@@ -4,6 +4,8 @@ Hugo responsive images makes generating responsive images for either figures or 
 
 Minimal inline code is required and configuration can take place either inline or in your site's config file.
 
+The project generates both fixed width responsive images (1x,2x etc) and variable width responsive images for responsive pages. All of Hugo's powerful image processing options have been exposed.
+
 ## Installation (as a module)
 
 ``` YAML
@@ -23,9 +25,17 @@ module:
 
 ## Configuration
 
-All configuration items have been provided in the module. To override simply copy and paste the following into your own site config:
+The first set of configuration items are from [Hugo's image processing configuration. See the docs for more info.](https://gohugo.io/content-management/image-processing/#processing-options).
+
+The second set of items (in params) are configuration options which have been provided in the module. To override simply copy and paste the following into your own site config:
 
 ```yaml
+imaging:
+  anchor: Smart 
+  bgColor: '#ffffff' 
+  hint: photo
+  quality: 75
+  resampleFilter: Box
 params:
   image:
     widths: [600, 900, 1300] # widths to generate if widths not specified
@@ -86,6 +96,7 @@ Fixed/responsive width images and page/global resource images have been merged i
   "fillRatio" (slice 4 3) // provide a height by width ratio as a slice if fill to ratio is desired 
   // optional
   "anchor" [string] // override default anchor for crop if fillRatio is set. options are "Smart" "Center" "TopLeft"
+  ) }}
 ```
 
 ### Further options
@@ -97,25 +108,56 @@ Fixed/responsive width images and page/global resource images have been merged i
 "rotate" [int] // provide an integer between 1-360 to rotate counter-clockwise
 "loading" "auto" // remove lazyloading (either via lazysizes or stock browser functionality)
 // override image processing configuration 
-"resampleFilter" [string] // override default resample filter. Options are "Box" or "NearestNeighbor" or "Linear" or "Gaussian"
-"quality" [int] // override default image compression quality, between 1-100
-"hint" [string] // provide default hint for webp conversion. options are "Top" "TopRight" "Left" "Right" "BottomLeft" "Bottom" "BottomRight"
+"resampleFilter" [string] // override default resample filter. All hugo config options can be used. Defaults to `box` or your site config.
+"quality" [int] // override default image compression quality, between 1-100. Defaults to 75 or your site config.
+"hint" [string] // override default hint for webp conversion. All hugo config options can be used. Defaults to `box` or your site config.
 ```
 
 ## Figure used as a layout partial
 
-FIX
+```html
+{{ partial "figure"  (dict
+  "page" . // the current page context if src is a page resource.
+  "src" "image.jpg" // relative to the current pages markdown file
+  "figureTitle" "Boat x54"
+  ) }}
+```
+
+The following options are available for figures (in addition to the image options above)
+
+```html
+"link" [url string] // the whole figure will be linked to a url
+"target" [string] // add a target attribute to the link
+"rel" [string] // add a rel attribute to the link
+"figureTitle" [string] // added to a <h4> tag in the figurecaption
+"caption" [markdown string] // added to the figure caption
+"attr" [string] // the image owner added after the caption
+"attrLink" [url string] // url path for image owner
+```
 
 ## Usage as a shortcode
 
 The shortcode accepts the same parameters with the following differences:
 
-* figure=true is used to enable figure behaviour.
-* arrays are expressed as strings delimited with commas e.g. widths="400,800"
-* the page context is not provided, its already available in the shortcode
-* to use a global resource you need to set global=true
+- if no configuration is needed, a single positional parameter of a page resource image path can be provided.
+- figure=true is used to enable figure behavior.
+- arrays are expressed as strings delimited with commas e.g. widths="400,800"
+- the page context is not provided, its already available in the shortcode
+- to use a global resource you need to set global=true
 
-e.g.
+Positional parameter example (only page resource image path)
+
+```html
+{{< image "image.jpg" >}}
+```
+
+Standard example
+
+{{< image src=image.jpg widths="400,800" alt="Image of boat model x54" title="Boat x54" >}}
+
+Figure example
+
+{{< image src=image.jpg widths="400,800" figure=true alt="Image of boat model x54" figureTitle="Boat x54" caption="This boat suits most users" >}}
 
 ### Customizing shortcode behavior
 
@@ -138,6 +180,15 @@ You can override this configuration at a page level with the following front mat
 imageRenderHook: true # force the render hook to generate responsive images
 imageRenderHook: false # force the render hook to use default markdown image behavior (for images in the static folder)
 ---
+```
+
+To set defaults responsive widths only for use with the shortcode (and also the render-hook if it hasn't been configured) modify the config params.image.shortcodeWidths.
+
+```yaml
+# config.yaml
+params:
+  image:
+    shortcodeWidths: [600, 900, 1200] # if not set, defaults to 'widths'
 ```
 
 ### Customizing markdown render hook behavior
