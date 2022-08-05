@@ -6,6 +6,8 @@ Minimal inline code is required and configuration can take place either inline o
 
 The project generates both fixed width responsive images (1x,2x etc) and variable width responsive images for responsive pages. All of Hugo's powerful image processing options have been exposed.
 
+You images will have a default class of `img-fluid` (Bootstrap responsive image), but you can set this in the config, or inline.
+
 ## Installation (as a module)
 
 ``` YAML
@@ -104,7 +106,7 @@ Fixed/responsive width images and page/global resource images have been merged i
 ```html
 "title" [string] // set the image title. If not set, figureTitle then the page's title will be used.
 "alt" [string] // set the alt text. If not set the figure caption is used, else "Image of [title]" used.
-"class" [string] // override the default image class
+"class" [string] // override the default image class (defaults to 'img-fluid')
 "rotate" [int] // provide an integer between 1-360 to rotate counter-clockwise
 "loading" "auto" // remove lazyloading (either via lazysizes or stock browser functionality)
 // override image processing configuration 
