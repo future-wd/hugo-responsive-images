@@ -1,0 +1,32 @@
+{
+  "name": "@future-wd/hugo-image",
+  "version": "2.0.0-alpha.12",
+  "description": "Image processing for hugo",
+  "main": "image.html",
+  "scripts": {
+    "release": "standard-version",
+    "release:dry-run": "standard-version --dry-run",
+    "release:alpha": "standard-version --prerelease alpha",
+    "release:alpha:dry-run": "standard-version --prerelease alpha --dry-run",
+    "git:push": "git push --follow-tags origin master",
+    "update": "npx npm-check --update"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/powerfulweb/hugo-image"
+  },
+  "keywords": [
+    "hugo",
+    "image",
+    "responsive",
+    "placeholder",
+    "processing"
+  ],
+  "author": "Sean Emerson",
+  "license": "ISC",
+  "devDependencies": {
+    "standard-version": "^9.3.1",
+    "prettier": "^2.7.1",
+    "prettier-plugin-go-template": "^0.0.13"
+  }
+}

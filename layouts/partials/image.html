@@ -1,0 +1,205 @@
+{{- /* set variables */ -}}
+{{- $img := "" }}
+{{- if .page -}}
+  {{- /* page resource */ -}}
+  {{- $img = .page.Resources.GetMatch .src -}}
+{{- else -}}
+  {{- /* global resource */ -}}
+  {{- $img = resources.Get .src -}}
+{{- end -}}
+{{- if not $img }}
+  {{- warnf "No image resource found at %s%s" .page.RelPermalink .src -}}
+{{- end -}}
+{{- $srcsets := slice -}}
+{{- $widths := slice -}}
+{{- $fillRatio := 0 -}}
+{{- /* calculate fill ratio, if .fillRatio is provided */ -}}
+{{- if .fillRatio -}}
+  {{- /* height to width ratio of .fillRatio */ -}}
+  {{- /* numbers must be converted to float before division or they will create an answer of 0 */ -}}
+  {{- $fillRatio = div (index .fillRatio 1 | float) (index .fillRatio 0 | float) -}}
+{{- end -}}
+{{/*********************************************************************
+   * if .width present for pixel density srcset                        *
+   * produce array [{desc: "1x", width: 300},{desc: "2x", width: 600}] *
+   *********************************************************************/}}
+{{- if .width -}}
+  {{- $densities := .densities | default site.Params.image.densities -}}
+  {{- $densities = sort $densities -}}
+  {{- range $density := $densities }}
+    {{- $widths = $widths | append (slice 
+      (dict 
+        "desc" (printf "%dx" $density)
+        "width" (mul $.width $density)
+      )
+    ) -}}
+  {{- end -}}
+{{- else -}}
+{{/* else produce responsive srcset 
+  * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}] 
+   */}}
+  {{- $userWidths := .widths | default site.Params.image.widths -}}
+  {{- $userWidths = sort $userWidths -}}
+  {{- range $userWidth := $userWidths }}
+    {{- $widths = $widths | append (slice 
+      (dict 
+        "desc" (printf "%dw" $userWidth)
+        "width" $userWidth
+      )
+    ) -}}
+  {{- end -}}
+{{- end -}}
+{{- /* set image processing options */ -}}
+{{- $options := slice -}}
+{{- with .quality -}}
+  {{- if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 100)) -}}
+    {{ $options = $options | append (printf "q%d" .) -}}
+  {{- else -}}
+    {{- warnf "Invalid .quality of %v (%s). .quality must be integer of 1-100 inclusive." . $img.RelPermalink -}}
+  {{- end -}}
+{{- end -}}
+{{- with .rotate -}}
+  {{- if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 360)) -}}
+    {{ $options = $options | append (printf "r%d" .) -}}
+  {{- else -}}
+    {{- warnf "Invalid .rotate of %v (%s). .rotate must be integer of 1-360 inclusive." . $img.RelPermalink -}}
+  {{- end -}}
+{{- end -}}
+{{- with .resampleFilter -}}
+  {{- $filterOpts := (slice "Box" "NearestNeighbor" "Linear" "Gaussian") -}}
+  {{- if in $filterOpts . -}}
+    {{ $options = $options | append . -}}
+  {{- else -}}
+    {{- warnf "Invalid .resampleFilter of %v (%s). Valid .resampleFilter options are %s" . $img.RelPermalink (delimit $filterOpts ", ") -}}
+  {{- end -}}
+{{- end -}}
+{{- with .hint -}}
+  {{- $hintOpts := (slice "picture" "photo" "drawing" "icon" "text") -}}
+  {{- if in $hintOpts . -}}
+    {{ $options = $options | append . -}}
+  {{- else -}}
+    {{- warnf "Invalid .hint of %v (%s). Valid .hint options are %s" . $img.RelPermalink (delimit $hintOpts ", ") -}}
+  {{- end -}}
+{{- end -}}
+{{- with .anchor -}}
+  {{- $anchorOpts := (slice "Smart" "Center" "TopLeft" "Top" "TopRight" "Left" "Right" "BottomLeft" "Bottom" "BottomRight") -}}
+  {{- if in $anchorOpts . -}}
+    {{ $options = $options | append  . -}}
+  {{- else -}}
+    {{- warnf "Invalid .anchor of %v (%s). Valid .anchor options are %s" . $img.RelPermalink (delimit $anchorOpts ", ") -}}
+  {{- end -}}
+{{- end -}}
+{{- /* ----------------------------- */ -}}
+{{- /* generate images at each width */ -}}
+
+{{- /*******************************
+     * loop over each image format *
+    ********************************/ -}}
+{{- range $format := site.Params.image.formats -}}
+  {{- /* add format to options array (for format transformation) if not original */ -}}
+  {{- if ne $format "original" -}}
+    {{ $options = $options | append $format -}}
+  {{- end -}}
+  {{- /* change options array into space delimited string. new variable created so its unique to this iteration */ -}}
+  {{- $optionsString := delimit $options " " -}}
+  {{- /* range over resize widths */ -}}
+  {{ $srcset := slice }}
+  {{ $src := "" }}
+  {{- range $index, $width := $widths -}}
+    {{- $imgResized := "" -}}
+    {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
+    {{- if $.fillRatio -}}
+      {{- /* resulting fillHeight must be converted to integer for use with image resize */ -}}
+      {{- $fillHeight := mul $width.width $fillRatio | int -}}
+      {{- if or (gt $width.width $img.Width) (gt $fillHeight $img.Height) -}}
+        {{- warnf "Source image %s (%dx%dpx) is not large enough to resize to %dx%dpx" $img.RelPermalink $img.Width $img.Height $width.width $fillHeight -}}
+      {{- end -}}
+      {{- /* resize image */ -}}
+      {{- $imgResized = $img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
+    {{- else -}}
+      {{- /* do standard image resize */ -}}
+      {{- if gt $width.width $img.Width -}}
+        {{- warnf "Source image %s is not wide enough to resize to %dpx" $img.RelPermalink $width.width -}}
+      {{- end -}}
+      {{- /* resize image */ -}}
+      {{- $imgResized = $img.Resize (printf "%dx %s %s" $width.width $optionsString) -}}
+    {{- end -}}
+    {{- /* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */ -}}
+    {{- $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) -}}
+    {{- /* if 1x density (First iteration), add image to src variable for use as fallback */ -}}
+    {{- if $.width  -}}
+      {{- if eq $index 0 -}}
+        {{ $src = $imgResized -}}
+      {{- end -}}
+    {{- else -}}
+      {{- /* if largest width (last iteration), add image to src variable for use as fallback */ -}}
+      {{- if eq (len $widths) (add $index 1) -}}
+        {{ $src = $imgResized -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- /* convert srcset array into a string, delimit with , between each image */ -}}
+  {{- $srcset := delimit $srcset ", " -}}
+  {{- /* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */ -}}
+  {{- $srcsets = merge $srcsets (dict $format (dict "srcset" $srcset "src" $src)) -}}
+{{- end -}}
+
+{{- /* ***********************
+     * picture tag variables *
+     *************************/ -}}
+{{- $title := .page.Title -}}
+{{- if .title -}}
+  {{- $title = .title -}}
+{{- else if .figureTitle -}}
+  {{- $title = .figureTitle -}}
+{{- end -}}
+{{- $sizes := "" -}}
+{{ if .sizes }}
+  {{ $sizes = .sizes }}
+{{- else if site.Params.image.lazysizes -}}
+  {{- $sizes = "auto" }}
+{{- else -}}
+  {{ $sizes = "100vw" }}
+{{- end -}}
+{{- $class := .class | default site.Params.image.class -}}
+{{- if site.Params.image.lazysizes -}}
+  {{- $class = print $class " " "lazyload" -}}
+{{- end -}}
+{{- if .figure }}
+{{- $class = print $class " " site.Params.image.figureImageClass -}}
+{{- end -}}
+{{- /************************
+     * generate picture tag *
+     ************************/ -}}
+<picture>
+  {{- range $srcsets }}
+  <source 
+    {{ if or (eq .loading "auto") (eq site.Params.image.lazysizes false) }}
+    srcset="{{ .srcset }}" 
+    {{ else }}
+    data-srcset="{{ .srcset }}" 
+    {{ end }} 
+    type="{{ .src.MediaType }}">
+  {{- end}}
+  {{ with index $srcsets "original" }}
+    {{ with .src }}
+    <img 
+      {{ if eq $.loading "auto" }}
+      loading="auto"
+      {{ end }}
+      {{ if or (eq $.loading "auto") (eq site.Params.image.lazysizes false) }}
+      src="{{ .RelPermalink }}"
+      {{ else }}
+      data-src="{{ .RelPermalink }}" 
+      {{ end }}
+      alt="{{ $.alt | default ( ($.caption | markdownify | plainify) | default (printf "Image of %s" $title)) }}" 
+      title="{{ $title }}"
+      height="{{ .Height }}" 
+      width="{{ .Width }}"
+      class="{{ $class }}"
+      {{ if not $.width }}
+      sizes="{{ $sizes }}"
+      {{ end }}>
+    {{- end -}}
+  {{ end -}}
+</picture>

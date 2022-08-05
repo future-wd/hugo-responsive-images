@@ -1,0 +1,51 @@
+{{ $params := dict }}
+{{/* don't pass .Page context if global resource requested */}}
+{{ if ne (.Get "global") "true" }}
+  {{ $params = merge $params (dict "page" .Page) }}
+{{ end }}
+
+{{- /* check for named params in shortcode */ -}}
+{{- if .IsNamedParams -}}
+  {{ $params = merge $params .Params }}
+
+  {{- with (.Get "widths") -}}
+    {{- $widths := split . "," -}}
+    {{- $widths = apply $widths "int" "." }}
+    {{- $params = merge $params (dict "widths" $widths) }}
+  {{ else }}
+    {{/* if no widths provided, provide shortcodeWidths (if configured)
+      else the image partial has its own default widths */}}
+    {{ with site.Params.image.shortcodeWidths }}
+      {{- $params = merge $params (dict "widths" . ) }}
+    {{- end -}}
+  {{- end -}}
+
+  {{- with (.Get "densities") -}}
+    {{- $densities := split . "," -}}
+    {{- $densities = apply $densities "int" "." }}
+    {{- $params = merge $params (dict "widths" $densities) }}
+  {{- end -}}
+  {{- with (.Get "fillRatio") -}}
+    {{- $fillRatio = split . "," -}}
+    {{- $fillRatio = apply $fillRatio "int" "." }}
+    {{- $params = merge $params (dict "widths" $fillRatio) }}
+  {{- end -}}
+
+  {{ if not (.Get "src") }}
+    {{ errorf "The %q shortcode requires the 'src' named parameter. See %s" .Name .Position }}
+  {{ end }}
+{{- else -}}
+{{- /* if only 1 un named param in shortcode */ -}}
+  {{- with (.Get 0) -}}
+  {{ $params = merge $params (dict "src" .) }}
+  {{- end -}}
+  {{ if ge (len .Params) 2 }}
+    {{ errorf "If using positional parameters, only 1 parameter can be provided (src)" }}
+  {{ end }}
+{{- end -}}
+
+{{ if eq (.Get "figure") true }}
+{{ partial "figure" $params }}
+{{ else }}
+{{ partial "image" $params }}
+{{ end }}
