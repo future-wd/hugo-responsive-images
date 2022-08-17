@@ -1,6 +1,6 @@
-{{- /********************************
-    ** loop over each image format **
-    *********************************/ -}}
+{{- /**********************************
+  **** loop over each image format ****
+  *************************************/ -}}
 {{- $picture := dict -}}
 {{- $options := .options -}}
 {{- range $format := site.Params.image.formats -}}
@@ -10,9 +10,9 @@
   {{- end -}}
   {{- /* change options array into space delimited string. new variable created so its unique to this iteration */ -}}
   {{- $optionsString := delimit $options " " -}}
-  {{- /*********************************
-      ** loop over each width         **
-      **********************************/ -}}
+  {{- /***********************************
+    **** loop over each width         ****
+    **************************************/ -}}
   {{ $srcset := slice }}
   {{ $src := "" }}
   {{- range $index, $width := $.widths -}}
