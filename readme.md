@@ -179,7 +179,7 @@ To create your own html to wrap your image/figure element create the following i
 
 ```html
 <!-- layouts/partials/image-includes/shortcode-html.html -->
-<div class="custom-wrapper">
+<div class="custom-wrapper-class">
   {{ partial "image-includes/shortcode-params.html" . }}
 </div>
 ```
@@ -223,7 +223,26 @@ params:
     renderHookWidths: [600, 900, 1200] # if not set, defaults to 'shortCodeWidths' and then 'widths'
 ```
 
-If you wish to set defaults for renderHook behavior you need to copy and paste /layouts/_markup/render-image.html out of the modules github source and into your project. See above for an example on how to set default behaviors.
+By default the render-hook image is wrapped in the following html:
+
+```html
+<div class="row d-flex justify-content-center">
+  <div class="col-md-9 d-flex justify-content-center">
+    {{ partial "image-includes/render-hook-params" . }}
+  </div>
+</div>
+```
+
+To create your own html to wrap your image/figure element create the following in your project:
+
+```html
+<!-- layouts/partials/image-includes/render-hook-html.html -->
+<div class="custom-wrapper-class">
+  {{ partial "image-includes/render-hook-params" . }}
+</div>
+```
+
+Customize as you wish, just keep the 3rd line ( {{ partial ... }} )
 
 <!-- 
 ### Noscript required HTML, JS and CSS

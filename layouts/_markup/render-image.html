@@ -1,13 +1,13 @@
-{{ if or (eq site.Params.image.renderhook true) (.Page.Params.imageRenderHook true) }}
-{{ $widths := site.Params.image.renderHookWidths | default (site.params.image.shortcodeWidths | default site.Params.image.widths ) }}
-{{ $config := (dict 
+{{- if or (eq site.Params.image.renderhook true) (.Page.Params.imageRenderHook true) -}}
+{{- $widths := site.Params.image.renderHookWidths | default (site.params.image.shortcodeWidths | default site.Params.image.widths ) -}}
+{{- $config := (dict 
   "page" .Page 
   "src" .Destination 
   "alt" .PlainText 
   "title" .Title 
   "widths" $widths
   ) -}}
-{{ partial "image" $config }}
-{{ else if (not (or site.Params.image.renderhook (.Page.Params.imageRenderHook false))) }}
-<img src="{{.Destination }}" alt="{{ .PlainText }}" {{ with .Title }}title="{{ . }}"{{ end }}>
-{{ end }} 
+{{- partial "image" $config -}}
+{{- else if (not (or site.Params.image.renderhook (.Page.Params.imageRenderHook false))) -}}
+  {{- partial "image-includes/render-hook-html" . -}}
+{{- end -}} 
