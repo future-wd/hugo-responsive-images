@@ -1,4 +1,5 @@
 image:
+  # api: netlify
   widths: [600, 900, 1300]
   # shortcodeWidths: [600, 900, 1300] # custom widths for shortcode use in markdown files. If unset defaults to widths
   # renderHookWidths: [600, 900, 1300] # custom widths for render hook use in markdown files. If unset defaults to shortcode widths
