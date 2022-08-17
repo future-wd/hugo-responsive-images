@@ -1,18 +1,27 @@
-{{- /* 
-  netlify image processing:
-  width:    ?nfresize=fit&w=300 /
-  fitRatio: ?nfresize=smartcrop&w=300&h=300 
-  /* -}}
+{{- $apiOpts := (slice "netlify") }}
+{{- with site.Params.image.api -}}
+  {{- if not (in $apiOpts .) -}}
+    {{- errorf "Invalid configured api of %v. Valid api's are %s" .  (delimit $apiOpts ", ") -}}
+  {{- end -}}
+{{- end -}}
+
 {{- /**********************************
   **** loop over each image format ****
   *************************************/ -}}
 {{- $picture := dict -}}
-{{- /***********************************
-  **** loop over each width         ****
-  **************************************/ -}}
-{{ $srcset := slice }}
-{{ $src := "" }}
-{{- range $format := (slice "original") -}}
+{{- $options := .options -}}
+{{- range $format := site.Params.image.formats -}}
+  {{- /* add format to options array (for format transformation) if not original */ -}}
+  {{- if ne $format "original" -}}
+    {{ $options = $options | append $format -}}
+  {{- end -}}
+  {{- /* change options array into space delimited string. new variable created so its unique to this iteration */ -}}
+  {{- $optionsString := delimit $options " " -}}
+  {{- /***********************************
+    **** loop over each width         ****
+    **************************************/ -}}
+  {{ $srcset := slice }}
+  {{ $src := "" }}
   {{- range $index, $width := $.widths -}}
     {{- $imgResized := "" -}}
     {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
@@ -23,17 +32,17 @@
         {{- warnf "Source image %s (%dx%dpx) is not large enough to resize to %dx%dpx" $.img.RelPermalink $.img.Width $.img.Height $width $fillHeight -}}
       {{- end -}}
       {{- /* resize image */ -}}
-      {{- $imgResized = printf "%s?nfresize=smartcrop?w=%dh=%d" $.img.RelPermalink $width.width $fillHeight -}}
+      {{- $imgResized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
     {{- else -}}
       {{- /* do standard image resize */ -}}
       {{- if gt $width.width $.img.Width -}}
-        {{- warnf "Source image %s (%dx%dpx) is not wide enough to resize to %dpx" $.img.RelPermalink $.img.Width $.img.Height $width.width -}}
+      {{- warnf "Source image %s (%dx%dpx) is not wide enough to resize to %dpx" $.img.RelPermalink $.img.Width $.img.Height $width.width -}}
       {{- end -}}
-      {{- /* create resize path */ -}}
-      {{- $imgResized = printf "%s?nfresize=fit?w=%d" $.img.RelPermalink $width.width -}}
+      {{- /* resize image */ -}}
+      {{- $imgResized = $.img.Resize (printf "%dx %s %s" $width.width $optionsString) -}}
     {{- end -}}
     {{- /* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */ -}}
-    {{- $srcset = $srcset | append (printf "%s %s" $imgResized $width.desc) -}}
+    {{- $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) -}}
     {{- /* if .width and 1x density (First iteration), add image to src variable for use as fallback */ -}}
     {{- if .partial.width  -}}
       {{- if eq $index 0 -}}
@@ -50,7 +59,5 @@
   {{- $srcset := delimit $srcset ", " -}}
   {{- /* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */ -}}
   {{- $picture = merge $picture (dict $format (dict "srcset" $srcset "src" $src)) -}}
-{{ end }}
+{{- end -}}
 {{- return $picture -}}
-
-
