@@ -1,12 +1,17 @@
 {{ $picture := dict }}
-{{ if site.Params.image.api }}
-EXTERNAL API!!!
-  {{ with partial "image-includes/external-api" . }}
-    {{ $picture = . }}
-  {{ end }}
+{{- with site.Params.image.api -}}
+  {{- $apiOpts := (slice "netlify") }}
+  {{- if in $apiOpts . -}}
+    {{ with partial "image-includes/external-api" $ }}
+      {{ $picture = . }}
+    {{ end }}
+  {{ else }}
+    {{- $msg := "Invalid configured image api of %v. Valid api's are %s"}}
+    {{- errorf $msg .  (delimit $apiOpts ", ") -}}
+  {{- end -}}
 {{ else }}
   {{ with partial "image-includes/image-api" . }}
-  {{ $picture = . }}
+    {{ $picture = . }}
   {{ end }}
 {{ end }}
 {{ return $picture }}

@@ -1,10 +1,3 @@
-{{- $apiOpts := (slice "netlify") }}
-{{- with site.Params.image.api -}}
-  {{- if not (in $apiOpts .) -}}
-    {{- errorf "Invalid configured api of %v. Valid api's are %s" .  (delimit $apiOpts ", ") -}}
-  {{- end -}}
-{{- end -}}
-
 {{- /**********************************
   **** loop over each image format ****
   *************************************/ -}}

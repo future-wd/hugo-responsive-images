@@ -129,7 +129,11 @@
     {{ else }}
       data-srcset="{{ .srcset }}"
     {{ end }}
+    {{ if site.Params.image.api }}
+    type="{{ $img.MediaType }}"
+    {{ else }}
     type="{{ .src.MediaType }}"
+    {{ end }}
   />
   {{- end }}
   {{ with index . "original" }}
@@ -138,15 +142,23 @@
     {{ if eq $.loading "auto" }}
       loading="auto"
     {{ end }}
-    {{ if or (eq $.loading "auto") (eq site.Params.image.lazysizes false) }}
-      src="{{ .RelPermalink }}"
+    {{ $imgPath := "" }}
+    {{ if site.Params.image.api }}
+      {{- $imgPath = . -}}
+    height="{{ $img.Height }}"
+    width="{{ $img.Width }}"
     {{ else }}
-      data-src="{{ .RelPermalink }}"
+      {{- $imgPath = .RelPermalink -}}
+    height="{{ .Height }}"
+    width="{{ .Width }}"
+    {{ end }}
+    {{ if or (eq $.loading "auto") (eq site.Params.image.lazysizes false) }}
+      src="{{ $imgPath }}"
+    {{ else }}
+      data-src="{{ $imgPath }}"
     {{ end }}
     alt="{{ $.alt | default ( ($.caption | markdownify | plainify) | default (printf "Image of %s" $title)) }}"
     title="{{ $title }}"
-    height="{{ .Height }}"
-    width="{{ .Width }}"
     class="{{ $class }}"
     {{ if not $.width }}
       sizes="{{ $sizes }}"
