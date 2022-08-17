@@ -1,0 +1,5 @@
+{{ $widths := slice }}
+{{ range $width := .widths }}
+{{ $widths = $widths | append $width.width }}
+{{ end }}
+{{ return $widths }}
