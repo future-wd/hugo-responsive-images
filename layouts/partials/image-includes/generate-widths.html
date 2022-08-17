@@ -29,7 +29,7 @@
     {{- else -}}
       {{- /* do standard image resize */ -}}
       {{- if gt $width.width $.img.Width -}}
-        {{- warnf "Source image %s is not wide enough to resize to %dpx" $.img.RelPermalink $width.width -}}
+      {{- warnf "Source image %s (%dx%dpx) is not wide enough to resize to %dpx" $.img.RelPermalink $.img.Width $.img.Height $width.width -}}
       {{- end -}}
       {{- /* resize image */ -}}
       {{- $imgResized = $.img.Resize (printf "%dx %s %s" $width.width $optionsString) -}}
