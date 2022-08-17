@@ -165,9 +165,26 @@ Figure example
 
 To set defaults responsive widths only for use with shortcodes modify the config params.image.shortcodeWidths.
 
-If you wish to set defaults for shortcode behavior you need to copy and paste /layouts/shortcodes/image.html out of the modules github source and into your project.
+By default the image or figure is wrapped in the following html:
 
-This is an example of how to override....
+```html
+<div class="row d-flex justify-content-center">
+  <div class="col-md-9 d-flex justify-content-center">
+    {{ partial "image-includes/shortcode-params.html" . }}
+  </div>
+</div>
+```
+
+To create your own html to wrap your image/figure element create the following in your project:
+
+```html
+<!-- layouts/partials/image-includes/shortcode-html.html -->
+<div class="custom-wrapper">
+  {{ partial "image-includes/shortcode-params.html" . }}
+</div>
+```
+
+Customize as you wish, just keep the 3rd line ( {{ partial ... }} )
 
 ## Usage as a markdown render hook
 
