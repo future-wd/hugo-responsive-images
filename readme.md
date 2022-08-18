@@ -32,6 +32,7 @@ The first set of configuration items are from [Hugo's image processing configura
 The second set of items (in params) are configuration options which have been provided in the module. To override simply copy and paste the following into your own site config:
 
 ```yaml
+ignoreErrors: ["alt-error"] # suppress error message if no alt text has been provided.
 imaging:
   anchor: Smart 
   bgColor: '#ffffff' 
@@ -55,7 +56,7 @@ params:
 
 ```
 
-> All of these configuration items can also be configured on a per page basis by adding the config to the page's front matter. 
+> All of image parameter configuration items can also be configured on a per page basis by adding the config to the page's front matter.
 
 For example:
 

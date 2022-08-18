@@ -112,6 +112,9 @@
 {{- if .figure }}
   {{- $class = print $class " " (.page.Param "image.figureImageClass") -}}
 {{- end -}}
+{{- if not .alt }}
+  {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s" $img.RelPermalink .page.RelPermalink }}
+{{- end -}}
 {{- /************************
   **** generate picture tag *
   ***************************/ -}}
