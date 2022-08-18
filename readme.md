@@ -83,9 +83,13 @@ Fixed/responsive width images and page/global resource images have been merged i
   "src" "image.jpg" // relative to the current pages markdown file
   "width" "300" // width in pixels if a fixed width image is desired.
   // optional
-  "densities" (slice 1 2) // fill densities for fixed width image
+  "densities" (slice 1 2 3) // creates 1x, 2x, 3x versions (defaults to 1x, 2x)
   )}}
 ```
+
+> A "type" of "page" does not need to be provided. Default behavior is page resource images.
+>
+> By providing the "width" key, you will be generating a fixed with image.
 
 ### Responsive width & global resource example
 
@@ -93,13 +97,16 @@ Fixed/responsive width images and page/global resource images have been merged i
 
 {{ partial "image" (dict
   "src" "images/image.jpg" // relative to the the assets folder as no page context has been provided
+  "type" "global"
+  "page" . // page must be provided for configuration to work
   // optional 
   "widths" (slice 400 800 1200) // override default responsive widths. 
   "sizes" [string] // set the sizes property for the image tag, defaults to "100vw" or "auto" if lazysizes is enabled in the config and installed into the website
   )}}
 ```
 
-> To use a global resource in the `assets` folder, simply don't include the `"page"` key.
+> You don't need to provide the "widths" key to generate responsive width images, this is the default behavior and the widths config will be used.
+
 
 ### Cropping an image to an aspect ratio
 
@@ -107,21 +114,35 @@ Fixed/responsive width images and page/global resource images have been merged i
 {{ partial "image"  (dict
   "page" . // the current page context if src is a page resource.
   "src" "image.jpg" // relative to the current pages markdown file
-  "fillRatio" (slice 4 3) // provide a height by width ratio as a slice if fill to ratio is desired 
-  // optional
-  "anchor" [string] // override default anchor for crop if fillRatio is set. options are "Smart" "Center" "TopLeft"
+  "fillRatio" (slice 4 3) 
+  "anchor" "center"
   ) }}
 ```
 
-### Further options
+### All options
 
 ```html
+"page" [variable] // provide the page context
+"src" [string] // provide the path to the image, relative to the page, or assets folder. (for global assets)
+"widths" [array] // provide array (slice) of widths for resizing
+"width" [int] // provide width for fixed with image (sets image mode to fixed width)
+"type" [string] // set to global for images in `assets` folder. Defaults to page resources.
 "title" [string] // set the image title. If not set, figureTitle then the page's title will be used.
 "alt" [string] // set the alt text. If not set the figure caption is used, else "Image of [title]" used.
 "class" [string] // override the default image class (defaults to 'img-fluid')
-"rotate" [int] // provide an integer between 1-360 to rotate counter-clockwise
+"fillRatio" [array] // provide array (slice) of two numbers for fill ratio
+"anchor" 
 "loading" "auto" // remove lazyloading (either via lazysizes or stock browser functionality)
-// override image processing configuration 
+
+
+"sizes" [string] // set the sizes property for the image tag, defaults to "100vw" or "auto" if lazysizes is enabled in the config and installed into the website
+```
+
+## Futher options
+
+```html
+"densities" [array] // provide an array (slice) of densities for fixed with image. (defaults to 1,2 x densities)
+"rotate" [int] // provide an integer between 1-360 to rotate counter-clockwise
 "resampleFilter" [string] // override default resample filter. All hugo config options can be used. Defaults to `box` or your site config.
 "quality" [int] // override default image compression quality, between 1-100. Defaults to 75 or your site config.
 "hint" [string] // override default hint for webp conversion. All hugo config options can be used. Defaults to `box` or your site config.
