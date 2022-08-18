@@ -1,11 +1,16 @@
 {{- /* set variables */ -}}
 {{- $img := "" }}
-{{- if .page -}}
-  {{- /* page resource */ -}}
+{{- /* if .page -}}
   {{- $img = .page.Resources.GetMatch .src -}}
 {{- else -}}
+  {{- $img = resources.Get .src -}}
+{{- end */ -}}
+{{- if eq .type "global" -}}
   {{- /* global resource */ -}}
   {{- $img = resources.Get .src -}}
+{{- else -}}
+  {{- /* page resource */ -}}
+  {{- $img = .page.Resources.GetMatch .src -}}
 {{- end -}}
 {{- if not $img }}
   {{- warnf "No image resource found at %s%s" .page.RelPermalink .src -}}
@@ -24,7 +29,7 @@
   **** produce array [{desc: "1x", width: 300},{desc: "2x", width: 600}] *
   ************************************************************************/ -}}
 {{- if .width -}}
-  {{- $densities := .densities | default site.Params.image.densities -}}
+  {{- $densities := .densities | default (.page.Param "image.densities") -}}
   {{- $densities = sort $densities -}}
   {{- range $density := $densities }}
     {{- $widths = $widths | append (slice
@@ -37,7 +42,7 @@
 {{/* else produce responsive srcset
   * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
 */}}
-  {{- $userWidths := .widths | default site.Params.image.widths -}}
+  {{- $userWidths := .widths | default (.page.Param "image.widths") -}}
   {{- $userWidths = sort $userWidths -}}
   {{- range $userWidth := $userWidths }}
     {{- $widths = $widths | append (slice
@@ -99,17 +104,17 @@
 {{- $sizes := "" -}}
 {{ if .sizes }}
   {{ $sizes = .sizes }}
-{{- else if site.Params.image.lazysizes -}}
+{{- else if .page.Param "image.lazysizes" -}}
   {{- $sizes = "auto" }}
 {{- else -}}
   {{ $sizes = "100vw" }}
 {{- end -}}
-{{- $class := .class | default site.Params.image.class -}}
-{{- if site.Params.image.lazysizes -}}
+{{- $class := .class | default (.page.Param "image.class") -}}
+{{- if .page.Param "image.lazysizes" -}}
   {{- $class = print $class " " "lazyload" -}}
 {{- end -}}
 {{- if .figure }}
-  {{- $class = print $class " " site.Params.image.figureImageClass -}}
+  {{- $class = print $class " " (.page.Param "image.figureImageClass") -}}
 {{- end -}}
 {{- /************************
   **** generate picture tag *
@@ -124,7 +129,7 @@
 <picture>
   {{- range . }}
   <source
-    {{ if or (eq .loading "auto") (eq site.Params.image.lazysizes false) }}
+    {{ if or (eq .loading "auto") (eq (.page.Param "image.lazysizes") false) }}
       srcset="{{ .srcset }}"
     {{ else }}
       data-srcset="{{ .srcset }}"
@@ -138,7 +143,7 @@
     {{ if eq $.loading "auto" }}
       loading="auto"
     {{ end }}
-    {{ if or (eq $.loading "auto") (eq site.Params.image.lazysizes false) }}
+    {{ if or (eq $.loading "auto") (eq ($.page.Param "image.lazysizes") false) }}
       src="{{ .RelPermalink }}"
     {{ else }}
       data-src="{{ .RelPermalink }}"
