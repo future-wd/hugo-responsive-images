@@ -212,7 +212,7 @@ By default the image or figure is wrapped in the following html:
 To create your own html to wrap your image/figure element create the following in your project:
 
 ```html
-<!-- layouts/partials/image-includes/shortcode-html.html -->
+<!-- layouts/partials/image-includes/shortcode-template.html -->
 <div class="custom-wrapper-class">
   {{ partial "image-includes/shortcode-params.html" . }}
 </div>
@@ -270,7 +270,7 @@ By default the render-hook image is wrapped in the following html:
 To create your own html to wrap your image/figure element create the following in your project:
 
 ```html
-<!-- layouts/partials/image-includes/render-hook-html.html -->
+<!-- layouts/partials/image-includes/render-hook-template.html -->
 <div class="custom-wrapper-class">
   {{ partial "image-includes/render-hook-params" . }}
 </div>

@@ -7,7 +7,7 @@
   "title" .Title 
   "widths" $widths
   ) -}}
-{{- partial "image-includes/render-hook-html" $config -}}
+{{- partial "image-includes/render-hook-template" $config -}}
 {{- else -}}
   {{- /* page resource image with no transformations */ -}}
   {{ $image := .Page.Resources.GetMatch .Destination }}
