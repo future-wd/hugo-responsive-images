@@ -1,11 +1,7 @@
 {{- /* set variables */ -}}
 {{- $img := "" }}
-{{- /* if .page -}}
-  {{- $img = .page.Resources.GetMatch .src -}}
-{{- else -}}
-  {{- $img = resources.Get .src -}}
-{{- end */ -}}
-{{- if eq .type "global" -}}
+
+{{- if eq .Type "global" -}}
   {{- /* global resource */ -}}
   {{- $img = resources.Get .src -}}
 {{- else -}}
