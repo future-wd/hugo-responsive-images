@@ -11,3 +11,5 @@ v1.0.4 - config can be overridden on a per page basis with markdown front matter
 v1.0.5 - generate error if no alt text provided (can be suppressed)
 
 v1.0.6 - change render-hook-html and shortcode-html to render-hook-template and shortcode-template
+
+v1.0.7 - http(s) links auto target="_blank" and rel="noopener nofollow" local paths use relref
