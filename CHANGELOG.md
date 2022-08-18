@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.8](/github.com/powerfulweb/hugo-image/compare/v1.0.7...v1.0.8) (2022-08-18)
+
+
+### Bug Fixes
+
+* remove depreciated figure  files ([1bcdd36](/github.com/powerfulweb/hugo-image/commit/1bcdd3602cf98402ed211a6cb1a48e084786185e))
+* share target and rel for both figure anchor tags ([5ee261e](/github.com/powerfulweb/hugo-image/commit/5ee261ec61ed9a3c4ec018e351748b3afe4f14a5))
+
 ### [1.0.7](/github.com/powerfulweb/hugo-image/compare/v1.0.6...v1.0.7) (2022-08-18)
 
 
