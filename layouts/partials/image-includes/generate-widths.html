@@ -3,7 +3,7 @@
   *************************************/ -}}
 {{- $picture := dict -}}
 {{- $options := .options -}}
-{{- range $format := site.Params.image.formats -}}
+{{- range $format := .page.Param "image.formats" -}}
   {{- /* add format to options array (for format transformation) if not original */ -}}
   {{- if ne $format "original" -}}
     {{ $options = $options | append $format -}}
