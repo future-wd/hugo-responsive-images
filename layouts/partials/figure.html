@@ -12,7 +12,7 @@
   {{- if .link -}}
       <a href="{{ $link }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
   {{- end -}}
-{{ partial "image" $params -}}
+  {{ partial "image" $params -}}
 {{- if .link }}</a>{{ end -}}
   {{ if or (or .figureTitle .caption) .attr }}
   <figcaption class="{{ .page.Param "image.figcaptionClass" }}">
