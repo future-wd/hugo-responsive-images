@@ -1,4 +1,18 @@
+{{ $target := .target }}
+{{ $rel := .rel }}
+{{ $link := .link }}
+{{- if hasPrefix .link "http" -}}
+  {{ if not $target }}
+    {{ $target = "_blank" }}
+  {{ end }}
+  {{ if not $rel }}
+    {{ $rel = "noopener noreferrer"}}
+  {{ end }}
+{{ else }}
+  {{ $link = relref .page .link }}
+{{ end }}
+
 <figure class="{{ .figureclass | default (.page.Param "image.figureClass") }}">
   {{- if .link -}}
-      <a href="{{ .link }}"{{ with .target }} target="{{ . }}"{{ end }}{{ with .rel }} rel="{{ . }}"{{ end }}>
+      <a href="{{ $link }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
   {{- end -}}
