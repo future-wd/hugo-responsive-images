@@ -11,5 +11,5 @@
 {{- else -}}
   {{- /* page resource image with no transformations */ -}}
   {{ $image := .Page.Resources.GetMatch .Destination }}
-  <img src="{{ $image.RelPermalink }}" alt="{{ .PlainText }}" {{ with .Title}} title="{{ . }}">
+  <img src="{{ $image.RelPermalink }}" alt="{{ .PlainText }}" {{ with .Title}} title="{{ . }}"{{ end }}>
 {{- end -}} 

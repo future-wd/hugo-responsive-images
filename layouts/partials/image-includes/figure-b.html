@@ -1,6 +1,6 @@
 {{- if .link }}</a>{{ end -}}
   {{ if or (or .figureTitle .caption) .attr }}
-  <figcaption class="{{ .site.Params.image.figcaptionClass }}">
+  <figcaption class="{{ .page.Param "image.figcaptionClass" }}">
   {{ with .figureTitle -}}
     <h4>{{ . }}</h4>
   {{- end -}}

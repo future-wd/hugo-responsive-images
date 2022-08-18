@@ -55,6 +55,18 @@ params:
 
 ```
 
+> All of these configuration items can also be configured on a per page basis by adding the config to the page's front matter. 
+
+For example:
+
+```markdown
+---
+title: About 
+image:
+  widths: [400, 750, 1300]
+---
+```
+
 ## Usage as a layout partial
 
 The following example shows all configuration options. The only required option is "src".
