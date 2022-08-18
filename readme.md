@@ -162,9 +162,9 @@ Fixed/responsive width images and page/global resource images have been merged i
 The following options are available for figures (in addition to the image options above)
 
 ```html
-"link" [url string] // the whole figure will be linked to a url. http(s) links will have target=_blank and rel="noopener nofollow" added if they aren't configured. For local paths check hugo's relref doc https://gohugo.io/functions/relref/
-"target" [string] // add a target attribute to the link
-"rel" [string] // add a rel attribute to the link
+"link" [url string] // the whole figure will be linked to a url. External urls must be prefixed with http(s). Local paths use relref paths. Check hugo's relref doc https://gohugo.io/functions/relref/ 
+"target" [string] // add a target attribute for http(s) link or attrLink. Defaults to "_blank"
+"rel" [string] // add a rel attribute for http(s) link or attrLink. Defaults to "noopender nofollow"
 "figureTitle" [string] // added to a <h4> tag in the figurecaption
 "caption" [markdown string] // added to the figure caption
 "attr" [string] // the image owner added after the caption

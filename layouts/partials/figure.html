@@ -1,4 +1,32 @@
-{{ $params := merge . (dict "figure" true) }}
-{{ partial "image-includes/figure-a" $params -}}
+{{- $params := merge . (dict "figure" true) -}}
+{{- $target := false -}}
+{{- $rel := false -}}
+{{- $link := .link -}}
+{{- if hasPrefix .link "http" -}}
+  {{- $target = .target | default "_blank" -}}
+  {{- $rel = .rel | default "noopener noreferrer" -}}
+{{- else -}}
+  {{- $link = relref .page .link -}}
+{{- end -}}
+<figure class="{{ .figureclass | default (.page.Param "image.figureClass") }}">
+  {{- if .link -}}
+      <a href="{{ $link }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
+  {{- end -}}
 {{ partial "image" $params -}}
-{{ partial "image-includes/figure-b" $params -}}
+{{- if .link }}</a>{{ end -}}
+  {{ if or (or .figureTitle .caption) .attr }}
+  <figcaption class="{{ .page.Param "image.figcaptionClass" }}">
+  {{ with .figureTitle -}}
+    <h4>{{ . }}</h4>
+  {{- end -}}
+  {{- if or .caption .attr -}}<p>
+    {{- .caption | markdownify -}}{{- if .attr -}}, {{ end }}
+    {{- with .attrLink }}
+        <a href="{{ . }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
+    {{- end -}}
+    {{- .attr | markdownify -}}
+    {{- if .attrLink }}</a>{{ end }}</p>
+  {{- end }}
+  </figcaption>
+  {{- end }}
+</figure>

@@ -7,7 +7,7 @@
   {{- if or .caption .attr -}}<p>
     {{- .caption | markdownify -}}{{- if .attr -}}, {{ end }}
     {{- with .attrLink }}
-        <a href="{{ . }}">
+        <a href="{{ . }}" >
     {{- end -}}
     {{- .attr | markdownify -}}
     {{- if .attrLink }}</a>{{ end }}</p>

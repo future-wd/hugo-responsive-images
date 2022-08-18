@@ -13,3 +13,5 @@ v1.0.5 - generate error if no alt text provided (can be suppressed)
 v1.0.6 - change render-hook-html and shortcode-html to render-hook-template and shortcode-template
 
 v1.0.7 - http(s) links auto target="_blank" and rel="noopener nofollow" local paths use relref
+
+v1.0.8 - share target and rel for both figure anchor tags
