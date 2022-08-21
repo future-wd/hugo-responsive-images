@@ -343,3 +343,11 @@ lazySizes.cfg.nativeLoading = {
   },
 };
 ```
+
+### Module configuration
+
+```yaml
+params:
+  image:
+    loading: lazysizes
+    sizes: lazysizes
