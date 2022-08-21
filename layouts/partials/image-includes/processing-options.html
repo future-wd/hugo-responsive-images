@@ -1,0 +1,41 @@
+{{- /* set image processing options */ -}}
+{{- $options := slice -}}
+{{- with .partial.quality -}}
+  {{- if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 100)) -}}
+    {{ $options = $options | append (printf "q%d" .) -}}
+  {{- else -}}
+    {{- warnf "Invalid .quality of %v (%s). .quality must be integer of 1-100 inclusive." . $.img.RelPermalink -}}
+  {{- end -}}
+{{- end -}}
+{{- with .partial.rotate -}}
+  {{- if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 360)) -}}
+    {{ $options = $options | append (printf "r%d" .) -}}
+  {{- else -}}
+    {{- warnf "Invalid .rotate of %v (%s). .rotate must be integer of 1-360 inclusive." . $.img.RelPermalink -}}
+  {{- end -}}
+{{- end -}}
+{{- with .partial.resampleFilter -}}
+  {{- $filterOpts := (slice "Box" "NearestNeighbor" "Linear" "Gaussian") -}}
+  {{- if in $filterOpts . -}}
+    {{ $options = $options | append . -}}
+  {{- else -}}
+    {{- warnf "Invalid .resampleFilter of %v (%s). Valid .resampleFilter options are %s" . $.img.RelPermalink (delimit $filterOpts ", ") -}}
+  {{- end -}}
+{{- end -}}
+{{- with .partial.hint -}}
+  {{- $hintOpts := (slice "picture" "photo" "drawing" "icon" "text") -}}
+  {{- if in $hintOpts . -}}
+    {{ $options = $options | append . -}}
+  {{- else -}}
+    {{- warnf "Invalid .hint of %v (%s). Valid .hint options are %s" . $.img.RelPermalink (delimit $hintOpts ", ") -}}
+  {{- end -}}
+{{- end -}}
+{{- with .partial.anchor -}}
+  {{- $anchorOpts := (slice "Smart" "Center" "TopLeft" "Top" "TopRight" "Left" "Right" "BottomLeft" "Bottom" "BottomRight") -}}
+  {{- if in $anchorOpts . -}}
+    {{ $options = $options | append  . -}}
+  {{- else -}}
+    {{- warnf "Invalid .anchor of %v (%s). Valid .anchor options are %s" . $.img.RelPermalink (delimit $anchorOpts ", ") -}}
+  {{- end -}}
+{{- end -}}
+{{ return $options }}
