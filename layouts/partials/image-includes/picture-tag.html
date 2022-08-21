@@ -57,7 +57,7 @@
     {{ else }}
       srcset="{{ .srcset }}"
     {{ end }}
-    {{ if site.Params.image.api }}
+    {{ if $.partial.page.Param "image.api" }}
     type="{{ $.img.MediaType }}"
     {{ else }}
     type="{{ .src.MediaType }}"
@@ -87,7 +87,7 @@
     {{ end }}
 
     {{ $imgPath := "" }}
-    {{ if site.Params.image.api }}
+    {{ if $.partial.page.Param "image.api" }}
       {{- $imgPath = . -}}
     height="{{ $.img.Height }}"
     width="{{ $.img.Width }}"
