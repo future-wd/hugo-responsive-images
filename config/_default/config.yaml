@@ -1,4 +1,0 @@
-module:
-  hugoVersion:
-    extended: false
-    min: 0.83.0
