@@ -50,7 +50,9 @@ params:
     figureClass: figure # default figure class
     figcaptionClass: figure-caption # default figcaption class
     figureImageClass: figure-img # default figure image class (appended to image class)
-    lazysizes: true # enable integration of the lazysizes js library
+    # depreciated lazysizes: true # enable integration of the lazysizes js library (`loading: lazysizes` needed for )
+    loading: lazy/auto/lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js to handle image loading. Defaults to lazy. If you use default (`lazy`) or `lazysizes`, you will need to set above the fold images to `auto`.
+    sizes: user/lazysizes # uses lazysizes to automatically generate the sizes property. User does not generate any sizes, you need to declare them. Defaults to user
     renderHook: false # set to false to disable included markdown image render hook
                       # override by setting imageRenderHook: true/false in front matter
 
@@ -304,3 +306,40 @@ The following elements are required for the `<noscript>` module to work. The scr
 </html>
 
 ``` -->
+
+## Setting up Lazysizes.js
+
+
+### Import inline via CDN
+
+```html
+https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js
+```
+
+### JavaScript Module via NPM
+
+Install 
+
+```bash
+npm install lazysizes
+```
+
+Import core package
+
+```javascript
+import 'lazysizes';
+```
+
+Add native lazyloading plugin
+
+```javascript
+import lazySizes from 'lazysizes';
+import 'lazysizes/plugins/native-loading/ls.native-loading';
+
+lazySizes.cfg.nativeLoading = {
+  setLoadingAttribute: true, // adds loading="lazy" to match non-native behavior
+  disableListeners: {
+    scroll: true // speeds up browser by not listening to scroll if native lazy load support detected
+  },
+};
+```
