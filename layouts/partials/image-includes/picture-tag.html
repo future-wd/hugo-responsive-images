@@ -1,0 +1,108 @@
+{{- /* ***********************
+  **** picture tag variables *
+  ****************************/ -}}
+{{- $loading := false -}}
+{{- $loadingValue := .partial.page.Param "image.loading" -}}
+{{- with .partial.loading -}}
+  {{ $loadingValue = . }}
+  {{- $loadingOpts := (slice "auto" "lazy" "lazysizes") -}}
+  {{- if not (in $loadingOpts .) -}}
+    {{- errorf "Invalid .loading of %v (%s). .loading can be %s" . $.img.RelPermalink (delimit $loadingOpts ", " " or ") -}}
+  {{- end -}}
+{{- end -}}
+{{- if eq $loadingValue (or "auto" "lazy") -}}
+  {{ $loading = $loadingValue }}
+{{- end -}}
+{{- $title := .page.Title -}}
+{{- if .partial.title -}}
+  {{- $title = .title -}}
+{{- else if .partial.figureTitle -}}
+  {{- $title = .partaial.figureTitle -}}
+{{- end -}}
+{{- $class := .partial.class | default (.partial.page.Param "image.class") -}}
+{{- /* append lazyload class if loading or sizes = lazysizes */ -}}
+{{- if or 
+  (or (eq .partial.sizes "lazysizes") (eq (.partial.page.Param "image.sizes") "lazysizes"))
+  (eq $loadingValue "lazysizes") -}} 
+  {{- $class = print $class " lazyload" -}}
+{{- end -}}
+{{- if .partial.figure }}
+  {{- $class = print $class " " (.partial.page.Param "image.figureImageClass") -}}
+{{- end -}}
+{{- $alt := .partial.caption | markdownify | plainify | default (printf "Image of %s" $title) -}}
+{{- with .partial.alt }}
+  {{- $alt = . -}}
+{{- else -}}
+  {{- if not .partial.caption -}}
+    {{- erroridf "alt-error" "Alt text has not been provided for image %s on page %s" $.img.RelPermalink .partial.page.RelPermalink -}}
+  {{- end -}}
+{{- end -}}
+{{- $sizes := false -}}
+{{- if .partial.sizes -}}
+  {{- $sizes = printf `sizes="%s"` .partial.sizes -}}
+{{ else if or (eq ($.partial.page.Param "image.sizes") "lazysizes") 
+  (eq $.partial.sizes "lazysizes") }}
+  {{- $sizes = `data-sizes="auto"` -}}
+{{ else }}
+  {{ $sizes = `sizes="100vw"` -}}
+{{ end }}
+{{- /************************
+  **** generate picture tag *
+  ***************************/ -}}
+<picture>
+  {{- range .picture }}
+  <source
+    {{ if eq $loadingValue "lazysizes" }}
+      data-srcset="{{ .srcset }}"
+    {{ else }}
+      srcset="{{ .srcset }}"
+    {{ end }}
+    {{ if site.Params.image.api }}
+    type="{{ $img.MediaType }}"
+    {{ else }}
+    type="{{ .src.MediaType }}"
+    {{ end }}
+  />
+  {{- end }}
+  {{ with index .picture "original" }}
+  {{ with .src }}
+  <img
+    {{ with $loading }}
+      loading="{{ . }}"
+    {{ end }}
+    {{ if eq $loadingValue "lazysizes" }}
+    data-src="{{ .RelPermalink }}"
+  {{ else }}
+    src="{{ .RelPermalink }}"
+  {{ end }}
+    alt="{{ $alt }}"
+    title="{{ $title }}"
+    height="{{ .Height }}"
+    width="{{ .Width }}"
+    {{ with $class }}
+    class="{{ . }}"
+    {{ end }}
+    {{ with $sizes }}
+      {{ . | safeHTMLAttr }}
+    {{ end }}
+
+    {{ $imgPath := "" }}
+    {{ if site.Params.image.api }}
+      {{- $imgPath = . -}}
+    height="{{ $.img.Height }}"
+    width="{{ $.img.Width }}"
+    {{ else }}
+      {{- $imgPath = .RelPermalink -}}
+    height="{{ .Height }}"
+    width="{{ .Width }}"
+    {{ end }}
+    {{ if eq $loadingValue "lazysizes" }}
+    data-src="{{ $imgPath }}"
+  {{ else }}
+    src="{{ $imgPath }}"
+  {{ end }}
+
+  />
+  {{- end -}}
+  {{ end -}}
+</picture>

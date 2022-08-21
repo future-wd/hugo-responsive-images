@@ -1,11 +1,12 @@
 {{- /* set variables */ -}}
 {{- $img := "" }}
-{{- if .page -}}
-  {{- /* page resource */ -}}
-  {{- $img = .page.Resources.GetMatch .src -}}
-{{- else -}}
+
+{{- if eq .Type "global" -}}
   {{- /* global resource */ -}}
   {{- $img = resources.Get .src -}}
+{{- else -}}
+  {{- /* page resource */ -}}
+  {{- $img = .page.Resources.GetMatch .src -}}
 {{- end -}}
 {{- if not $img }}
   {{- warnf "No image resource found at %s%s" .page.RelPermalink .src -}}
@@ -24,7 +25,7 @@
   **** produce array [{desc: "1x", width: 300},{desc: "2x", width: 600}] *
   ************************************************************************/ -}}
 {{- if .width -}}
-  {{- $densities := .densities | default site.Params.image.densities -}}
+  {{- $densities := .densities | default (.page.Param "image.densities") -}}
   {{- $densities = sort $densities -}}
   {{- range $density := $densities }}
     {{- $widths = $widths | append (slice
@@ -37,7 +38,7 @@
 {{/* else produce responsive srcset
   * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
 */}}
-  {{- $userWidths := .widths | default site.Params.image.widths -}}
+  {{- $userWidths := .widths | default (.page.Param "image.widths") -}}
   {{- $userWidths = sort $userWidths -}}
   {{- range $userWidth := $userWidths }}
     {{- $widths = $widths | append (slice
@@ -47,124 +48,20 @@
       )) -}}
   {{- end -}}
 {{- end -}}
-{{- /* set image processing options */ -}}
-{{- $options := slice -}}
-{{- with .quality -}}
-  {{- if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 100)) -}}
-    {{ $options = $options | append (printf "q%d" .) -}}
-  {{- else -}}
-    {{- warnf "Invalid .quality of %v (%s). .quality must be integer of 1-100 inclusive." . $img.RelPermalink -}}
-  {{- end -}}
+
+
+{{- $options := slice }}
+{{ with partial "image-includes/processing-options" (dict "partial" . "img" $img) -}}
+  {{- $options = . -}}
 {{- end -}}
-{{- with .rotate -}}
-  {{- if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 360)) -}}
-    {{ $options = $options | append (printf "r%d" .) -}}
-  {{- else -}}
-    {{- warnf "Invalid .rotate of %v (%s). .rotate must be integer of 1-360 inclusive." . $img.RelPermalink -}}
-  {{- end -}}
-{{- end -}}
-{{- with .resampleFilter -}}
-  {{- $filterOpts := (slice "Box" "NearestNeighbor" "Linear" "Gaussian") -}}
-  {{- if in $filterOpts . -}}
-    {{ $options = $options | append . -}}
-  {{- else -}}
-    {{- warnf "Invalid .resampleFilter of %v (%s). Valid .resampleFilter options are %s" . $img.RelPermalink (delimit $filterOpts ", ") -}}
-  {{- end -}}
-{{- end -}}
-{{- with .hint -}}
-  {{- $hintOpts := (slice "picture" "photo" "drawing" "icon" "text") -}}
-  {{- if in $hintOpts . -}}
-    {{ $options = $options | append . -}}
-  {{- else -}}
-    {{- warnf "Invalid .hint of %v (%s). Valid .hint options are %s" . $img.RelPermalink (delimit $hintOpts ", ") -}}
-  {{- end -}}
-{{- end -}}
-{{- with .anchor -}}
-  {{- $anchorOpts := (slice "Smart" "Center" "TopLeft" "Top" "TopRight" "Left" "Right" "BottomLeft" "Bottom" "BottomRight") -}}
-  {{- if in $anchorOpts . -}}
-    {{ $options = $options | append  . -}}
-  {{- else -}}
-    {{- warnf "Invalid .anchor of %v (%s). Valid .anchor options are %s" . $img.RelPermalink (delimit $anchorOpts ", ") -}}
-  {{- end -}}
-{{- end -}}
-{{- /* ***********************
-  **** picture tag variables *
-  ****************************/ -}}
-{{- $title := .page.Title -}}
-{{- if .title -}}
-  {{- $title = .title -}}
-{{- else if .figureTitle -}}
-  {{- $title = .figureTitle -}}
-{{- end -}}
-{{- $sizes := "" -}}
-{{ if .sizes }}
-  {{ $sizes = .sizes }}
-{{- else if site.Params.image.lazysizes -}}
-  {{- $sizes = "auto" }}
-{{- else -}}
-  {{ $sizes = "100vw" }}
-{{- end -}}
-{{- $class := .class | default site.Params.image.class -}}
-{{- if site.Params.image.lazysizes -}}
-  {{- $class = print $class " " "lazyload" -}}
-{{- end -}}
-{{- if .figure }}
-  {{- $class = print $class " " site.Params.image.figureImageClass -}}
-{{- end -}}
-{{- /************************
-  **** generate picture tag *
-  ***************************/ -}}
-{{- $partialVars := (dict
+{{- $widthVars := (dict
   "partial" .
   "widths" $widths
   "img" $img
   "options" $options
   ) -}}
-{{- with partial "image-includes/generate-widths" $partialVars -}}
-<picture>
-  {{- range . }}
-  <source
-    {{ if or (eq .loading "auto") (eq site.Params.image.lazysizes false) }}
-      srcset="{{ .srcset }}"
-    {{ else }}
-      data-srcset="{{ .srcset }}"
-    {{ end }}
-    {{ if site.Params.image.api }}
-    type="{{ $img.MediaType }}"
-    {{ else }}
-    type="{{ .src.MediaType }}"
-    {{ end }}
-  />
-  {{- end }}
-  {{ with index . "original" }}
-  {{ with .src }}
-  <img
-    {{ if eq $.loading "auto" }}
-      loading="auto"
-    {{ end }}
-    {{ $imgPath := "" }}
-    {{ if site.Params.image.api }}
-      {{- $imgPath = . -}}
-    height="{{ $img.Height }}"
-    width="{{ $img.Width }}"
-    {{ else }}
-      {{- $imgPath = .RelPermalink -}}
-    height="{{ .Height }}"
-    width="{{ .Width }}"
-    {{ end }}
-    {{ if or (eq $.loading "auto") (eq site.Params.image.lazysizes false) }}
-      src="{{ $imgPath }}"
-    {{ else }}
-      data-src="{{ $imgPath }}"
-    {{ end }}
-    alt="{{ $.alt | default ( ($.caption | markdownify | plainify) | default (printf "Image of %s" $title)) }}"
-    title="{{ $title }}"
-    class="{{ $class }}"
-    {{ if not $.width }}
-      sizes="{{ $sizes }}"
-    {{ end }}
-  />
-  {{- end -}}
-  {{ end -}}
-</picture>
+{{- with partial "image-includes/generate-widths" $widthVars -}}
+  {{- partial "image-includes/picture-tag.html" (dict "partial" $ "img" $img "picture" .) -}}
 {{ end }}
+
+

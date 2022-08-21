@@ -1,3 +1,3 @@
-module github.com/future-wd/hugo-image/v3
+module github.com/future-wd/hugo-responsive-images
 
 go 1.16

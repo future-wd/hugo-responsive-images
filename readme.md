@@ -32,6 +32,7 @@ The first set of configuration items are from [Hugo's image processing configura
 The second set of items (in params) are configuration options which have been provided in the module. To override simply copy and paste the following into your own site config:
 
 ```yaml
+ignoreErrors: ["alt-error"] # suppress error message if no alt text has been provided.
 imaging:
   anchor: Smart 
   bgColor: '#ffffff' 
@@ -49,10 +50,24 @@ params:
     figureClass: figure # default figure class
     figcaptionClass: figure-caption # default figcaption class
     figureImageClass: figure-img # default figure image class (appended to image class)
-    lazysizes: true # enable integration of the lazysizes js library
+    # depreciated lazysizes: true # enable integration of the lazysizes js library (`loading: lazysizes` needed for )
+    loading: lazy/auto/lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js to handle image loading. Defaults to lazy. If you use default (`lazy`) or `lazysizes`, you will need to set above the fold images to `auto`.
+    sizes: user/lazysizes # uses lazysizes to automatically generate the sizes property. User does not generate any sizes, you need to declare them. Defaults to user
     renderHook: false # set to false to disable included markdown image render hook
                       # override by setting imageRenderHook: true/false in front matter
 
+```
+
+> All of image parameter configuration items can also be configured on a per page basis by adding the config to the page's front matter.
+
+For example:
+
+```markdown
+---
+title: About 
+image:
+  widths: [400, 750, 1300]
+---
 ```
 
 ## Usage as a layout partial
@@ -71,9 +86,13 @@ Fixed/responsive width images and page/global resource images have been merged i
   "src" "image.jpg" // relative to the current pages markdown file
   "width" "300" // width in pixels if a fixed width image is desired.
   // optional
-  "densities" (slice 1 2) // fill densities for fixed width image
+  "densities" (slice 1 2 3) // creates 1x, 2x, 3x versions (defaults to 1x, 2x)
   )}}
 ```
+
+> A "type" of "page" does not need to be provided. Default behavior is page resource images.
+>
+> By providing the "width" key, you will be generating a fixed with image.
 
 ### Responsive width & global resource example
 
@@ -81,13 +100,16 @@ Fixed/responsive width images and page/global resource images have been merged i
 
 {{ partial "image" (dict
   "src" "images/image.jpg" // relative to the the assets folder as no page context has been provided
+  "type" "global"
+  "page" . // page must be provided for configuration to work
   // optional 
   "widths" (slice 400 800 1200) // override default responsive widths. 
   "sizes" [string] // set the sizes property for the image tag, defaults to "100vw" or "auto" if lazysizes is enabled in the config and installed into the website
   )}}
 ```
 
-> To use a global resource in the `assets` folder, simply don't include the `"page"` key.
+> You don't need to provide the "widths" key to generate responsive width images, this is the default behavior and the widths config will be used.
+
 
 ### Cropping an image to an aspect ratio
 
@@ -95,21 +117,35 @@ Fixed/responsive width images and page/global resource images have been merged i
 {{ partial "image"  (dict
   "page" . // the current page context if src is a page resource.
   "src" "image.jpg" // relative to the current pages markdown file
-  "fillRatio" (slice 4 3) // provide a height by width ratio as a slice if fill to ratio is desired 
-  // optional
-  "anchor" [string] // override default anchor for crop if fillRatio is set. options are "Smart" "Center" "TopLeft"
+  "fillRatio" (slice 4 3) 
+  "anchor" "center"
   ) }}
 ```
 
-### Further options
+### All options
 
 ```html
+"page" [variable] // provide the page context
+"src" [string] // provide the path to the image, relative to the page, or assets folder. (for global assets)
+"widths" [array] // provide array (slice) of widths for resizing
+"width" [int] // provide width for fixed with image (sets image mode to fixed width)
+"type" [string] // set to global for images in `assets` folder. Defaults to page resources.
 "title" [string] // set the image title. If not set, figureTitle then the page's title will be used.
 "alt" [string] // set the alt text. If not set the figure caption is used, else "Image of [title]" used.
 "class" [string] // override the default image class (defaults to 'img-fluid')
-"rotate" [int] // provide an integer between 1-360 to rotate counter-clockwise
+"fillRatio" [array] // provide array (slice) of two numbers for fill ratio
+"anchor" 
 "loading" "auto" // remove lazyloading (either via lazysizes or stock browser functionality)
-// override image processing configuration 
+
+
+"sizes" [string] // set the sizes property for the image tag, defaults to "100vw" or "auto" if lazysizes is enabled in the config and installed into the website
+```
+
+## Futher options
+
+```html
+"densities" [array] // provide an array (slice) of densities for fixed with image. (defaults to 1,2 x densities)
+"rotate" [int] // provide an integer between 1-360 to rotate counter-clockwise
 "resampleFilter" [string] // override default resample filter. All hugo config options can be used. Defaults to `box` or your site config.
 "quality" [int] // override default image compression quality, between 1-100. Defaults to 75 or your site config.
 "hint" [string] // override default hint for webp conversion. All hugo config options can be used. Defaults to `box` or your site config.
@@ -128,9 +164,9 @@ Fixed/responsive width images and page/global resource images have been merged i
 The following options are available for figures (in addition to the image options above)
 
 ```html
-"link" [url string] // the whole figure will be linked to a url
-"target" [string] // add a target attribute to the link
-"rel" [string] // add a rel attribute to the link
+"link" [url string] // the whole figure will be linked to a url. External urls must be prefixed with http(s). Local paths use relref paths. Check hugo's relref doc https://gohugo.io/functions/relref/ 
+"target" [string] // add a target attribute for http(s) link or attrLink. Defaults to "_blank"
+"rel" [string] // add a rel attribute for http(s) link or attrLink. Defaults to "noopender nofollow"
 "figureTitle" [string] // added to a <h4> tag in the figurecaption
 "caption" [markdown string] // added to the figure caption
 "attr" [string] // the image owner added after the caption
@@ -178,7 +214,7 @@ By default the image or figure is wrapped in the following html:
 To create your own html to wrap your image/figure element create the following in your project:
 
 ```html
-<!-- layouts/partials/image-includes/shortcode-html.html -->
+<!-- layouts/partials/image-includes/shortcode-template.html -->
 <div class="custom-wrapper-class">
   {{ partial "image-includes/shortcode-params.html" . }}
 </div>
@@ -236,7 +272,7 @@ By default the render-hook image is wrapped in the following html:
 To create your own html to wrap your image/figure element create the following in your project:
 
 ```html
-<!-- layouts/partials/image-includes/render-hook-html.html -->
+<!-- layouts/partials/image-includes/render-hook-template.html -->
 <div class="custom-wrapper-class">
   {{ partial "image-includes/render-hook-params" . }}
 </div>
@@ -270,3 +306,48 @@ The following elements are required for the `<noscript>` module to work. The scr
 </html>
 
 ``` -->
+
+## Setting up Lazysizes.js
+
+
+### Import inline via CDN
+
+```html
+https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js
+```
+
+### JavaScript Module via NPM
+
+Install 
+
+```bash
+npm install lazysizes
+```
+
+Import core package
+
+```javascript
+import 'lazysizes';
+```
+
+Add native lazyloading plugin
+
+```javascript
+import lazySizes from 'lazysizes';
+import 'lazysizes/plugins/native-loading/ls.native-loading';
+
+lazySizes.cfg.nativeLoading = {
+  setLoadingAttribute: true, // adds loading="lazy" to match non-native behavior
+  disableListeners: {
+    scroll: true // speeds up browser by not listening to scroll if native lazy load support detected
+  },
+};
+```
+
+### Module configuration
+
+```yaml
+params:
+  image:
+    loading: lazysizes
+    sizes: lazysizes
