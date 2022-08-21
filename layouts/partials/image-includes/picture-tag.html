@@ -58,7 +58,7 @@
       srcset="{{ .srcset }}"
     {{ end }}
     {{ if site.Params.image.api }}
-    type="{{ $img.MediaType }}"
+    type="{{ $.img.MediaType }}"
     {{ else }}
     type="{{ .src.MediaType }}"
     {{ end }}
