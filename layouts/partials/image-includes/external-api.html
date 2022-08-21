@@ -1,7 +1,20 @@
 {{- /* 
+
+  providers: 
+  
   netlify image processing:
   width:    ?nfresize=fit&w=300 /
   fitRatio: ?nfresize=smartcrop&w=300&h=300 
+
+  imgix:
+  width: ?w
+  height: ?h
+  fit=crop&w=300&h=300
+  quality: ?q=75 (default)
+  output format: ?fm=webp
+  rotate: 0-359 ?rot=
+
+  vercel?
 
   other providers to follow..
   /* -}}

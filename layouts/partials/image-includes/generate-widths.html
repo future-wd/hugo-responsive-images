@@ -1,7 +1,7 @@
 {{ $picture := dict }}
-{{- with site.Params.image.api -}}
-  {{- $apiOpts := (slice "netlify") }}
-  {{- if in $apiOpts . -}}
+{{- with site.Params.image.provider -}}
+  {{- $providerOpts := (slice "netlify") }}
+  {{- if in $providerOpts . -}}
     {{ with partial "image-includes/external-api" $ }}
       {{ $picture = . }}
     {{ end }}
