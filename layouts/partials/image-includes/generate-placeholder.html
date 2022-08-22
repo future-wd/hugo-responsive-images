@@ -3,7 +3,8 @@
 {{ if $placeholderType }}
   {{ if eq $placeholderType "lqip" }}
     {{ $placeholder = .img.Resize (printf "%vx gif" (div .img.Width 10)) }}
-
+    {{ $placeholder = $placeholder.Filter (images.GaussianBlur (.partial.page.Param "image.lqipBlurAmount")) }}
+    {{ $placeholder = printf "data:image/gif;base64,%s" ($placeholder.Content | base64Encode) -}}
     {{ return $placeholder }}
   {{ else if eq $placeholderType "dominant" }}
 

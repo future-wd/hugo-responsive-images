@@ -13,3 +13,6 @@ image:
   sizes: user # uses lazysizes to automatically generate the sizes property. User does not generate any sizes, you need to declare them. Defaults to user
   renderHook: false # set to false to disable included markdown image render hook
                     # override by setting imageRenderHook: true/false in front matter
+  lqipBlurAmount: 90
+
+  placeholder: lquip

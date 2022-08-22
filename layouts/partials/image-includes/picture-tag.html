@@ -60,31 +60,29 @@
     type="{{ .src.MediaType }}"
   />
 {{- end }}
-{{ with index .picture "original" }}
-  {{ with .src }}
-  <img
-    {{ with $loading }}
-      loading="{{ . }}"
+{{ with .picture.original.src }}
+<img
+  {{ with $loading }}
+    loading="{{ . }}"
+  {{ end }}
+  {{ if eq $loadingValue "lazysizes" }}
+    data-src="{{ .RelPermalink }}"
+    {{ with $.picture.original.placeholder }}
+      src="{{ . | safeURL }}"
     {{ end }}
-    {{ if eq $loadingValue "lazysizes" }}
-      data-src="{{ .RelPermalink }}"
-      {{ with $.picture.original.placeholder }}
-        src="{{ .}}"
-      {{ end }}
-    {{ else }}
-      src="{{ .RelPermalink }}"
-    {{ end }}
-    alt="{{ $alt }}"
-    title="{{ $title }}"
-    height="{{ .Height }}"
-    width="{{ .Width }}"
-    {{ with $class }}
-    class="{{ . }}"
-    {{ end }}
-    {{ with $sizes }}
-      {{ . | safeHTMLAttr }}
-    {{ end }}
-  />
-  {{- end -}}
+  {{ else }}
+    src="{{ .RelPermalink }}"
+  {{ end }}
+  alt="{{ $alt }}"
+  title="{{ $title }}"
+  height="{{ .Height }}"
+  width="{{ .Width }}"
+  {{ with $class }}
+  class="{{ . }}"
+  {{ end }}
+  {{ with $sizes }}
+    {{ . | safeHTMLAttr }}
+  {{ end }}
+/>
 {{ end -}}
 </picture>

@@ -3,7 +3,7 @@
   *************************************/ -}}
 {{- $picture := dict -}}
 {{- $options := .options -}}
-{{ $placeholder := false }}
+
 {{- range $format := .partial.page.Param "image.formats" -}}
   {{- /* add format to options array (for format transformation) if not original */ -}}
   {{- if ne $format "original" -}}
@@ -15,7 +15,8 @@
     **** loop over each width         ****
     **************************************/ -}}
   {{ $srcset := slice }}
-  {{ $src := "" }}
+  {{ $src := false }}
+  {{ $placeholder := false }}
   {{- range $index, $width := $.widths -}}
     {{- $imgResized := "" -}}
     {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
@@ -49,13 +50,13 @@
       {{- /* else largest width (last iteration), add image to src variable for use as fallback */ -}}
       {{- if eq (len $.widths) (add $index 1) -}}
         {{ $src = $imgResized -}}
-        {{ if eq $format "original" }}
+        
           {{ with partial "image-includes/generate-placeholder" (dict 
             "img" $imgResized
             "partial" $) }}
-          {{ $placeholder = . }}
-        {{ end }}
-      {{ end }}
+            {{ $placeholder = . }}
+          {{ end }}
+        
       {{- end -}}
     {{- end -}}
   {{- end -}}
