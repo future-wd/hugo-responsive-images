@@ -37,16 +37,14 @@
     {{- /* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */ -}}
     {{- $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) -}}
     {{- /* if .width and 1x density (First iteration), add image to src variable for use as fallback */ -}}
-    {{- if .partial.width  -}}
-      {{- if eq $index 0 -}}
-        {{ $src = $imgResized -}}
-      {{- end -}}
-    {{- else -}}
-      {{- /* else largest width (last iteration), add image to src variable for use as fallback */ -}}
-      {{- if eq (len $.widths) (add $index 1) -}}
-        {{ $src = $imgResized -}}
-      {{- end -}}
-    {{- end -}}
+    {{ if eq $format "original" }}
+      {{ if and $.partial.width (eq $index 0) }}
+        {{ $src = $imgResized }}
+      {{ else if eq (len $.widths) (add $index 1) }}
+        {{/* else largest width (last iteration), add image to src variable for use as fallback */}}
+        {{ $src = $imgResized }}
+      {{ end }}
+    {{ end }}
   {{- end -}}
   {{- /* convert srcset array into a string, delimit with , between each image */ -}}
   {{- $srcset := delimit $srcset ", " -}}
