@@ -3,6 +3,7 @@
   *************************************/ -}}
 {{- $picture := dict -}}
 {{- $options := .options -}}
+{{ $placeholder := false }}
 {{- range $format := .partial.page.Param "image.formats" -}}
   {{- /* add format to options array (for format transformation) if not original */ -}}
   {{- if ne $format "original" -}}
@@ -40,17 +41,27 @@
     {{- if .partial.width  -}}
       {{- if eq $index 0 -}}
         {{ $src = $imgResized -}}
+        {{ with partial "image-includes/generate-placeholder" $imgResized }}
+          {{ $placeholder = . }}
+        {{ end }}
       {{- end -}}
     {{- else -}}
       {{- /* else largest width (last iteration), add image to src variable for use as fallback */ -}}
       {{- if eq (len $.widths) (add $index 1) -}}
         {{ $src = $imgResized -}}
+        {{ if eq $format "original" }}
+          {{ with partial "image-includes/generate-placeholder" (dict 
+            "img" $imgResized
+            "partial" $) }}
+          {{ $placeholder = . }}
+        {{ end }}
+      {{ end }}
       {{- end -}}
     {{- end -}}
   {{- end -}}
   {{- /* convert srcset array into a string, delimit with , between each image */ -}}
   {{- $srcset := delimit $srcset ", " -}}
   {{- /* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */ -}}
-  {{- $picture = merge $picture (dict $format (dict "srcset" $srcset "src" $src)) -}}
+  {{- $picture = merge $picture (dict $format (dict "srcset" $srcset "src" $src "placeholder" $placeholder)) -}}
 {{- end -}}
 {{- return $picture -}}

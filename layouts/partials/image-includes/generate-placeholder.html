@@ -1,0 +1,13 @@
+{{ $placeholder := false }}
+{{ $placeholderType := .parital.placeholder | default (.partial.page.Param "image.placeholder") }}
+{{ if $placeholderType }}
+  {{ if eq $placeholderType "lqip" }}
+    {{ $placeholder = .img.Resize (printf "%vx gif" (div .img.Width 10)) }}
+
+    {{ return $placeholder }}
+  {{ else if eq $placeholderType "dominant" }}
+
+  {{ else }}
+  {{/* specified color */}}
+  {{ end }}
+{{ end }}
