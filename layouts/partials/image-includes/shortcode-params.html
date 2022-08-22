@@ -25,6 +25,7 @@
   {{- end -}}
   {{- with (.Get "densities") -}}
     {{- $densities := split . "," -}}
+    {{- $densities = apply $densities "strings.TrimLeft" " " "." -}}
     {{- $densities = apply $densities "int" "." }}
     {{- $params = merge $params (dict "widths" $densities) }}
   {{- end -}}
