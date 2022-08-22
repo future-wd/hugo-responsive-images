@@ -50,12 +50,11 @@
       {{- /* else largest width (last iteration), add image to src variable for use as fallback */ -}}
       {{- if eq (len $.widths) (add $index 1) -}}
         {{ $src = $imgResized -}}
-        
-          {{ with partial "image-includes/generate-placeholder" (dict 
-            "img" $imgResized
-            "partial" $) }}
-            {{ $placeholder = . }}
-          {{ end }}
+        {{ with partial "image-includes/generate-placeholder" (dict 
+          "img" $imgResized
+          "partial" $) }}
+          {{ $placeholder = . }}
+        {{ end }}
         
       {{- end -}}
     {{- end -}}
