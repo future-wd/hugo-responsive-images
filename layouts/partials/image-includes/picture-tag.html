@@ -13,9 +13,9 @@
 {{- if eq $loadingValue (or "auto" "lazy") -}}
   {{ $loading = $loadingValue }}
 {{- end -}}
-{{- $title := .page.Title -}}
+{{- $title := .partial.page.Title -}}
 {{- if .partial.title -}}
-  {{- $title = .title -}}
+  {{- $title = .partial.title -}}
 {{- else if .partial.figureTitle -}}
   {{- $title = .partaial.figureTitle -}}
 {{- end -}}
