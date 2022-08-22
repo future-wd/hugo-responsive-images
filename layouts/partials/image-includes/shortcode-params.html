@@ -13,6 +13,8 @@
   {{- with (.Get "widths") -}}
     {{- /* create array ',' delimiter for creation */ -}}
     {{- $widths := split . "," -}}
+    {{- /* remove leading spaces from each string */ -}}
+    {{- $widths = apply $widths "strings.TrimLeft" " " "." -}}
     {{- /* convert int strings to int */ -}}
     {{- $widths = apply $widths "int" "." -}}
     {{- $params = merge $params (dict "widths" $widths) -}}
@@ -25,13 +27,15 @@
   {{- end -}}
   {{- with (.Get "densities") -}}
     {{- $densities := split . "," -}}
+    {{- $densities = apply $densities "strings.TrimLeft" " " "." -}}
     {{- $densities = apply $densities "int" "." }}
     {{- $params = merge $params (dict "widths" $densities) }}
   {{- end -}}
   {{- with (.Get "fillRatio") -}}
-    {{- $fillRatio = split . "," -}}
+    {{- $fillRatio := split . "," -}}
+    {{- $fillRatio = apply $fillRatio "strings.TrimLeft" " " "." -}}
     {{- $fillRatio = apply $fillRatio "int" "." }}
-    {{- $params = merge $params (dict "widths" $fillRatio) }}
+    {{- $params = merge $params (dict "fillRatio" $fillRatio) }}
   {{- end -}}
   {{- /* check for src if not throw error */ -}}
   {{- if not (.Get "src") -}}
