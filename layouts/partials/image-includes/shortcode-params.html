@@ -13,6 +13,8 @@
   {{- with (.Get "widths") -}}
     {{- /* create array ',' delimiter for creation */ -}}
     {{- $widths := split . "," -}}
+    {{- /* remove leading spaces from each string */ -}}
+    {{- $widths = apply $widths "strings.TrimLeft" " " "." -}}
     {{- /* convert int strings to int */ -}}
     {{- $widths = apply $widths "int" "." -}}
     {{- $params = merge $params (dict "widths" $widths) -}}
