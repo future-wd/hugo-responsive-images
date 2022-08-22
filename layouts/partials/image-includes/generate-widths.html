@@ -18,11 +18,11 @@
   {{- range $index, $width := $.widths -}}
     {{- $imgResized := "" -}}
     {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
-    {{- if .partial.fillRatio -}}
+    {{- if $.fillRatio -}}
       {{- /* resulting fillHeight must be converted to integer for use with image resize */ -}}
-      {{- $fillHeight := mul $width .partial.fillRatio | int -}}
+      {{- $fillHeight := mul ($width.width | float) $.fillRatio | int -}}
       {{- if or (gt $width.width $.img.Width) (gt $fillHeight $.img.Height) -}}
-        {{- warnf "Source image %s (%dx%dpx) is not large enough to resize to %dx%dpx" $.img.RelPermalink $.img.Width $.img.Height $width $fillHeight -}}
+        {{- warnf "Source image %s (%dx%dpx) is not large enough to resize to %dx%dpx" $.img.RelPermalink $.img.Width $.img.Height $width.width $fillHeight -}}
       {{- end -}}
       {{- /* resize image */ -}}
       {{- $imgResized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
