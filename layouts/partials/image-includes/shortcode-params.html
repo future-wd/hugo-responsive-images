@@ -30,6 +30,7 @@
   {{- end -}}
   {{- with (.Get "fillRatio") -}}
     {{- $fillRatio := split . "," -}}
+    {{- $fillRatio = apply $fillRatio "strings.TrimLeft" " " "." -}}
     {{- $fillRatio = apply $fillRatio "int" "." }}
     {{- $params = merge $params (dict "fillRatio" $fillRatio) }}
   {{- end -}}
