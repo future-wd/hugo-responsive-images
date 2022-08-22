@@ -50,16 +50,7 @@
   **** generate picture tag *
   ***************************/ -}}
 <picture>
-{{- range .picture }}
-  <source
-    {{ if eq $loadingValue "lazysizes" }}
-      data-srcset="{{ .srcset }}"
-    {{ else }}
-      srcset="{{ .srcset }}"
-    {{ end }}
-    type="{{ .src.MediaType }}"
-  />
-{{- end }}
+
 {{ with .picture.original.src }}
 <img
   {{ with $loading }}
@@ -71,7 +62,9 @@
       src="{{ . | safeURL }}"
     {{ end }}
   {{ else }}
-    src="{{ .RelPermalink }}"
+  {{ with $.picture.original.placeholder }}
+  src="{{ . | safeURL }}"
+{{ end }}
   {{ end }}
   alt="{{ $alt }}"
   title="{{ $title }}"
@@ -86,3 +79,7 @@
 />
 {{ end -}}
 </picture>
+
+{{ with .picture.original.placeholder }}
+{{ .  }}
+{{ end }}

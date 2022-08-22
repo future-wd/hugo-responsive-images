@@ -39,25 +39,24 @@
     {{- /* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */ -}}
     {{- $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) -}}
     {{- /* if .width and 1x density (First iteration), add image to src variable for use as fallback */ -}}
-    {{- if .partial.width  -}}
-      {{- if eq $index 0 -}}
-        {{ $src = $imgResized -}}
-        {{ with partial "image-includes/generate-placeholder" $imgResized }}
-          {{ $placeholder = . }}
-        {{ end }}
-      {{- end -}}
-    {{- else -}}
-      {{- /* else largest width (last iteration), add image to src variable for use as fallback */ -}}
-      {{- if eq (len $.widths) (add $index 1) -}}
-        {{ $src = $imgResized -}}
+    {{ if eq $format "original" }}
+      {{ if and $.partial.width (eq $index 0) }}
+        {{ $src = $imgResized }}
         {{ with partial "image-includes/generate-placeholder" (dict 
-          "img" $imgResized
-          "partial" $) }}
+        "src" $src
+        "partial" $.partial ) }}
           {{ $placeholder = . }}
         {{ end }}
-        
-      {{- end -}}
-    {{- end -}}
+      {{ else if eq (len $.widths) (add $index 1) }}
+        {{/* else largest width (last iteration), add image to src variable for use as fallback */}}
+        {{ $src = $imgResized }}
+        {{ with partial "image-includes/generate-placeholder" (dict 
+        "src" $src
+        "partial" $.partial ) }}
+          {{ $placeholder = . }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
   {{- end -}}
   {{- /* convert srcset array into a string, delimit with , between each image */ -}}
   {{- $srcset := delimit $srcset ", " -}}

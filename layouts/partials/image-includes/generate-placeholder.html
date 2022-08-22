@@ -2,13 +2,12 @@
 {{ $placeholderType := .parital.placeholder | default (.partial.page.Param "image.placeholder") }}
 {{ if $placeholderType }}
   {{ if eq $placeholderType "lqip" }}
-    {{ $placeholder = .img.Resize (printf "%vx gif" (div .img.Width 10)) }}
+    {{ $placeholder = .src.Resize (printf "%vx gif" (div .src.Width (.partial.page.Param "image.lqipDivAmount") | int)) }}
     {{ $placeholder = $placeholder.Filter (images.GaussianBlur (.partial.page.Param "image.lqipBlurAmount")) }}
     {{ $placeholder = printf "data:image/gif;base64,%s" ($placeholder.Content | base64Encode) -}}
-    {{ return $placeholder }}
   {{ else if eq $placeholderType "dominant" }}
-
-  {{ else }}
-  {{/* specified color */}}
+    {{ $placeholder = .src.Resize "1x gif" }}
+    {{ $placeholder = printf "data:image/gif;base64,%s" ($placeholder.Content | base64Encode) -}}
   {{ end }}
 {{ end }}
+{{ return $placeholder }}
