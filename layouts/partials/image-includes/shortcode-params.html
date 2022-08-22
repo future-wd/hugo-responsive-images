@@ -29,9 +29,9 @@
     {{- $params = merge $params (dict "widths" $densities) }}
   {{- end -}}
   {{- with (.Get "fillRatio") -}}
-    {{- $fillRatio = split . "," -}}
+    {{- $fillRatio := split . "," -}}
     {{- $fillRatio = apply $fillRatio "int" "." }}
-    {{- $params = merge $params (dict "widths" $fillRatio) }}
+    {{- $params = merge $params (dict "fillRatio" $fillRatio) }}
   {{- end -}}
   {{- /* check for src if not throw error */ -}}
   {{- if not (.Get "src") -}}
