@@ -1,18 +1,20 @@
 {{- /**********************************
   **** loop over each image format ****
   *************************************/ -}}
-{{- $picture := dict -}}
-{{- $options := .options -}}
-{{- range $format := .partial.page.Param "image.formats" -}}
-  {{- /* add format to options array (for format transformation) if not original */ -}}
-  {{- if ne $format "original" -}}
-    {{ $options = $options | append $format -}}
-  {{- end -}}
-  {{- /* change options array into space delimited string. new variable created so its unique to this iteration */ -}}
-  {{- $optionsString := delimit $options " " -}}
-  {{- /***********************************
-    **** loop over each width         ****
-    **************************************/ -}}
+{{ $picture := dict }}
+{{ $options := .options }}
+{{ $formats := .partial.formats | default (.partial.page.Param "image.formats") }}
+{{ range $format := $formats }}
+  {{/* add format to options array (for format transformation) if not original */}}
+  {{ if ne $format "original" }}
+    {{ $options = $options | append $format }}
+  {{ end }}
+  {{/* change options array into space delimited string. 
+        new options string, srcset and src variables created so they are unique to this iteration */}}
+  {{ $optionsString := delimit $options " " }}
+  {{/*********************************
+    ** loop over each width         **
+    **********************************/}}
   {{ $srcset := slice }}
   {{ $src := "" }}
   {{- range $index, $width := $.widths -}}
@@ -22,17 +24,17 @@
       {{- /* resulting fillHeight must be converted to integer for use with image resize */ -}}
       {{- $fillHeight := mul ($width.width | float) $.fillRatio | int -}}
       {{- if and (or (gt $width.width $.img.Width) (gt $fillHeight $.img.Height)) (ne ($.partial.page.Param "image.suppressWidthWarning") true) -}}
-        {{- warnf "Source image %s (%dx%dpx) is not large enough to resize to %dx%dpx on page %s" $.img.RelPermalink $.img.Width $.img.Height $width.width $fillHeight $.partial.page.RelPermalink -}}
+        {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.img.RelPermalink $.img.Width $.img.Height $.partial.page.RelPermalink $width.width $fillHeight  -}}
       {{- end -}}
       {{- /* resize image */ -}}
       {{- $imgResized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
     {{- else -}}
       {{- /* do standard image resize */ -}}
       {{- if and (gt $width.width $.img.Width) (ne ($.partial.page.Param "image.suppressWidthWarning") true) -}}
-        {{- warnf "Source image %s (%dx%dpx) is not wide enough to resize to %dpx on page %s" $.img.RelPermalink $.img.Width $.img.Height $width.width $.partial.page.RelPermalink -}}
+        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.img.RelPermalink $.img.Width $.img.Height $.partial.page.RelPermalink $width.width }}
       {{- end -}}
       {{- /* resize image */ -}}
-      {{- $imgResized = $.img.Resize (printf "%dx %s %s" $width.width $optionsString) -}}
+      {{- $imgResized = $.img.Resize (printf "%dx %s" $width.width $optionsString) -}}
     {{- end -}}
     {{- /* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */ -}}
     {{- $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) -}}
