@@ -55,7 +55,7 @@ params:
     sizes: user/lazysizes # uses lazysizes to automatically generate the sizes property. User does not generate any sizes, you need to declare them. Defaults to user
     renderHook: false # set to false to disable included markdown image render hook
                       # override by setting imageRenderHook: true/false in front matter
-
+    # suppressWidthWarning: true # turn off image too narrow warning
 ```
 
 > All of image parameter configuration items can also be configured on a per page basis by adding the config to the page's front matter.
