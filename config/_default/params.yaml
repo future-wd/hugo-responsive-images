@@ -14,6 +14,6 @@ image:
   renderHook: false # set to false to disable included markdown image render hook
                     # override by setting imageRenderHook: true/false in front matter
   lqipBlurAmount: 0
-  lqipDivAmount: 1
+  lqipDivAmount: 2
 
 
