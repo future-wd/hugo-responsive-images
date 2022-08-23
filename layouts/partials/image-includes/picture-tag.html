@@ -54,12 +54,14 @@
 {{ with .picture.original.src }}
 <img
 {{ if eq $loadingValue "lazysizes" }}
-  data-src="{{ .RelPermalink }}"
+
   {{ with $.picture.original.placeholder }}
   src="{{ . | safeURL }}"
   {{ end }}
 {{ else }}
-
+  {{ with $.picture.original.placeholder }}
+    src="{{ . | safeURL }}"
+  {{ end }}
 {{ end }}
   alt="{{ $alt }}"
   title="{{ $title }}"

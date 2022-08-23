@@ -14,7 +14,11 @@ image:
   renderHook: false # set to false to disable included markdown image render hook
                     # override by setting imageRenderHook: true/false in front matter
   # suppressWidthWarning: true
-  lqipBlurAmount: 4
-  lqipDivAmount: 5
+  # placeholder: 
+
+  lqipBlurAmount: 5 # apply gaussian blur amount of 5 to lqip
+                    # may need to be increased at a page level for larger images
+  lqipDivAmount: 5 # lqip is 5x smaller than the smallest image in srcset
+  gifDivAmount: 10
 
 
