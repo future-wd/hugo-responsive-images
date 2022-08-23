@@ -1,9 +1,12 @@
 {{ $placeholder := false }}
 {{ $placeholderType := .parital.placeholder | default (.partial.page.Param "image.placeholder") }}
+{{ $lqipDivFactor := .parital.lqipDivFactor | default (.partial.page.Param "image.lqipDivFactor") }}
+{{ $lqipBlurAmount := .parital.lqipBlurAmount | default (.partial.page.Param "image.lqipBlurAmount") }}
+{{ $gifDivFactor := .parital.gifDivFactor | default (.partial.page.Param "image.gifDivFactor") }}
 {{ if $placeholderType }}
   {{ if eq $placeholderType "lqip" }}
-    {{ $placeholder = .src.Resize (printf "%vx gif" (.src.Width | div (.partial.page.Param "image.lqipDivAmount") | int)) }}
-    {{ $placeholder = $placeholder.Filter (images.GaussianBlur (.partial.page.Param "image.lqipBlurAmount")) }}
+    {{ $placeholder = .src.Resize (printf "%vx gif" (div .src.Width $lqipDivFactor | int)) }}
+    {{ $placeholder = $placeholder.Filter (images.GaussianBlur $lqipBlurAmount) }}
   {{ else }}
     {{ if eq $placeholderType "dominant" }}
       {{ $placeholder = .src.Resize "1x1 gif" }}
@@ -15,7 +18,7 @@
       {{ end }}
       {{ $placeholder = $placeholder.Resize "1x1 gif" }}
     {{ end }}
-    {{ $placeholder = $placeholder.Resize (printf "%vx%v gif" ( div .src.Width (.partial.page.Param "image.gifDivAmount") | int) (div .src.Height (.partial.page.Param "image.gifDivAmount") | int)) }}
+    {{ $placeholder = $placeholder.Resize (printf "%vx%v gif" ( div .src.Width $gifDivFactor | int) (div .src.Height $gifDivFactor | int)) }}
   {{ end }}
   {{ $placeholder = printf "data:image/gif;base64,%s" ($placeholder.Content | base64Encode) -}}
 {{ end }}

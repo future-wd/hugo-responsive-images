@@ -1,6 +1,6 @@
-{{- /* ***********************
-  **** picture tag variables *
-  ****************************/ -}}
+{{- /* **************************
+  **** picture tag variables ****
+  *******************************/ -}}
 {{- $loading := false -}}
 {{- $loadingValue := .partial.page.Param "image.loading" -}}
 {{- with .partial.loading -}}
@@ -46,33 +46,47 @@
 {{ else }}
   {{ $sizes = `sizes="100vw"` -}}
 {{ end }}
-{{- /************************
-  **** generate picture tag *
-  ***************************/ -}}
+{{- /***************************
+  **** generate picture tag ****
+  ******************************/ -}}
 <picture>
-
-{{ with .picture.original.src }}
-<img
-{{ if eq $loadingValue "lazysizes" }}
-
-  {{ with $.picture.original.placeholder }}
-  src="{{ . | safeURL }}"
-  {{ end }}
-{{ else }}
-  {{ with $.picture.original.placeholder }}
-    src="{{ . | safeURL }}"
-  {{ end }}
-{{ end }}
-  alt="{{ $alt }}"
-  title="{{ $title }}"
-  height="{{ .Height }}"
-  width="{{ .Width }}"
-  {{ with $class }}
-  class="{{ . }}"
-  {{ end }}
-  {{ with $sizes }}
-    {{ . | safeHTMLAttr }}
-  {{ end }}
-/>
-{{ end -}}
-</picture>
+  {{- range $format, $values := .picture }}
+    <source
+    {{- if eq $loadingValue "lazysizes" }}
+      data-srcset="{{ .srcset }}"
+    {{- else -}}
+      srcset="{{ .srcset }}"
+    {{- end -}}
+    {{- if eq $format "original" }}
+      type="{{ .src.MediaType }}"
+    {{- else }}
+      type="{{ printf "image/%s" $format }}"
+    {{- end }}
+    />
+  {{- end }}
+  {{- with .picture.original.src }}
+    <img
+    {{- with $loading }}
+      loading="{{ . }}"
+    {{- end -}}
+    {{- if eq $loadingValue "lazysizes" }}
+      data-src="{{ .RelPermalink }}"
+      {{- with $.picture.original.placeholder }}
+      src="{{ . | safeURL }}"
+      {{- end }}
+    {{- else }}
+      src="{{ .RelPermalink }}"
+    {{- end }}
+      alt="{{ $alt }}"
+      title="{{ $title }}"
+      height="{{ .Height }}"
+      width="{{ .Width }}"
+    {{- with $class }}
+      class="{{ . }}"
+    {{- end -}}
+    {{- with $sizes }}
+      {{ . | safeHTMLAttr }}
+    {{- end }}
+    />
+  {{ end -}}
+  </picture>
