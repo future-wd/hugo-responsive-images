@@ -13,9 +13,9 @@
 {{- if eq $loadingValue (or "auto" "lazy") -}}
   {{ $loading = $loadingValue }}
 {{- end -}}
-{{- $title := .page.Title -}}
+{{- $title := .partial.page.Title -}}
 {{- if .partial.title -}}
-  {{- $title = .title -}}
+  {{- $title = .partial.title -}}
 {{- else if .partial.figureTitle -}}
   {{- $title = .partaial.figureTitle -}}
 {{- end -}}
@@ -50,38 +50,40 @@
   **** generate picture tag *
   ***************************/ -}}
 <picture>
-  {{- range .picture }}
+{{- range $format, $values := .picture }}
   <source
-    {{ if eq $loadingValue "lazysizes" }}
-      data-srcset="{{ .srcset }}"
-    {{ else }}
-      srcset="{{ .srcset }}"
-    {{ end }}
+  {{- if eq $loadingValue "lazysizes" }}
+    data-srcset="{{ .srcset }}"
+  {{- else -}}
+    srcset="{{ .srcset }}"
+  {{- end -}}
+  {{- if eq $format "original" }}
     type="{{ .src.MediaType }}"
-  />
+  {{- else }}
+    type="{{ printf "image/%s" $format }}"
   {{- end }}
-  {{ with index .picture "original" }}
-  {{ with .src }}
+  />
+{{- end }}
+{{- with .picture.original.src }}
   <img
-    {{ with $loading }}
-      loading="{{ . }}"
-    {{ end }}
-    {{ if eq $loadingValue "lazysizes" }}
-      data-src="{{ .RelPermalink }}"
-    {{ else }}
-      src="{{ .RelPermalink }}"
-    {{ end }}
+  {{- with $loading }}
+    loading="{{ . }}"
+  {{- end -}}
+  {{- if eq $loadingValue "lazysizes" }}
+    data-src="{{ .RelPermalink }}"
+  {{- else }}
+    src="{{ .RelPermalink }}"
+  {{- end }}
     alt="{{ $alt }}"
     title="{{ $title }}"
     height="{{ .Height }}"
     width="{{ .Width }}"
-    {{ with $class }}
+  {{- with $class }}
     class="{{ . }}"
-    {{ end }}
-    {{ with $sizes }}
-      {{ . | safeHTMLAttr }}
-    {{ end }}
-  />
   {{- end -}}
-  {{ end -}}
+  {{- with $sizes }}
+    {{ . | safeHTMLAttr }}
+  {{- end }}
+  />
+{{ end -}}
 </picture>
