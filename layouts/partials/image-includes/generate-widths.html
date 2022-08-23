@@ -21,15 +21,15 @@
     {{- if $.fillRatio -}}
       {{- /* resulting fillHeight must be converted to integer for use with image resize */ -}}
       {{- $fillHeight := mul ($width.width | float) $.fillRatio | int -}}
-      {{- if or (gt $width.width $.img.Width) (gt $fillHeight $.img.Height) -}}
-        {{- warnf "Source image %s (%dx%dpx) is not large enough to resize to %dx%dpx" $.img.RelPermalink $.img.Width $.img.Height $width.width $fillHeight -}}
+      {{- if and (or (gt $width.width $.img.Width) (gt $fillHeight $.img.Height)) (ne ($.partial.page.Param "image.suppressWidthWarning") true) -}}
+        {{- warnf "Source image %s (%dx%dpx) is not large enough to resize to %dx%dpx on page %s" $.img.RelPermalink $.img.Width $.img.Height $width.width $fillHeight $.partial.page.RelPermalink -}}
       {{- end -}}
       {{- /* resize image */ -}}
       {{- $imgResized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
     {{- else -}}
       {{- /* do standard image resize */ -}}
-      {{- if gt $width.width $.img.Width -}}
-      {{- warnf "Source image %s (%dx%dpx) is not wide enough to resize to %dpx" $.img.RelPermalink $.img.Width $.img.Height $width.width -}}
+      {{- if and (gt $width.width $.img.Width) (ne ($.partial.page.Param "image.suppressWidthWarning") true) -}}
+        {{- warnf "Source image %s (%dx%dpx) is not wide enough to resize to %dpx on page %s" $.img.RelPermalink $.img.Width $.img.Height $width.width $.partial.page.RelPermalink -}}
       {{- end -}}
       {{- /* resize image */ -}}
       {{- $imgResized = $.img.Resize (printf "%dx %s %s" $width.width $optionsString) -}}
