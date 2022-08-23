@@ -1,5 +1,5 @@
 {{- /* set variables */ -}}
-{{- $img := "" }}
+{{- $img := false }}
 
 {{- if eq .Type "global" -}}
   {{- /* global resource */ -}}
@@ -16,6 +16,15 @@
 {{- $fillRatio := false -}}
 {{- /* calculate fill ratio, if .fillRatio is provided */ -}}
 {{- if .fillRatio -}}
+  {{- if reflect.IsSlice .fillRatio -}}
+    {{- range .fillRatio -}}
+      {{- if ne (printf "%T" .) "int" }}
+      {{- errorf "%q is not a valid integer in fillRatio array for image %s on page %s." . $img.RelPermalink $.page.RelPermalink -}}
+      {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{- errorf `"%v" is not a valid fillRatio array for image %s on page %s.` .fillRatio $img.RelPermalink .page.RelPermalink -}}
+  {{- end -}}
   {{- /* height to width ratio of .fillRatio */ -}}
   {{- /* numbers must be converted to float before division or they may create an answer of 0 */ -}}
   {{- $fillRatio = div (index .fillRatio 1 | float) (index .fillRatio 0 | float) -}}
@@ -26,7 +35,7 @@
   ************************************************************************/ -}}
 {{- if .width -}}
   {{- if ne (printf "%T" .width) "int" }}
-  {{ errorf "%q is not a valid width for image %s on page %s, must be an integer." .width $img.RelPermalink .page.RelPermalink -}}
+  {{- errorf "%q is not a valid width integer for image %s on page %s." .width $img.RelPermalink .page.RelPermalink -}}
   {{- end -}}
   {{- $densities := .densities | default (.page.Param "image.densities") -}}
   {{- $densities = sort $densities -}}
@@ -37,11 +46,21 @@
       "width" (mul $.width $density)
       )) -}}
   {{- end -}}
-
 {{- else -}}
 {{/* else produce responsive srcset
   * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
 */}}
+  {{- if .widths -}}
+    {{- if reflect.IsSlice .widths -}}
+      {{- range .widths -}}
+        {{- if ne (printf "%T" .) "int" }}
+        {{- errorf "%q is not a valid width integer in widths array for image %s on page %s." . $img.RelPermalink $.page.RelPermalink -}}
+        {{- end -}}
+      {{- end -}}
+    {{- else -}}
+    {{- errorf `"%v" is not a valid width array for image %s on page %s.` .widths $img.RelPermalink .page.RelPermalink -}}
+    {{- end -}}
+  {{- end -}}
   {{- $userWidths := .widths | default (.page.Param "image.widths") -}}
   {{- $userWidths = sort $userWidths -}}
   {{- range $userWidth := $userWidths }}
