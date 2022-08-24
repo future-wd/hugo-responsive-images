@@ -2,7 +2,9 @@
 {{- $target := .target | default (.page.Param "image.target") -}}
 {{- $rel := .rel | default (.page.Param "image.rel") -}}
 {{- $link := .link | default (.page.Param "image.link") -}}
-{{- $figCaptionClass = .figCaptionClass | default (.page.Param "image.figCaptionClass") }}
+{{- $figCaptionClass := .figCaptionClass | default (.page.Param "image.figCaptionClass") -}}
+{{- $figureTitle := .figureTitle | default (.page.Param "image.figureTitle") -}}
+{{- $figureTitleH := .figureH | default (.page.Param "image.figureTitleH") -}}
 {{- if hasPrefix .link "http" -}}
   {{- $target = $target | default "_blank" -}}
   {{- $rel = $rel | default "noopener noreferrer" -}}
@@ -17,8 +19,8 @@
 {{- if $link }}</a>{{ end -}}
   {{ if or (or .figureTitle .caption) .attr }}
   <figcaption class="{{ $figCaptionClass }}">
-  {{ with .figureTitle -}}
-    <h4>{{ . }}</h4>
+  {{ with $figureTitle -}}
+    <h{{ $figureTitleH | safeHTMLAttr }}>{{ . }}</h{{ $figureTitleH | safeHTMLAttr }}>
   {{- end -}}
   {{- if or .caption .attr -}}<p>
     {{- .caption | markdownify -}}{{- if .attr -}}, {{ end }}
