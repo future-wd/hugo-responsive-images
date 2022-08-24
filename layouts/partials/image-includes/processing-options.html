@@ -1,3 +1,78 @@
+{{- $widths := slice -}}
+{{- $fillRatio := false -}}
+
+
+{{- /* calculate fill ratio, if .fillRatio is provided */ -}}
+{{- if .partial.fillRatio -}}
+  {{- if reflect.IsSlice .partial.fillRatio -}}
+    {{- range .partial.fillRatio -}}
+      {{- if ne (printf "%T" .) "int" }}
+      {{- errorf "%q is not a valid integer in fillRatio array for image %s on page %s." . $.img.RelPermalink $.partial.page.RelPermalink -}}
+      {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{- errorf `"%v" is not a valid fillRatio array for image %s on page %s.` .partial.fillRatio $.img.RelPermalink .partial.page.RelPermalink -}}
+  {{- end -}}
+  {{- /* height to width ratio of .partial.fillRatio */ -}}
+  {{- /* numbers must be converted to float before division or they may create an answer of 0 */ -}}
+  {{- $fillRatio = div (index .partial.fillRatio 1 | float) (index .partial.fillRatio 0 | float) -}}
+{{- end -}}
+{{- /*********************************************************************
+  **** if .width present for pixel density srcset                        *
+  **** produce array [{desc: "1x", width: 300},{desc: "2x", width: 600}] *
+  ************************************************************************/ -}}
+{{- if .partial.width -}}
+  {{- if ne (printf "%T" .partial.width) "int" }}
+  {{- errorf "%q is not a valid width integer for image %s on page %s." .partial.width $.img.RelPermalink .partial.page.RelPermalink -}}
+  {{- end -}}
+  {{- $densities := .partial.densities | default (.partial.page.Param "image.densities") -}}
+  {{- $densities = sort $densities -}}
+  {{- range $density := $densities }}
+    {{- $widths = $widths | append (slice
+      (dict
+      "desc" (printf "%dx" $density)
+      "width" (mul $.width $density)
+      )) -}}
+  {{- end -}}
+{{- else -}}
+{{/* else produce responsive srcset
+  * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
+*/}}
+  {{- if .partial.widths -}}
+    {{- if reflect.IsSlice .partial.widths -}}
+      {{- range .widths -}}
+        {{- if ne (printf "%T" .) "int" }}
+        {{- errorf "%q is not a valid width integer in widths array for image %s on page %s." . $.img.RelPermalink $.page.RelPermalink -}}
+        {{- end -}}
+      {{- end -}}
+    {{- else -}}
+    {{- errorf `"%v" is not a valid width array for image %s on page %s.` .partial.widths $.img.RelPermalink .partial.page.RelPermalink -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $userWidths := .partial.widths | default (.partial.page.Param "image.widths") -}}
+  {{- $userWidths = sort $userWidths -}}
+  {{- range $userWidth := $userWidths }}
+    {{- $widths = $widths | append (slice
+      (dict
+      "desc" (printf "%dw" $userWidth)
+      "width" $userWidth
+      )) -}}
+  {{- end -}}
+{{- end -}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 {{/* set image processing options from image, page or site config */}}
 {{ $options := slice }}
 {{ $quality := .partial.quality | default (.partial.page.Param "image.quality") }}
@@ -68,7 +143,11 @@
     ) }}
   {{ end }}
 {{ end }}
-{{ return $options }}
+{{ return (dict 
+  "options" $options
+  "widths" $widths
+  "fillRatio" $fillRatio
+  ) }}
 {{/* set error message template */}}
 {{ define "partials/inline/options-error" }}
   {{ errorf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value .ctx.img.RelPermalink .ctx.partial.page.RelPermalink .options }}
