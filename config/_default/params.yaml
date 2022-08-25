@@ -15,4 +15,5 @@ image:
   renderHook: false # set to false to disable included markdown image render hook
                     # override by setting imageRenderHook: true/false in front matter
   renderHookWrapperClass: img-wrapper
+  shortcodeWrapperClass: img-wrapper
   # suppressWidthWarning: true
