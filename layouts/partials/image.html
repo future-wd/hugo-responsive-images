@@ -11,71 +11,14 @@
 {{- if not $img }}
   {{- errorf "No image resource found at %s%s" .page.RelPermalink .src -}}
 {{- end -}}
-{{- $srcsets := slice -}}
+{{- /* processing options */ -}}
 {{- $widths := slice -}}
 {{- $fillRatio := false -}}
-{{- /* calculate fill ratio, if .fillRatio is provided */ -}}
-{{- if .fillRatio -}}
-  {{- if reflect.IsSlice .fillRatio -}}
-    {{- range .fillRatio -}}
-      {{- if ne (printf "%T" .) "int" }}
-      {{- errorf "%q is not a valid integer in fillRatio array for image %s on page %s." . $img.RelPermalink $.page.RelPermalink -}}
-      {{- end -}}
-    {{- end -}}
-  {{- else -}}
-    {{- errorf `"%v" is not a valid fillRatio array for image %s on page %s.` .fillRatio $img.RelPermalink .page.RelPermalink -}}
-  {{- end -}}
-  {{- /* height to width ratio of .fillRatio */ -}}
-  {{- /* numbers must be converted to float before division or they may create an answer of 0 */ -}}
-  {{- $fillRatio = div (index .fillRatio 1 | float) (index .fillRatio 0 | float) -}}
-{{- end -}}
-{{- /*********************************************************************
-  **** if .width present for pixel density srcset                        *
-  **** produce array [{desc: "1x", width: 300},{desc: "2x", width: 600}] *
-  ************************************************************************/ -}}
-{{- if .width -}}
-  {{- if ne (printf "%T" .width) "int" }}
-  {{- errorf "%q is not a valid width integer for image %s on page %s." .width $img.RelPermalink .page.RelPermalink -}}
-  {{- end -}}
-  {{- $densities := .densities | default (.page.Param "image.densities") -}}
-  {{- $densities = sort $densities -}}
-  {{- range $density := $densities }}
-    {{- $widths = $widths | append (slice
-      (dict
-      "desc" (printf "%dx" $density)
-      "width" (mul $.width $density)
-      )) -}}
-  {{- end -}}
-{{- else -}}
-{{/* else produce responsive srcset
-  * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
-*/}}
-  {{- if .widths -}}
-    {{- if reflect.IsSlice .widths -}}
-      {{- range .widths -}}
-        {{- if ne (printf "%T" .) "int" }}
-        {{- errorf "%q is not a valid width integer in widths array for image %s on page %s." . $img.RelPermalink $.page.RelPermalink -}}
-        {{- end -}}
-      {{- end -}}
-    {{- else -}}
-    {{- errorf `"%v" is not a valid width array for image %s on page %s.` .widths $img.RelPermalink .page.RelPermalink -}}
-    {{- end -}}
-  {{- end -}}
-  {{- $userWidths := .widths | default (.page.Param "image.widths") -}}
-  {{- $userWidths = sort $userWidths -}}
-  {{- range $userWidth := $userWidths }}
-    {{- $widths = $widths | append (slice
-      (dict
-      "desc" (printf "%dw" $userWidth)
-      "width" $userWidth
-      )) -}}
-  {{- end -}}
-{{- end -}}
-
-{{- /* processing options */ -}}
 {{- $options := slice }}
 {{ with partial "image-includes/processing-options" (dict "partial" . "img" $img) -}}
-  {{- $options = . -}}
+  {{- $options = .options -}}
+  {{- $widths = .widths -}}
+  {{- $fillRatio = .fillRatio -}}
 {{- end -}}
 {{- /* generate image widths */ -}}
 {{- $widthVars := (dict
@@ -88,7 +31,6 @@
 {{- with partial "image-includes/generate-widths" $widthVars -}}
   {{- /* generate picture tag */ -}}
   {{- partial "image-includes/picture-tag.html" (dict "partial" $ "img" $img "picture" .) -}}
- 
-{{ end }}
+{{- end -}}
 
 

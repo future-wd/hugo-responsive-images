@@ -1,58 +1,55 @@
 {{- /* ***********************
   **** picture tag variables *
   ****************************/ -}}
-{{- $loading := false -}}
-{{- $loadingValue := .partial.page.Param "image.loading" -}}
-{{- with .partial.loading -}}
-  {{ $loadingValue = . }}
+{{- $loading := .partial.loading | default (.partial.page.Param "image.loading") -}}
+{{- with $loading -}}
   {{- $loadingOpts := (slice "auto" "lazy" "lazysizes") -}}
   {{- if not (in $loadingOpts .) -}}
-    {{- errorf "Invalid .loading of %v (%s). .loading can be %s" . $.img.RelPermalink (delimit $loadingOpts ", " " or ") -}}
+    {{- errorf `Invalid loading value of "%v" for image %s on page %s. Valid options are %s` . $.img.RelPermalink $.partial.page.RelPermalink (delimit $loadingOpts ", " " or ") -}}
   {{- end -}}
-{{- end -}}
-{{- if eq $loadingValue (or "auto" "lazy") -}}
-  {{ $loading = $loadingValue }}
 {{- end -}}
 {{- $title := .partial.page.Title -}}
 {{- if .partial.title -}}
   {{- $title = .partial.title -}}
 {{- else if .partial.figureTitle -}}
-  {{- $title = .partaial.figureTitle -}}
+  {{- $title = .partial.figureTitle -}}
 {{- end -}}
 {{- $class := .partial.class | default (.partial.page.Param "image.class") -}}
-{{- /* append lazyload class if loading or sizes = lazysizes */ -}}
+{{- /* append lazyload class (to enable) if loading or sizes = lazysizes */ -}}
 {{- if or 
   (or (eq .partial.sizes "lazysizes") (eq (.partial.page.Param "image.sizes") "lazysizes"))
-  (eq $loadingValue "lazysizes") -}} 
+  (eq $loading "lazysizes") -}} 
   {{- $class = print $class " lazyload" -}}
 {{- end -}}
 {{- if .partial.figure }}
-  {{- $class = print $class " " (.partial.page.Param "image.figureImageClass") -}}
+  {{- $figureImageClass := .partial.figureImageClass | default (.partial.page.Param "image.figureImageClass") }}
+  {{- $class = print $class " " $figureImageClass -}}
 {{- end -}}
-{{- $alt := .partial.caption | markdownify | plainify | default (printf "Image of %s" $title) -}}
-{{- with .partial.alt }}
-  {{- $alt = . -}}
-{{- else -}}
-  {{- if not .partial.caption -}}
-    {{- erroridf "alt-error" "Alt text has not been provided for image %s on page %s" $.img.RelPermalink .partial.page.RelPermalink -}}
+{{/* alt defaults to caption. If not caption or alt set, error. If suppressed, defaults to "image of [title]" */}}
+{{- $alt := false -}}
+{{- $alt = (.partial.caption | markdownify | plainify) | default .partial.alt -}}
+{{- if not $alt -}}
+  {{- erroridf "alt-error" "Alt text has not been provided for image %s on page %s" $.img.RelPermalink .partial.page.RelPermalink -}}
+  {{- $alt = printf "Image of %s" $title -}}
+{{- end -}}
+{{- $sizesProp := false -}}
+{{- $sizes := .partial.sizes | default (.partial.page.Param "image.sizes") -}}
+{{- if $sizes -}}
+  {{- if eq $sizes "lazysizes" -}}
+    {{- $sizesProp = `data-sizes="auto"` -}}
+  {{- else -}}
+    {{- $sizes = printf `sizes="%s"` $sizes -}}
   {{- end -}}
+{{- else if (not .partial.width) -}}
+  {{- $sizes = `sizes="100vw"` -}}
 {{- end -}}
-{{- $sizes := false -}}
-{{- if .partial.sizes -}}
-  {{- $sizes = printf `sizes="%s"` .partial.sizes -}}
-{{ else if or (eq ($.partial.page.Param "image.sizes") "lazysizes") 
-  (eq $.partial.sizes "lazysizes") }}
-  {{- $sizes = `data-sizes="auto"` -}}
-{{ else }}
-  {{ $sizes = `sizes="100vw"` -}}
-{{ end }}
-{{- /************************
-  **** generate picture tag *
-  ***************************/ -}}
+{{- /***************************
+  **** generate picture tag ****
+  ******************************/ -}}
 <picture>
 {{- range $format, $values := .picture }}
   <source
-  {{- if eq $loadingValue "lazysizes" }}
+  {{- if eq $loading "lazysizes" }}
     data-srcset="{{ .srcset }}"
   {{- else -}}
     srcset="{{ .srcset }}"
@@ -66,10 +63,10 @@
 {{- end }}
 {{- with .picture.original.src }}
   <img
-  {{- with $loading }}
-    loading="{{ . }}"
+  {{- if eq $loading (or "auto" "lazy") -}}
+    loading="{{ $loading }}"
   {{- end -}}
-  {{- if eq $loadingValue "lazysizes" }}
+  {{- if eq $loading "lazysizes" }}
     data-src="{{ .RelPermalink }}"
   {{- else }}
     src="{{ .RelPermalink }}"
