@@ -16,7 +16,8 @@
     ** loop over each width         **
     **********************************/}}
   {{ $srcset := slice }}
-  {{ $src := "" }}
+  {{ $src := false }}
+  {{ $placeholder := false }}
   {{- range $index, $width := $.widths -}}
     {{- $imgResized := "" -}}
     {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
@@ -40,8 +41,20 @@
     {{- $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) -}}
     {{- /* if .width and 1x density (First iteration), add image to src variable for use as fallback */ -}}
     {{ if eq $format "original" }}
-      {{ if and $.partial.width (eq $index 0) }}
-        {{ $src = $imgResized }}
+      {{ if eq $index 0}}
+        {{/* smallest image width for placeholder generation */}}
+        {{ with partial "image-includes/generate-placeholder" (dict 
+        "src" $imgResized
+        "img" $.img
+        "partial" $.partial ) }}
+          {{ $placeholder = . }}
+        {{ end }}
+      {{ end }}
+      {{/* add smallest image to src for screen density srcset */}}
+      {{ if $.partial.width }}
+        {{ if eq $index 0}}
+          {{ $src = $imgResized }}
+        {{ end }}
       {{ else if eq (len $.widths) (add $index 1) }}
         {{/* else largest width (last iteration), add image to src variable for use as fallback */}}
         {{ $src = $imgResized }}
@@ -51,6 +64,6 @@
   {{- /* convert srcset array into a string, delimit with , between each image */ -}}
   {{- $srcset := delimit $srcset ", " -}}
   {{- /* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */ -}}
-  {{- $picture = merge $picture (dict $format (dict "srcset" $srcset "src" $src)) -}}
+  {{- $picture = merge $picture (dict $format (dict "srcset" $srcset "src" $src "placeholder" $placeholder)) -}}
 {{- end -}}
 {{- return $picture -}}

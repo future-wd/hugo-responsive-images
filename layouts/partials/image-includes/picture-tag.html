@@ -68,6 +68,9 @@
   {{- end -}}
   {{- if eq $loading "lazysizes" }}
     data-src="{{ .RelPermalink }}"
+    {{- with $.picture.original.placeholder }}
+    src="{{ . | safeURL }}"
+    {{- end }}
   {{- else }}
     src="{{ .RelPermalink }}"
   {{- end }}
