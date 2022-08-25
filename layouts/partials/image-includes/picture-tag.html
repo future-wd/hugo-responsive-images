@@ -23,7 +23,7 @@
 {{- end -}}
 {{- if .partial.figure }}
   {{- $figureImageClass := .partial.figureImageClass | default (.partial.page.Param "image.figureImageClass") }}
-  {{- $class = print $class " " $figureImageClass -}}
+  {{- $class = $figureImageClass -}}
 {{- end -}}
 {{/* alt defaults to caption. If not caption or alt set, error. If suppressed, defaults to "image of [title]" */}}
 {{- $alt := false -}}
