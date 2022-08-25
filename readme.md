@@ -45,9 +45,9 @@ params:
     # shortcodeWidths: [600, 900, 1300] # custom widths for shortcode use in markdown files. If unset defaults to widths
     # renderHookWidths: [600, 900, 1300] # custom widths for render hook use in markdown files. If unset defaults to shortcode widths
     densities: [1,2] # densities which are output when an image width is specified
-    formats: [original, webp] # set output formats. options are `original`, `bmp`, `gif`, `jpeg`, `jpg`, `png`, `tif`, `tiff`, and `webp`.
+    formats: [webp, original] # set output formats. options are `original`, `bmp`, `gif`, `jpeg`, `jpg`, `png`, `tif`, `tiff`, and `webp`. In order of least supported to most supported.
     class: img-fluid # default image class if no class is specified
-    figureClass: figure # default figure class
+    figureClass: "figure img-fluid" # default figure class
     figcaptionClass: figure-caption # default figcaption class
     figureImageClass: figure-img # default figure image class (appended to image class)
     # depreciated lazysizes: true # enable integration of the lazysizes js library (`loading: lazysizes` needed for )
