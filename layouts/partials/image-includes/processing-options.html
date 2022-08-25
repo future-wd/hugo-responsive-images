@@ -7,11 +7,21 @@
   {{- if reflect.IsSlice .partial.fillRatio -}}
     {{- range .partial.fillRatio -}}
       {{- if ne (printf "%T" .) "int" }}
-      {{- errorf "%q is not a valid integer in fillRatio array for image %s on page %s." . $.img.RelPermalink $.partial.page.RelPermalink -}}
+        {{ partial "inline/options-error" (dict 
+          "var" "fillRatio array item"
+          "value" .
+          "options" "2x integers in an array/slice"
+          "ctx" $
+        ) }}
       {{- end -}}
     {{- end -}}
   {{- else -}}
-    {{- errorf `"%v" is not a valid fillRatio array for image %s on page %s.` .partial.fillRatio $.img.RelPermalink .partial.page.RelPermalink -}}
+    {{ partial "inline/options-error" (dict 
+      "var" "fillRatio"
+      "value" .
+      "options" "2x integers in an array/slice"
+      "ctx" $
+    ) }}
   {{- end -}}
   {{- /* height to width ratio of .partial.fillRatio */ -}}
   {{- /* numbers must be converted to float before division or they may create an answer of 0 */ -}}
@@ -23,7 +33,12 @@
   ************************************************************************/ -}}
 {{- if .partial.width -}}
   {{- if ne (printf "%T" .partial.width) "int" }}
-  {{- errorf "%q is not a valid width integer for image %s on page %s." .partial.width $.img.RelPermalink .partial.page.RelPermalink -}}
+    {{ partial "inline/options-error" (dict 
+      "var" "width"
+      "value" .
+      "options" "single integers"
+      "ctx" $
+    ) }}
   {{- end -}}
   {{- $densities := .partial.densities | default (.partial.page.Param "image.densities") -}}
   {{- $densities = sort $densities -}}
@@ -42,11 +57,21 @@
     {{- if reflect.IsSlice .partial.widths -}}
       {{- range .widths -}}
         {{- if ne (printf "%T" .) "int" }}
-        {{- errorf "%q is not a valid width integer in widths array for image %s on page %s." . $.img.RelPermalink $.page.RelPermalink -}}
+          {{ partial "inline/options-error" (dict 
+            "var" "widths array item"
+            "value" .
+            "options" "2x integers in an array/slice"
+            "ctx" $
+          ) }}
         {{- end -}}
       {{- end -}}
     {{- else -}}
-    {{- errorf `"%v" is not a valid width array for image %s on page %s.` .partial.widths $.img.RelPermalink .partial.page.RelPermalink -}}
+      {{ partial "inline/options-error" (dict 
+        "var" "width array"
+        "value" .
+        "options" "2x integers in an array/slice"
+        "ctx" $
+      ) }}
     {{- end -}}
   {{- end -}}
   {{- $userWidths := .partial.widths | default (.partial.page.Param "image.widths") -}}
@@ -151,4 +176,7 @@
 {{/* set error message template */}}
 {{ define "partials/inline/options-error" }}
   {{ errorf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value .ctx.img.RelPermalink .ctx.partial.page.RelPermalink .options }}
+{{ end }}
+{{ define "partials/inline/option-error" }}
+  {{ errorf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value .ctx.img.RelPermalink .ctx.partial.page.RelPermalink .option }}
 {{ end }}
