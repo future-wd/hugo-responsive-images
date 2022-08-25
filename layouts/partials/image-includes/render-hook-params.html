@@ -1,1 +1,9 @@
-<img src="{{ .Destination }}" alt="{{ .PlainText }}" {{ with .Title }}title="{{ . }}"{{ end }}>
+{{- $widths := .Page.Param "image.renderHookWidths" | default (.Page.Param "image.shortcodeWidths") | default (.Page.Param "image.widths" ) -}}
+{{- $config := (dict 
+  "page" .Page 
+  "src" .Destination 
+  "alt" .PlainText 
+  "title" .Title 
+  "widths" $widths
+  ) -}}
+{{- partial "image" $config -}}

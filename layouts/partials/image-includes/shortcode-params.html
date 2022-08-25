@@ -1,66 +1,63 @@
+{{/* add page context from shortcode to params */}}
 {{- $params := (dict "page" .Page) -}}
-{{- /* global=true is depreciated but supported */ -}}
-{{- if eq (.Get "global") "true" -}}
-  {{- $params = merge $params (dict "type" "global" ) -}}
-{{- end -}}
-{{- /* **************************************************************
-  **** check for named params in shortcode                       ****
-  *******************************************************************/ -}}
-{{- if .IsNamedParams -}}
-  {{- /* merge shortcode .Params map with $params map */ -}}
+{{/****************************************
+  ** check for named params in shortcode **
+  *****************************************/}}
+{{ if .IsNamedParams }}
+  {{/* merge shortcode .Params map with $params map */}}
   {{ $params = merge $params .Params }}
-  {{- /* override some params where neccessary */ -}}
-  {{- with (.Get "widths") -}}
-    {{- /* create array ',' delimiter for creation */ -}}
-    {{- $widths := split . "," -}}
-    {{- /* remove leading spaces from each string */ -}}
-    {{- $widths = apply $widths "strings.TrimLeft" " " "." -}}
-    {{- /* convert int strings to int */ -}}
-    {{- $widths = apply $widths "int" "." -}}
-    {{- $params = merge $params (dict "widths" $widths) -}}
-  {{- else -}}
-    {{- /* if no widths provided, provide shortcodeWidths (if configured)
-      else the image partial has its own default widths */ -}}
-    {{- with site.Params.image.shortcodeWidths -}}
-      {{- $params = merge $params (dict "widths" . ) -}}
-    {{- end -}}
-  {{- end -}}
-  {{- with (.Get "densities") -}}
-    {{- $densities := split . "," -}}
-    {{- $densities = apply $densities "strings.TrimLeft" " " "." -}}
-    {{- $densities = apply $densities "int" "." }}
-    {{- $params = merge $params (dict "widths" $densities) }}
-  {{- end -}}
-  {{- with (.Get "fillRatio") -}}
-    {{- $fillRatio := split . "," -}}
-    {{- $fillRatio = apply $fillRatio "strings.TrimLeft" " " "." -}}
-    {{- $fillRatio = apply $fillRatio "int" "." }}
-    {{- $params = merge $params (dict "fillRatio" $fillRatio) }}
-  {{- end -}}
-  {{- /* check for src if not throw error */ -}}
-  {{- if not (.Get "src") -}}
-    {{- errorf "The %q shortcode requires the 'src' named parameter. See %s" .Name .Position -}}
-  {{- end -}}
-{{- else -}}
-{{- /* **************************************************************
-  **** single positional parameter                               ****
-  **** this will generate an error as not alt has been provided, ****
-  **** but the error can be suppressed if required               ****
-  *******************************************************************/ -}}
-{{- /* if only 1 un named param in shortcode */ -}}
-  {{- with (.Get 0) -}}
+  {{/* override some params where neccessary */}}
+  {{ with (.Get "widths") }}
+    {{/* create array ',' delimiter for creation */}}
+    {{ $widths := split . "," }}
+    {{/* remove leading spaces from each string */}}
+    {{ $widths = apply $widths "strings.TrimLeft" " " "." }}
+    {{/* convert int strings to int */}}
+    {{ $widths = apply $widths "int" "." }}
+    {{ $params = merge $params (dict "widths" $widths) }}
+  {{ else }}
+    {{/* if no widths provided, provide shortcodeWidths (if configured)
+      else the image partial has its own default widths */}}
+    {{ with site.Params.image.shortcodeWidths }}
+      {{ $params = merge $params (dict "widths" . ) }}
+    {{ end }}
+  {{ end }}
+  {{ with (.Get "densities") }}
+    {{ $densities := split . "," }}
+    {{ $densities = apply $densities "strings.TrimLeft" " " "." }}
+    {{ $densities = apply $densities "int" "." }}
+    {{ $params = merge $params (dict "widths" $densities) }}
+  {{ end }}
+  {{ with (.Get "fillRatio") }}
+    {{ $fillRatio := split . "," }}
+    {{ $fillRatio = apply $fillRatio "strings.TrimLeft" " " "." }}
+    {{ $fillRatio = apply $fillRatio "int" "." }}
+    {{ $params = merge $params (dict "fillRatio" $fillRatio) }}
+  {{ end }}
+  {{/* check for src if not throw error */}}
+  {{ if not (.Get "src") }}
+    {{ errorf "The %q shortcode on page %s requires the 'src' named parameter. See %s" .Name .Page .Position }}
+  {{ end }}
+{{ else }}
+{{/**************************************************************
+  ** single positional parameter                               **
+  ** this will generate an error as not alt has been provided, **
+  ** but the error can be suppressed if required               **
+  ***************************************************************/}}
+{{/* if only 1 un named param in shortcode */}}
+  {{ with (.Get 0) }}
   {{ $params = merge $params (dict "src" .) }}
-  {{- end -}}
+  {{ end }}
   {{ if ge (len .Params) 2 }}
     {{ errorf "If using positional parameters, only 1 parameter can be provided (src)" }}
   {{ end }}
-{{- end -}}
-{{- /*********************************************
-  **** choose partial based on shortcode used ****
-  ************************************************/ -}}
-{{- if eq .Name "figure" -}}
-{{- partial "figure" $params -}}
-{{- else -}}
-{{- partial "image" $params -}}
-{{- end -}}
+{{ end }}
+{{/*******************************************
+  ** choose partial based on shortcode used **
+  ********************************************/}}
+{{ if eq .Name "figure" }}
+{{ partial "figure" $params }}
+{{ else if eq .Name "image" }}
+{{ partial "image" $params }}
+{{ end }}
 
