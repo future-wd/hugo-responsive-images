@@ -1,56 +1,17 @@
-{{- /**********************************
-  **** loop over each image format ****
-  *************************************/ -}}
-{{ $picture := dict }}
-{{ $options := .options }}
-{{ $formats := .partial.formats | default (.partial.page.Param "image.formats") }}
-{{ range $format := $formats }}
-  {{/* add format to options array (for format transformation) if not original */}}
-  {{ if ne $format "original" }}
-    {{ $options = $options | append $format }}
-  {{ end }}
-  {{/* change options array into space delimited string. 
-        new options string, srcset and src variables created so they are unique to this iteration */}}
-  {{ $optionsString := delimit $options " " }}
-  {{/*********************************
-    ** loop over each width         **
-    **********************************/}}
-  {{ $srcset := slice }}
-  {{ $src := "" }}
-  {{- range $index, $width := $.widths -}}
-    {{- $imgResized := "" -}}
-    {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
-    {{- if $.fillRatio -}}
-      {{- /* resulting fillHeight must be converted to integer for use with image resize */ -}}
-      {{- $fillHeight := mul ($width.width | float) $.fillRatio | int -}}
-      {{- if and (or (gt $width.width $.img.Width) (gt $fillHeight $.img.Height)) (ne ($.partial.page.Param "image.suppressWidthWarning") true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.img.RelPermalink $.img.Width $.img.Height $.partial.page.RelPermalink $width.width $fillHeight  -}}
-      {{- end -}}
-      {{- /* resize image */ -}}
-      {{- $imgResized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
-    {{- else -}}
-      {{- /* do standard image resize */ -}}
-      {{- if and (gt $width.width $.img.Width) (ne ($.partial.page.Param "image.suppressWidthWarning") true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.img.RelPermalink $.img.Width $.img.Height $.partial.page.RelPermalink $width.width }}
-      {{- end -}}
-      {{- /* resize image */ -}}
-      {{- $imgResized = $.img.Resize (printf "%dx %s" $width.width $optionsString) -}}
-    {{- end -}}
-    {{- /* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */ -}}
-    {{- $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) -}}
-    {{- /* if .width and 1x density (First iteration), add image to src variable for use as fallback */ -}}
-    {{ if eq $format "original" }}
-      {{ if and $.partial.width (eq $index 0) }}
-        {{ $src = $imgResized }}
-      {{ else if eq (len $.widths) (add $index 1) }}
-        {{/* else largest width (last iteration), add image to src variable for use as fallback */}}
-        {{ $src = $imgResized }}
-      {{ end }}
+{{- $picture := false -}}
+{{- with site.Params.image.provider -}}
+  {{- $providerOpts := (slice "netlify") }}
+  {{- if in $providerOpts . -}}
+    {{ with partial "image-includes/external-widths" $ }}
+      {{ $picture = . }}
     {{ end }}
+  {{ else }}
+    {{- $msg := "Invalid configured image api of %v. Valid api's are %s"}}
+    {{- errorf $msg .  (delimit $providerOpts ", ") -}}
   {{- end -}}
-  {{- /* convert srcset array into a string, delimit with , between each image */ -}}
-  {{- $srcset := delimit $srcset ", " -}}
-  {{- /* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */ -}}
-  {{- $picture = merge $picture (dict $format (dict "srcset" $srcset "src" $src)) -}}
-{{- end -}}
-{{- return $picture -}}
+{{ else }}
+  {{ with partial "image-includes/local-widths" . }}
+    {{ $picture = . }}
+  {{ end }}
+{{ end }}
+{{ return $picture }}

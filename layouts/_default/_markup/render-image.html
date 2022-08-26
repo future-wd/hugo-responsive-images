@@ -1,5 +1,5 @@
 {{- if eq (.Page.Param "image.renderhook") true -}}
-  {{- partial "image-includes/render-hook-template" . -}}
+  {{- partial "image-includes/render-hook-params" . -}}
 {{- else -}}
   {{- /* default markdown behavior */ -}}
   {{- partial "image-includes/render-hook-template-default" . -}}
