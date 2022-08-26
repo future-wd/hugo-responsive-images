@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](/github.com/powerfulweb/hugo-image/compare/v1.0.12...v1.1.0) (2022-08-26)
+
+
+### Features
+
+* render hook wrapper class ([ea92dd9](/github.com/powerfulweb/hugo-image/commit/ea92dd947dd4fe36548efbc0a5673e1e14fdee8e))
+
+
+### Bug Fixes
+
+* change from .site.params to .Params ([93c1056](/github.com/powerfulweb/hugo-image/commit/93c1056bbe60c4985907cede65be7600ff9cf55a))
+* clean up error messages ([910f49c](/github.com/powerfulweb/hugo-image/commit/910f49cd56bf22eafe1c91fe60186683568bd85c))
+* clean up shortcode params ([d3ce496](/github.com/powerfulweb/hugo-image/commit/d3ce496292a9b67d91bddc1594f633c78fcd5631))
+* clean up variables ([51956cf](/github.com/powerfulweb/hugo-image/commit/51956cf74af482cca98bf5e3afd23bbdf2ad1276))
+* clean up vars and error message ([a7c006f](/github.com/powerfulweb/hugo-image/commit/a7c006f37bf9194fbebd6396e0a97577fd94a302))
+* dont't use class for figures ([726d168](/github.com/powerfulweb/hugo-image/commit/726d168d5ef9ed8070a6b78c2cbba89f55945840))
+* example api config ([3290ba3](/github.com/powerfulweb/hugo-image/commit/3290ba3d1b08278910d482c44dd5555b3246f0a4))
+* figureTitle and heading level set at all levels ([71a15ba](/github.com/powerfulweb/hugo-image/commit/71a15ba8f2d9b405480ad5a4817c6b0a354f11e7))
+* generate placeholders lqip/dominant color/single color ([6667a3f](/github.com/powerfulweb/hugo-image/commit/6667a3f9f2dcbbefd76e4d052d1ad222008cc0e9))
+* image format can be set at image level ([3737909](/github.com/powerfulweb/hugo-image/commit/3737909bb83a6d09c4f7f1cbc00d771567d26875))
+* img variable ([f90af52](/github.com/powerfulweb/hugo-image/commit/f90af52fa53a1f81aef8d18732611b9df08799e2))
+* move width and fillratio into partial ([f1e4074](/github.com/powerfulweb/hugo-image/commit/f1e4074704f5bdeeecc38b5e1ff830fbeefd2f22))
+* netlify image working ([fbf883d](/github.com/powerfulweb/hugo-image/commit/fbf883d0f4afb01df514e8585ba27eead0d1f43b))
+* netlify working ([89ac82b](/github.com/powerfulweb/hugo-image/commit/89ac82b800e104538a3fe69a7166117367be04b4))
+* render hook ([60e03a4](/github.com/powerfulweb/hugo-image/commit/60e03a47ca9441bf13084b60b52dba36f5685cc6))
+* shortcode wrapper class ([0f1da49](/github.com/powerfulweb/hugo-image/commit/0f1da49cc60fa6a60ae5753e7770f51885957746))
+* target, rel, link, figCaptionClass can be set atl all levels ([d967d7b](/github.com/powerfulweb/hugo-image/commit/d967d7bcea010b112e951f1ad4a0fb5057704844))
+
 ### [1.0.12](/github.com/powerfulweb/hugo-image/compare/v1.0.11...v1.0.12) (2022-08-25)
 
 ### [1.0.11](/github.com/powerfulweb/hugo-image/compare/v1.0.10...v1.0.11) (2022-08-23)
