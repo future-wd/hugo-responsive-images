@@ -1,16 +1,9 @@
 {{- /* ***********************
   **** picture tag variables *
   ****************************/ -}}
-{{ $provider := .partial.provider | default (.partial.page.Param "image.provider") }}
 {{- $loading := .partial.loading | default (.partial.page.Param "image.loading") -}}
 {{- with $loading -}}
-  {{- $loadingOpts := false -}}
-  {{ if $provider }}
-    {{- /* disable lazy loading for external image processing */ -}}
-    {{- $loadingOpts = (slice "auto" "lazy") -}}
-  {{- else -}}
-    {{- $loadingOpts = (slice "auto" "lazy" "lazysizes") -}}
-  {{- end -}}
+  {{- $loadingOpts := (slice "auto" "lazy" "lazysizes") -}}
   {{- if not (in $loadingOpts .) -}}
     {{- errorf `Invalid loading value of "%v" for image %s on page %s. Valid options are %s` . $.img.RelPermalink $.partial.page.RelPermalink (delimit $loadingOpts ", " " or ") -}}
   {{- end -}}
@@ -29,14 +22,14 @@
   {{- $class = print $class " lazyload" -}}
 {{- end -}}
 {{- if .partial.figure }}
-  {{- $figureImageClass := .partial.class | default (.partial.page.Param "image.figureImageClass") }}
+  {{- $figureImageClass := .partial.figureImageClass | default (.partial.page.Param "image.figureImageClass") }}
   {{- $class = $figureImageClass -}}
 {{- end -}}
 {{/* alt defaults to caption. If not caption or alt set, error. If suppressed, defaults to "image of [title]" */}}
 {{- $alt := false -}}
 {{- $alt = (.partial.caption | markdownify | plainify) | default .partial.alt -}}
 {{- if not $alt -}}
-  {{- erroridf "alt-error" "Alt text has not been provided for image %s on page %s" .img.RelPermalink .partial.page.RelPermalink -}}
+  {{- erroridf "alt-error" "Alt text has not been provided for image %s on page %s" $.img.RelPermalink .partial.page.RelPermalink -}}
   {{- $alt = printf "Image of %s" $title -}}
 {{- end -}}
 {{- $sizesProp := false -}}
@@ -62,7 +55,7 @@
     srcset="{{ .srcset }}"
   {{- end -}}
   {{- if eq $format "original" }}
-    type="{{ $.img.MediaType }}"
+    type="{{ .src.MediaType }}"
   {{- else }}
     type="{{ printf "image/%s" $format }}"
   {{- end }}
@@ -70,7 +63,7 @@
 {{- end }}
 {{- with .picture.original.src }}
   <img
-  {{- if eq $loading (or "auto" "lazy") }}
+  {{- if eq $loading (or "auto" "lazy") -}}
     loading="{{ $loading }}"
   {{- end -}}
   {{- if eq $loading "lazysizes" }}
@@ -78,23 +71,19 @@
     {{- with $.picture.original.placeholder }}
     src="{{ . | safeURL }}"
     {{- end }}
-  {{- else if $provider }}
-    src="{{ . }}"
-    height="{{ $.img.Height }}"
-    width="{{ $.img.Width }}"
   {{- else }}
     src="{{ .RelPermalink }}"
-    height="{{ .Height }}"
-    width="{{ .Width }}"
-  {{- end }}
-  {{- with $class }}
-    class="{{ . }}"
-  {{- end -}}
-  {{- with $sizesProp }}
-    {{ . | safeHTMLAttr }}
   {{- end }}
     alt="{{ $alt }}"
     title="{{ $title }}"
+    height="{{ .Height }}"
+    width="{{ .Width }}"
+  {{- with $class }}
+    class="{{ . }}"
+  {{- end -}}
+  {{- with $sizes }}
+    {{ . | safeHTMLAttr }}
+  {{- end }}
   />
 {{ end  -}}
 </picture>

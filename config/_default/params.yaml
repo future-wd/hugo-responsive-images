@@ -1,5 +1,6 @@
 image:
-  widths: [600, 900, 1300] # widths to generate if widths not specified
+  # api: netlify
+  widths: [600, 900, 1300]
   # shortcodeWidths: [600, 900, 1300] # custom widths for shortcode use in markdown files. If unset defaults to widths
   # renderHookWidths: [600, 900, 1300] # custom widths for render hook use in markdown files. If unset defaults to shortcode widths
   densities: [1,2] # densities which are output when an image width is specified
@@ -25,3 +26,4 @@ image:
   gifDivFactor: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
 
 
+  # provider: netlify
