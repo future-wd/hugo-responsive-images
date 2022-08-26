@@ -50,6 +50,7 @@ params:
     figureClass: "figure img-fluid" # default figure class
     figcaptionClass: figure-caption # default figcaption class
     figureImageClass: "figure-img img-fluid" # default figure image class (appended to image class) ## USE .class inline
+    figureTitleH: 4 # heading level for figure title
     loading: lazy/auto/lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js to handle image loading. Defaults to lazy. If you use default (`lazy`) or `lazysizes`, you will need to set above the fold images to `auto`.
     sizes: user/lazysizes # uses lazysizes to automatically generate the sizes property. User does not generate any sizes, you need to declare them. Defaults to user
     renderHook: false # set to false to disable included markdown image render hook
