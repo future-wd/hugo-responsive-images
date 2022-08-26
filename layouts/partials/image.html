@@ -1,5 +1,5 @@
 {{- /* set variables */ -}}
-{{- $img := "" }}
+{{- $img := false }}
 
 {{- if eq .Type "global" -}}
   {{- /* global resource */ -}}
@@ -9,59 +9,28 @@
   {{- $img = .page.Resources.GetMatch .src -}}
 {{- end -}}
 {{- if not $img }}
-  {{- warnf "No image resource found at %s%s" .page.RelPermalink .src -}}
+  {{- errorf "No image resource found at %s%s" .page.RelPermalink .src -}}
 {{- end -}}
-{{- $srcsets := slice -}}
+{{- /* processing options */ -}}
 {{- $widths := slice -}}
-{{- $fillRatio := 0 -}}
-{{- /* calculate fill ratio, if .fillRatio is provided */ -}}
-{{- if .fillRatio -}}
-  {{- /* height to width ratio of .fillRatio */ -}}
-  {{- /* numbers must be converted to float before division or they will create an answer of 0 */ -}}
-  {{- $fillRatio = div (index .fillRatio 1 | float) (index .fillRatio 0 | float) -}}
-{{- end -}}
-{{- /*********************************************************************
-  **** if .width present for pixel density srcset                        *
-  **** produce array [{desc: "1x", width: 300},{desc: "2x", width: 600}] *
-  ************************************************************************/ -}}
-{{- if .width -}}
-  {{- $densities := .densities | default (.page.Param "image.densities") -}}
-  {{- $densities = sort $densities -}}
-  {{- range $density := $densities }}
-    {{- $widths = $widths | append (slice
-      (dict
-      "desc" (printf "%dx" $density)
-      "width" (mul $.width $density)
-      )) -}}
-  {{- end -}}
-{{- else -}}
-{{/* else produce responsive srcset
-  * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
-*/}}
-  {{- $userWidths := .widths | default (.page.Param "image.widths") -}}
-  {{- $userWidths = sort $userWidths -}}
-  {{- range $userWidth := $userWidths }}
-    {{- $widths = $widths | append (slice
-      (dict
-      "desc" (printf "%dw" $userWidth)
-      "width" $userWidth
-      )) -}}
-  {{- end -}}
-{{- end -}}
-
-
+{{- $fillRatio := false -}}
 {{- $options := slice }}
 {{ with partial "image-includes/processing-options" (dict "partial" . "img" $img) -}}
-  {{- $options = . -}}
+  {{- $options = .options -}}
+  {{- $widths = .widths -}}
+  {{- $fillRatio = .fillRatio -}}
 {{- end -}}
+{{- /* generate image widths */ -}}
 {{- $widthVars := (dict
   "partial" .
   "widths" $widths
+  "fillRatio" $fillRatio
   "img" $img
   "options" $options
   ) -}}
 {{- with partial "image-includes/generate-widths" $widthVars -}}
+  {{- /* generate picture tag */ -}}
   {{- partial "image-includes/picture-tag.html" (dict "partial" $ "img" $img "picture" .) -}}
-{{ end }}
+{{- end -}}
 
 

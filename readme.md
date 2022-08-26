@@ -45,9 +45,9 @@ params:
     # shortcodeWidths: [600, 900, 1300] # custom widths for shortcode use in markdown files. If unset defaults to widths
     # renderHookWidths: [600, 900, 1300] # custom widths for render hook use in markdown files. If unset defaults to shortcode widths
     densities: [1,2] # densities which are output when an image width is specified
-    formats: [original, webp] # set output formats. options are `original`, `bmp`, `gif`, `jpeg`, `jpg`, `png`, `tif`, `tiff`, and `webp`.
+    formats: [webp, original] # set output formats. options are `original`, `bmp`, `gif`, `jpeg`, `jpg`, `png`, `tif`, `tiff`, and `webp`. In order of least supported to most supported.
     class: img-fluid # default image class if no class is specified
-    figureClass: figure # default figure class
+    figureClass: "figure img-fluid" # default figure class
     figcaptionClass: figure-caption # default figcaption class
     figureImageClass: figure-img # default figure image class (appended to image class)
     # depreciated lazysizes: true # enable integration of the lazysizes js library (`loading: lazysizes` needed for )
@@ -56,7 +56,12 @@ params:
     renderHook: false # set to false to disable included markdown image render hook
                       # override by setting imageRenderHook: true/false in front matter
     provider: netlify # currently only supports netlify image processing. comment or delete to disable
-
+    # suppressWidthWarning: true # turn off image too narrow warning
+    # placeholder: lqip/dominant/file_name 
+    lqipBlurAmount: 5 # apply gaussian blur amount of 5 to lqip
+                      # may need to be increased at a page level for larger images
+    lqipDivAmount: 5 # lqip is 5x smaller than the smallest image in srcset
+    gifDivAmount: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
 ```
 
 > All of image parameter configuration items can also be configured on a per page basis by adding the config to the page's front matter.
@@ -308,8 +313,35 @@ The following elements are required for the `<noscript>` module to work. The scr
 
 ``` -->
 
-## Setting up Lazysizes.js
+## Placeholder
 
+Displaying a placeholder image while the actual image is loading is dependent on the use of lazysizes.js for the purpose of swapping the image. `loading: lazysizes` must be set in site/page configuration, or per image.
+
+The configuration item `placeholder` has three options; `lqip`, `dominant` (dominant color used), or specify an image in the `assets/images/placeholder-images` directory, without the .gif extension. 
+
+The following colours (based on bootstrap) have been provided:
+
+- white
+- gray-100
+- gray-200
+- gray-300
+- gray-400
+- gray-500
+- gray-600
+- gray-700
+- gray-800
+- gray-900
+- black
+
+To create a custom color, make a 10px x 10px gif image with only 1 color and save it in the directory and then call it by its file name, without the .gif extension.
+
+Lqip gaussian blur amount can be adjusted with the `lqipBlurAmount` configuration item in site/page configuration, or per image.
+
+Lqip image size division factor can be adjusted with the `lqipDivFactor` configuration item in site/page configuration, or per image. It is based off the smallest image in the srcset.
+
+Dominant/single color gif image size division factor can be adjusted with the `gifDivFactor` configuration item in site/page configuration, or per image. It is based off the smallest image in the srcset.
+
+## Setting up Lazysizes.js
 
 ### Import inline via CDN
 

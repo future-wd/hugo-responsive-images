@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.12](/github.com/powerfulweb/hugo-image/compare/v1.0.11...v1.0.12) (2022-08-25)
+
+### [1.0.11](/github.com/powerfulweb/hugo-image/compare/v1.0.10...v1.0.11) (2022-08-23)
+
+
+### Bug Fixes
+
+* densities typo in shortcode params ([13cef56](/github.com/powerfulweb/hugo-image/commit/13cef56e3d1551bb13f9e5d5d36ae22a82bc800b))
+* fillratio bug fixed ([6a9f061](/github.com/powerfulweb/hugo-image/commit/6a9f061e073ffc10ea2476cd99efeaba37e54bb9))
+* only generate single image for orig format ([9482e4c](/github.com/powerfulweb/hugo-image/commit/9482e4c91713aba3e6e27023f51db6fc59906bc6))
+* option to suppress width warning ([1604ef6](/github.com/powerfulweb/hugo-image/commit/1604ef6c6c88d70287e7c140f2a7055ab4539121))
+* remove leading spaces from shortcode fill ratio array ([0822068](/github.com/powerfulweb/hugo-image/commit/0822068fc1f500121bc7f0aa1919f865ec5124a1))
+* remove leading spaces from widths array of string integers ([c53c600](/github.com/powerfulweb/hugo-image/commit/c53c6000d5972ed46af21f63d6cad233bbe3f8f2))
+* shortcode fillRatio param typo ([b348328](/github.com/powerfulweb/hugo-image/commit/b3483288c54aed082b1313289e124893080a6165))
+* title typo ([716e9a8](/github.com/powerfulweb/hugo-image/commit/716e9a8d105e411ee9958d1f0ebf9fb85b9280ff))
+* validate widths and fillRatio arrays/integers ([ee477ce](/github.com/powerfulweb/hugo-image/commit/ee477ceb27f513c551d5927d2e840776c4ae2044))
+* width validation ([13c4c0e](/github.com/powerfulweb/hugo-image/commit/13c4c0ed10974bfe6162d406d1b463aff4cf7a14))
+
 ### [1.0.10](/github.com/powerfulweb/hugo-image/compare/v1.0.9...v1.0.10) (2022-08-21)
 
 
