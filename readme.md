@@ -57,7 +57,7 @@ params:
                       # override by setting imageRenderHook: true/false in front matter
     # provider: netlify # currently only supports netlify image processing.
     # suppressWidthWarning: true # turn off image too narrow warning
-    # placeholder: lqip/dominant/file_name 
+    # placeholder: lqip/dominant/file_name  (see colours set up in assets/images/placeholder-colors) use filename without .gif
     lqipBlurAmount: 5 # apply gaussian blur amount of 5 to lqip
                       # may need to be increased at a page level for larger images
     lqipDivAmount: 5 # lqip is 5x smaller than the smallest image in srcset
