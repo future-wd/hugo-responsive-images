@@ -26,4 +26,4 @@ image:
   gifDivFactor: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
 
 
-  provider: netlify
+  # provider: netlify

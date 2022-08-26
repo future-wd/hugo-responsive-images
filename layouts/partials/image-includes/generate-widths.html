@@ -1,16 +1,16 @@
-{{ $picture := dict }}
+{{- $picture := false -}}
 {{- with site.Params.image.provider -}}
   {{- $providerOpts := (slice "netlify") }}
   {{- if in $providerOpts . -}}
-    {{ with partial "image-includes/external-api" $ }}
+    {{ with partial "image-includes/external-widths" $ }}
       {{ $picture = . }}
     {{ end }}
   {{ else }}
     {{- $msg := "Invalid configured image api of %v. Valid api's are %s"}}
-    {{- errorf $msg .  (delimit $apiOpts ", ") -}}
+    {{- errorf $msg .  (delimit $providerOpts ", ") -}}
   {{- end -}}
 {{ else }}
-  {{ with partial "image-includes/image-api" . }}
+  {{ with partial "image-includes/local-widths" . }}
     {{ $picture = . }}
   {{ end }}
 {{ end }}

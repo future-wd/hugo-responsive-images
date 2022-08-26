@@ -1,6 +1,5 @@
 {{- /* set variables */ -}}
 {{- $img := false }}
-
 {{- if eq .Type "global" -}}
   {{- /* global resource */ -}}
   {{- $img = resources.Get .src -}}
@@ -20,17 +19,17 @@
   {{- $widths = .widths -}}
   {{- $fillRatio = .fillRatio -}}
 {{- end -}}
-{{- /* generate image widths */ -}}
-{{- $widthVars := (dict
+{{- /* generate image widths, and then generate picture tag */ -}}
+{{- with partial "image-includes/generate-widths" (dict
   "partial" .
   "widths" $widths
   "fillRatio" $fillRatio
   "img" $img
   "options" $options
-  ) -}}
-{{- with partial "image-includes/generate-widths" $widthVars -}}
-  {{- /* generate picture tag */ -}}
-  {{- partial "image-includes/picture-tag.html" (dict "partial" $ "img" $img "picture" .) -}}
+  ) -}} 
+  {{- partial "image-includes/picture-tag" (dict 
+    "partial" $
+    "img" $img 
+    "picture" .) -}}
 {{- end -}}
-
 

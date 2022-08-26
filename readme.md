@@ -49,13 +49,12 @@ params:
     class: img-fluid # default image class if no class is specified
     figureClass: "figure img-fluid" # default figure class
     figcaptionClass: figure-caption # default figcaption class
-    figureImageClass: figure-img # default figure image class (appended to image class)
-    # depreciated lazysizes: true # enable integration of the lazysizes js library (`loading: lazysizes` needed for )
+    figureImageClass: "figure-img img-fluid" # default figure image class (appended to image class) ## USE .class inline
     loading: lazy/auto/lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js to handle image loading. Defaults to lazy. If you use default (`lazy`) or `lazysizes`, you will need to set above the fold images to `auto`.
     sizes: user/lazysizes # uses lazysizes to automatically generate the sizes property. User does not generate any sizes, you need to declare them. Defaults to user
     renderHook: false # set to false to disable included markdown image render hook
                       # override by setting imageRenderHook: true/false in front matter
-    provider: netlify # currently only supports netlify image processing. comment or delete to disable
+    # provider: netlify # currently only supports netlify image processing.
     # suppressWidthWarning: true # turn off image too narrow warning
     # placeholder: lqip/dominant/file_name 
     lqipBlurAmount: 5 # apply gaussian blur amount of 5 to lqip

@@ -19,13 +19,14 @@
   other providers to follow..
   /* -}}
 
-{{- /**********************************
-  **** loop over each image format ****
-  *************************************/ -}}
-{{- $picture := dict -}}
+
+
+
 {{- /***********************************
   **** loop over each width         ****
   **************************************/ -}}
+{{ $suppressWidthWarning := .partial.supressWidthWarning | default ($.partial.page.Param "image.suppressWidthWarning") }}
+{{- $picture := dict -}}
 {{ $srcset := slice }}
 {{ $src := "" }}
 {{- range $format := (slice "original") -}}
@@ -42,8 +43,8 @@
       {{- $imgResized = printf "%s?nfresize=smartcrop?w=%dh=%d" $.img.RelPermalink $width.width $fillHeight -}}
     {{- else -}}
       {{- /* do standard image resize */ -}}
-      {{- if gt $width.width $.img.Width -}}
-        {{- warnf "Source image %s (%dx%dpx) is not wide enough to resize to %dpx" $.img.RelPermalink $.img.Width $.img.Height $width.width -}}
+      {{- if and (gt $width.width $.img.Width) (ne $suppressWidthWarning true) -}}
+        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.img.RelPermalink $.img.Width $.img.Height $.partial.page.RelPermalink $width.width }}
       {{- end -}}
       {{- /* create resize path */ -}}
       {{- $imgResized = printf "%s?nfresize=fit?w=%d" $.img.RelPermalink $width.width -}}

@@ -4,6 +4,7 @@
 {{ $picture := dict }}
 {{ $options := .options }}
 {{ $formats := .partial.formats | default (.partial.page.Param "image.formats") }}
+{{ $suppressWidthWarning := .partial.supressWidthWarning | default ($.partial.page.Param "image.suppressWidthWarning") }}
 {{ range $format := $formats }}
   {{/* add format to options array (for format transformation) if not original */}}
   {{ if ne $format "original" }}
@@ -31,7 +32,7 @@
       {{- $imgResized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
     {{- else -}}
       {{- /* do standard image resize */ -}}
-      {{- if and (gt $width.width $.img.Width) (ne ($.partial.page.Param "image.suppressWidthWarning") true) -}}
+      {{- if and (gt $width.width $.img.Width) (ne $suppressWidthWarning true) -}}
         {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.img.RelPermalink $.img.Width $.img.Height $.partial.page.RelPermalink $width.width }}
       {{- end -}}
       {{- /* resize image */ -}}
