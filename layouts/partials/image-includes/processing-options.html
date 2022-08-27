@@ -1,8 +1,0 @@
-
-{{/* set error message template */}}
-{{ define "partials/inline/options-error" }}
-  {{ errorf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value .ctx.img.RelPermalink .ctx.partial.page.RelPermalink .options }}
-{{ end }}
-{{ define "partials/inline/option-error" }}
-  {{ errorf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value .ctx.img.RelPermalink .ctx.partial.page.RelPermalink .option }}
-{{ end }}
