@@ -143,7 +143,7 @@
 {{- $loading := .loading | default (.page.Param "image.loading") -}}
 {{- with  $loading -}}
   {{- $loadingOpts := false -}}
-  {{ if $.param.provider }}
+  {{ if $.params.provider }}
     {{- /* disable lazy loading for external image processing */ -}}
     {{- $loadingOpts = (slice "auto" "lazy") -}}
   {{- else -}}
@@ -332,7 +332,7 @@
 
 
 {{ define "partials/inline/options-error" }}
-  {{ errorf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value $.param.img.RelPermalink .page.RelPermalink .options }}
+  {{ errorf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value $.params.img.RelPermalink .page.RelPermalink .options }}
 {{ end }}
 
 

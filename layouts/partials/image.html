@@ -1,22 +1,17 @@
-{{- /* set variables */ -}}
-
-
 {{- /* santize inputs, merge params and process */ -}}
 {{- $params := slice }}
 {{- with partial "image-includes/params.html" . }}
   {{- $params = . }}
 {{- end -}}
-{{ $params }}
-
-
-{{- /* generate image widths, and then generate picture tag  -}}
+{{- /* generate image widths*/ -}}
+{{- $picture := slice -}}
 {{- with partial "image-includes/generate-widths" (dict
-  "partial" .
   "page" .page
   "params" $params
   ) -}} 
-  {{- partial "image-includes/picture-tag" (dict 
+  {{ $picture = .}}
+{{- end -}}
+{{- /* generate picture tag */ -}}
+{{- partial "image-includes/picture-tag" (dict 
     "params" $params
-    "picture" .) -}}
-{{- end */ -}}
-
+    "picture" $picture) -}}

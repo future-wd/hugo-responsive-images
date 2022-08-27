@@ -25,18 +25,18 @@
     {{- if $.params.fillRatio -}}
       {{- /* resulting fillHeight must be converted to integer for use with image resize */ -}}
       {{- $fillHeight := mul ($width.width | float) $.fillRatio | int -}}
-      {{- if and (or (gt $width.width $.param.img.Width) (gt $fillHeight $.param.img.Height)) (ne $.param.suppressWidthWarning true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.param.img.RelPermalink $.param.img.Width $.param.img.Height $.page.RelPermalink $width.width $fillHeight  -}}
+      {{- if and (or (gt $width.width $.params.img.Width) (gt $fillHeight $.params.img.Height)) (ne $.params.suppressWidthWarning true) -}}
+        {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.params.img.RelPermalink $.params.img.Width $.params.img.Height $.page.RelPermalink $width.width $fillHeight  -}}
       {{- end -}}
       {{- /* resize image */ -}}
-      {{- $imgResized = $.param.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
+      {{- $imgResized = $.params.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
     {{- else -}}
       {{- /* do standard image resize */ -}}
-      {{- if and (gt $width.width $.param.img.Width) (ne $.param.suppressWidthWarning true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.param.img.RelPermalink $.param.img.Width $.param.img.Height $.page.RelPermalink $width.width }}
+      {{- if and (gt $width.width $.params.img.Width) (ne $.params.suppressWidthWarning true) -}}
+        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.params.img.RelPermalink $.params.img.Width $.params.img.Height $.page.RelPermalink $width.width }}
       {{- end -}}
       {{- /* resize image */ -}}
-      {{- $imgResized = $.param.img.Resize (printf "%dx %s" $width.width $optionsString) -}}
+      {{- $imgResized = $.params.img.Resize (printf "%dx %s" $width.width $optionsString) -}}
     {{- end -}}
     {{- /* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */ -}}
     {{- $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) -}}
@@ -53,7 +53,7 @@
         {{ end }}
       {{ end }}
       {{/* add smallest image to src for screen density srcset */}}
-      {{ if $.param.width }}
+      {{ if $.params.width }}
         {{ if eq $index 0}}
           {{ $src = $imgResized }}
         {{ end }}

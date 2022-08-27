@@ -1,56 +1,49 @@
-{{- /***************************
-  **** generate picture tag ****
-  ******************************/ -}}
 <picture>
 {{- range $format, $values := .picture }}
   <source
-  {{ if eq $.param.loading "lazysizes" }}
+  {{ if eq $.params.loading "lazysizes" }}
     data-srcset="{{ .srcset }}"
   {{- else -}}
     srcset="{{ .srcset }}"
   {{- end -}}
-  {{- if eq $.param.format "original" }}
-    type="{{ $.param.img.MediaType }}"
+  {{- if eq $.params.format "original" }}
+    type="{{ $.params.img.MediaType }}"
   {{- else }}
-    type="{{ printf "image/%s" $.param.format }}"
+    type="{{ printf "image/%s" $.params.format }}"
   {{- end }}
   />
 {{- end }}
 {{- with .picture.original.src }}
   <img
-  {{- if eq $.param.loading (or "auto" "lazy") }}
-    loading="{{ $.param.loading }}"
+  {{- if eq $.params.loading (or "auto" "lazy") }}
+    loading="{{ $.params.loading }}"
   {{- end -}}
-  {{- if eq $.param.loading "lazysizes" }}
+  {{- if eq $.params.loading "lazysizes" }}
     data-src="{{ .RelPermalink }}"
     {{- with $.picture.original.placeholder }}
     src="{{ . | safeURL }}"
     {{- end }}
-  {{- else if $.param.provider }}
+  {{- else if $.params.provider }}
     src="{{ . }}"
-    height="{{ $.param.img.Height }}"
-    width="{{ $.param.img.Width }}"
+    height="{{ $.params.img.Height }}"
+    width="{{ $.params.img.Width }}"
   {{- else }}
     src="{{ .RelPermalink }}"
     height="{{ .Height }}"
     width="{{ .Width }}"
   {{- end }}
-  {{- with $.param.class }}
+  {{- with $.params.class }}
     class="{{ . }}"
   {{- end -}}
-  {{- with $.param.sizes }}
+  {{- with $.params.sizes }}
     {{ . | safeHTMLAttr }}
   {{- end }}
-  {{- with $.param.alt }}
+  {{- with $.params.alt }}
     alt="{{ . }}"
   {{- end }}
-  {{- with $.param.title }}
+  {{- with $.params.title }}
     title="{{ . }}"
   {{- end }}
   />
 {{ end  -}}
 </picture>
-
-{{ .picture}}
-
-HELLP
