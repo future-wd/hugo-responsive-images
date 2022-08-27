@@ -1,4 +1,4 @@
-# Hugo responsive images [![Awesome](https://awesome.re/badge-flat.svg)](https://awesome.re) [<img src="hugo-logo-wide.svg" align="right" width="250">](https://gohugo.io/)
+# Hugo responsive images [![Awesome](https://awesome.re/badge-flat.svg)](https://awesome.re) [<img src="https://d33wubrfki0l68.cloudfront.net/c38c7334cc3f23585738e40334284fddcaf03d5e/2e17c/images/hugo-logo-wide.svg" align="right" width="250">](https://gohugo.io/)
 
 Hugo responsive images makes generating responsive images for either figures or standard picture elements a breeze.
 
