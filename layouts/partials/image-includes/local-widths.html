@@ -2,10 +2,10 @@
   **** loop over each image format ****
   *************************************/ -}}
 {{ $picture := dict }}
-{{ $options := .options }}
-{{ $formats := .partial.formats | default (.partial.page.Param "image.formats") }}
-{{ $suppressWidthWarning := .partial.supressWidthWarning | default ($.partial.page.Param "image.suppressWidthWarning") }}
-{{ range $format := $formats }}
+{{ $options := .params.options }}
+
+
+{{ range $format := .params.formats }}
   {{/* add format to options array (for format transformation) if not original */}}
   {{ if ne $format "original" }}
     {{ $options = $options | append $format }}
@@ -19,24 +19,24 @@
   {{ $srcset := slice }}
   {{ $src := false }}
   {{ $placeholder := false }}
-  {{- range $index, $width := $.widths -}}
+  {{- range $index, $width := .params.widths -}}
     {{- $imgResized := "" -}}
     {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
-    {{- if $.fillRatio -}}
+    {{- if $.params.fillRatio -}}
       {{- /* resulting fillHeight must be converted to integer for use with image resize */ -}}
       {{- $fillHeight := mul ($width.width | float) $.fillRatio | int -}}
-      {{- if and (or (gt $width.width $.img.Width) (gt $fillHeight $.img.Height)) (ne ($.partial.page.Param "image.suppressWidthWarning") true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.img.RelPermalink $.img.Width $.img.Height $.partial.page.RelPermalink $width.width $fillHeight  -}}
+      {{- if and (or (gt $width.width $.params.img.Width) (gt $fillHeight $.params.img.Height)) (ne $.params.suppressWidthWarning true) -}}
+        {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.params.img.RelPermalink $.params.img.Width $.params.img.Height $.page.RelPermalink $width.width $fillHeight  -}}
       {{- end -}}
       {{- /* resize image */ -}}
-      {{- $imgResized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
+      {{- $imgResized = $.params.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
     {{- else -}}
       {{- /* do standard image resize */ -}}
-      {{- if and (gt $width.width $.img.Width) (ne $suppressWidthWarning true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.img.RelPermalink $.img.Width $.img.Height $.partial.page.RelPermalink $width.width }}
+      {{- if and (gt $width.width $.params.img.Width) (ne $.params.suppressWidthWarning true) -}}
+        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.params.img.RelPermalink $.params.img.Width $.params.img.Height $.page.RelPermalink $width.width }}
       {{- end -}}
       {{- /* resize image */ -}}
-      {{- $imgResized = $.img.Resize (printf "%dx %s" $width.width $optionsString) -}}
+      {{- $imgResized = $.params.img.Resize (printf "%dx %s" $width.width $optionsString) -}}
     {{- end -}}
     {{- /* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */ -}}
     {{- $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) -}}
@@ -46,17 +46,18 @@
         {{/* smallest image width for placeholder generation */}}
         {{ with partial "image-includes/generate-placeholder" (dict 
         "src" $imgResized
-        "img" $.img
-        "partial" $.partial ) }}
+        "param" $.param
+        "page" $.page
+        ) }}
           {{ $placeholder = . }}
         {{ end }}
       {{ end }}
       {{/* add smallest image to src for screen density srcset */}}
-      {{ if $.partial.width }}
+      {{ if $.params.width }}
         {{ if eq $index 0}}
           {{ $src = $imgResized }}
         {{ end }}
-      {{ else if eq (len $.widths) (add $index 1) }}
+      {{ else if eq (len $.params.widths) (add $index 1) }}
         {{/* else largest width (last iteration), add image to src variable for use as fallback */}}
         {{ $src = $imgResized }}
       {{ end }}

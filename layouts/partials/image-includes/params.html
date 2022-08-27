@@ -1,0 +1,352 @@
+{{ $params :=  . }}
+
+{{- $img := false }}
+{{- if eq .type "global" -}}
+  {{- /* global resource */ -}}
+  {{- $img = resources.Get .src -}}
+{{- else -}}
+  {{- /* page resource */ -}}
+  {{- $img = .page.Resources.GetMatch .src -}}
+{{- end -}}
+{{- if not $img }}
+  {{- errorf "No image resource found at %s%s" .page.RelPermalink .src -}}
+{{- end -}}
+{{ $params = merge $params (dict "img" $img) }}
+
+{{/* ***************************
+  ** set params               **
+  ******************************/}}
+{{ $fillRatio := .fillRatio | default (.page.Param "image.fillRatio") }}
+{{- with $fillRatio -}}
+  {{- if reflect.IsSlice . -}}
+    {{- range . -}}
+      {{- if ne (printf "%T" .) "int" }}
+        {{ partial "inline/options-error" (dict 
+          "var" "fillRatio array item"
+          "value" .
+          "options" "2x integers in an array/slice"
+          "ctx" $
+        ) }}
+      {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{ partial "inline/options-error" (dict 
+      "var" "fillRatio"
+      "value" .
+      "options" "2x integers in an array/slice"
+      "ctx" $
+    ) }}
+  {{- end -}}
+  {{- /* height to width ratio of .fillRatio */ -}}
+  {{- /* numbers must be converted to float before division or they may create an answer of 0 */ -}}
+  {{- $fillRatio = div (index . 1 | float) (index . 0 | float) -}}
+{{- end -}}
+{{ $params = merge $params (dict "fillRatio" $fillRatio) }}
+
+
+
+
+
+{{- /*********************************************************************
+  **** if .width present for pixel density srcset                        *
+  **** produce array [{desc: "1x", width: 300},{desc: "2x", width: 600}] *
+  ************************************************************************/ -}}
+
+{{ $widths := .widths | default (.page.Param "image.widths") }}
+{{ $width := .width | default (.page.Param "image.width") }}
+{{- if $width -}}
+  {{- if ne (printf "%T" .width) "int" }}
+    {{ partial "inline/options-error" (dict 
+      "var" "width"
+      "value" .
+      "options" "single integers"
+      "ctx" $
+    ) }}
+  {{- end -}}
+  {{- $densities := .densities | default (.page.Param "image.densities") -}}
+  {{- $densities = sort $densities -}}
+  {{ $widths = slice }}
+  {{- range $density := $densities }}
+    {{- $widths = $widths | append (slice
+      (dict
+      "desc" (printf "%dx" $density)
+      "width" (mul $.width $density)
+      )) -}}
+  {{- end -}}
+{{- else if $widths -}}
+{{/* else produce responsive srcset
+  * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
+*/}}
+  {{- with $widths -}}
+    {{- if reflect.IsSlice . -}}
+      {{- range . -}}
+        {{- if ne (printf "%T" .) "int" }}
+          {{ partial "inline/options-error" (dict 
+            "var" "widths array item"
+            "value" .
+            "options" "2x integers in an array/slice"
+            "ctx" $
+          ) }}
+        {{- end -}}
+      {{- end -}}
+    {{- else -}}
+      {{ partial "inline/options-error" (dict 
+        "var" "width array"
+        "value" .
+        "options" "2x integers in an array/slice"
+        "ctx" $
+      ) }}
+    {{- end -}}
+  {{- end -}}
+  {{- $widths = sort $widths -}}
+  {{ $widthsArray := slice }}
+  {{- range $width := $widths }}
+    {{- $widthsArray = $widthsArray | append (slice
+      (dict
+      "desc" (printf "%dw" $width)
+      "width" $width
+      )) -}}
+  {{- end -}}
+  {{ $widths = $widthsArray }}
+{{- end -}}
+{{ $params = merge $params (dict 
+  "width" $width
+  "widths" $widths) }}
+
+  
+{{ $suppressWidthWarning := .suppressWidthWarning | default (.page.Param "image.suppressWidthWarning") }}
+{{ $params = merge $params (dict "suppressWidthWarning" $suppressWidthWarning) }}
+
+
+{{ $formats := .formats | default (.page.Param "image.formats") }}
+{{ with $formats }}
+  {{- $formatOpts := (slice "original" "bmp" "gif" "jpeg" "jpg" "png" "tif" "tiff" "webp") }}
+  {{- if reflect.IsSlice . -}}
+    {{- range . -}}
+      {{- if not (in $formatOpts .) -}}
+        {{ partial "inline/options-error" (dict 
+          "var" "formats array item"
+          "value" .
+          "options" (delimit $formatOpts ", " " and ")
+          "ctx" $
+        ) }}
+        {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{ partial "inline/options-error" (dict 
+        "var" "formats array"
+        "value" .
+        "options" "array of image formats"
+        "ctx" $
+      ) }}
+  {{ end }}
+{{ end }}
+{{ $params = merge $params (dict "formats" $formats) }}
+
+{{ $provider := false }}
+{{ $providerParam := .provider | default (.page.Param "image.provider") }}
+{{ with $providerParam }}
+  {{- $providerOpts := (slice "netlify") }}
+  {{- if in $providerOpts . -}}
+      {{ $provider = $providerParam }}
+  {{ else }}
+    {{ partial "inline/options-error" (dict 
+      "var" "provider"
+      "value" .
+      "options" (delimit $providerOpts ", " " and ")
+      "ctx" $
+    ) }}
+  {{ end }}
+{{ end }}
+{{ $params = merge $params (dict "provider" $provider) }}
+
+
+
+{{- $loading := .loading | default (.page.Param "image.loading") -}}
+{{- with  $loading -}}
+  {{- $loadingOpts := false -}}
+  {{ if $.params.provider }}
+    {{- /* disable lazy loading for external image processing */ -}}
+    {{- $loadingOpts = (slice "auto" "lazy") -}}
+  {{- else -}}
+    {{- $loadingOpts = (slice "auto" "lazy" "lazysizes") -}}
+  {{- end -}}
+  {{- if not (in $loadingOpts .) -}}
+    {{ partial "inline/options-error" (dict 
+      "var" "loading"
+      "value" .
+      "options" (delimit $loadingOpts ", " " and ")
+      "ctx" $
+    ) }}
+  {{- end -}}
+{{- end -}}
+{{ $params = merge $params (dict "loading" $loading) }}
+
+
+
+{{- $sizes := false -}}
+{{- $sizesParam := .sizes | default (.page.Param "image.sizes") -}}
+{{- with $sizesParam -}}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "inline/options-error" (dict 
+      "var" "sizes"
+      "value" .
+      "options" "strings"
+      "ctx" $
+    ) }}
+  {{ end }}
+{{ end }}
+{{ if $sizesParam }}
+  {{- if eq $sizesParam "lazysizes" -}}
+    {{- $sizes = `data-sizes="auto"` -}}
+  {{- else -}}
+    {{- $sizes = printf `sizes="%s"` $sizesParam -}}
+  {{- end -}}
+{{- else if (not $width) -}}
+  {{- $sizes = `sizes="100vw"` -}}
+{{- end -}}
+{{ $params = merge $params (dict "sizes" $sizes) }}
+
+
+{{/* title defaults to figuretitle if set */}}
+{{ $title := .title | default .figureTitle }}
+{{ $params = merge $params (dict "title" $title) }}
+
+
+{{ $figureTitle := .figureTitle }}
+{{ $params = merge $params (dict "figureTitle" $figureTitle) }}
+
+
+{{- $figure := .figure | default (.page.Param "image.figure") -}}
+{{ $params = merge $params (dict "figure" $figure) }}
+
+
+
+{{- $class := false -}}
+{{- if .params.figure }}
+  {{- $class := .partial.class | default (.partial.page.Param "image.figureImageClass") }}
+{{ else }}
+  {{- $class = .class | default (.page.Param "image.class") -}}
+{{- end -}}
+{{- if or 
+  (eq $sizes "lazysizes")
+  (eq $loading "lazysizes") -}} 
+  {{- $class = print $class " lazyload" -}}
+{{ end }}
+{{ $params = merge $params (dict "class" $class) }}
+
+
+
+{{/* alt defaults to caption. If not caption or alt set, error. If suppressed, defaults to "image of [title]" */}}
+{{- $alt := (.caption | markdownify | plainify) | default .alt -}}
+{{- if not $alt -}}
+  {{- erroridf "alt-error" "Alt text has not been provided for image %s on page %s" .img.RelPermalink .partial.page.RelPermalink -}}
+  {{- $alt = printf "Image of %s" $title -}}
+{{- end -}}
+{{ $params = merge $params (dict "alt" $alt) }}
+
+
+
+
+
+
+
+
+{{/* ******************************
+  ** placeholder variables       **
+  *********************************/}}
+{{ $placeholderType := .placeholder | default (.page.Param "image.placeholder") }}
+{{ $lqipDivFactor := .lqipDivFactor | default (.page.Param "image.lqipDivFactor") }}
+{{ $lqipBlurAmount := .lqipBlurAmount | default (.page.Param "image.lqipBlurAmount") }}
+{{ $gifDivFactor := .gifDivFactor | default (.page.Param "image.gifDivFactor") }}
+{{ $params = merge $params (dict
+  "placeholderType" $placeholderType
+  "lqipDivFactor" $lqipDivFactor
+  "lqipBlurAmount" $lqipBlurAmount
+  "gifDivFactor" $gifDivFactor) }}
+
+
+{{/* ******************************
+  ** set options                 **
+  *********************************/}}
+{{/* set image processing options from image, page or site config */}}
+{{ $options := slice }}
+{{ $quality := .quality | default (.page.Param "image.quality") }}
+{{ with $quality }}
+  {{ if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 100)) }}
+    {{ $options = $options | append (printf "q%d" .) }}
+  {{ else }}
+    {{ partial "inline/options-error" (dict 
+      "var" "quality"
+      "value" .
+      "options" "integers between 1-100 inclusive"
+      "ctx" $
+    ) }}
+  {{ end }}
+{{ end }}
+{{ $rotate := .rotate | default (.page.Param "image.rotate") }}
+{{ with $rotate }}
+  {{ if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 360)) }}
+    {{ $options = $options | append (printf "r%d" .) -}}
+  {{ else }}
+    {{ partial "inline/options-error" (dict 
+      "var" "rotate"
+      "value" .
+      "options" "integers between 1-360 inclusive"
+      "ctx" $
+    ) }}
+  {{ end }}
+{{ end }}
+{{ $resampleFilter := .resampleFilter | default (.page.Param "image.resampleFilter") }}
+{{ with $resampleFilter }}
+  {{ $filterOpts := (slice "Box" "NearestNeighbor" "Linear" "Gaussian") }}
+  {{ if in $filterOpts . }}
+    {{ $options = $options | append . }}
+  {{ else }}
+    {{ partial "inline/options-error" (dict 
+      "var" "resampleFilter"
+      "value" .
+      "options" (delimit $filterOpts ", ")
+      "ctx" $
+    ) }}
+  {{ end }}
+{{ end }}
+{{ $hint := .hint | default (.page.Param "image.hint") }}
+{{ with $hint }}
+  {{ $hintOpts := (slice "picture" "photo" "drawing" "icon" "text") }}
+  {{ if in $hintOpts . -}}
+    {{ $options = $options | append . }}
+  {{ else -}}
+    {{ partial "inline/options-error" (dict 
+      "var" "hint"
+      "value" .
+      "options" (delimit $hintOpts ", ")
+      "ctx" $
+    ) }}
+  {{ end }}
+{{ end }}
+{{ $anchor := .anchor | default (.page.Param "image.anchor") }}
+{{with $anchor }}
+  {{ $anchorOpts := (slice "Smart" "Center" "TopLeft" "Top" "TopRight" "Left" "Right" "BottomLeft" "Bottom" "BottomRight") }}
+  {{ if in $anchorOpts . }}
+    {{ $options = $options | append  . }}
+  {{ else }}
+    {{ partial "inline/options-error" (dict 
+      "var" "anchor"
+      "value" .
+      "options" (delimit $anchorOpts ", ")
+      "ctx" $
+    ) }}
+  {{ end }}
+{{ end }}
+{{ $params = merge $params (dict "options" $options) }}
+
+{{/* ******************************
+  ** error message               **
+  *********************************/}}
+{{ define "partials/inline/options-error" }}
+  {{ errorf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value .params.img.RelPermalink .page.RelPermalink .options }}
+{{ end }}
+
+
+{{ return $params }}

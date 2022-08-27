@@ -1,100 +1,49 @@
-{{- /* ***********************
-  **** picture tag variables *
-  ****************************/ -}}
-{{ $provider := .partial.provider | default (.partial.page.Param "image.provider") }}
-{{- $loading := .partial.loading | default (.partial.page.Param "image.loading") -}}
-{{- with $loading -}}
-  {{- $loadingOpts := false -}}
-  {{ if $provider }}
-    {{- /* disable lazy loading for external image processing */ -}}
-    {{- $loadingOpts = (slice "auto" "lazy") -}}
-  {{- else -}}
-    {{- $loadingOpts = (slice "auto" "lazy" "lazysizes") -}}
-  {{- end -}}
-  {{- if not (in $loadingOpts .) -}}
-    {{- errorf `Invalid loading value of "%v" for image %s on page %s. Valid options are %s` . $.img.RelPermalink $.partial.page.RelPermalink (delimit $loadingOpts ", " " or ") -}}
-  {{- end -}}
-{{- end -}}
-{{- $title := .partial.page.Title -}}
-{{- if .partial.title -}}
-  {{- $title = .partial.title -}}
-{{- else if .partial.figureTitle -}}
-  {{- $title = .partial.figureTitle -}}
-{{- end -}}
-{{- $class := .partial.class | default (.partial.page.Param "image.class") -}}
-{{- /* append lazyload class (to enable) if loading or sizes = lazysizes */ -}}
-{{- if or 
-  (or (eq .partial.sizes "lazysizes") (eq (.partial.page.Param "image.sizes") "lazysizes"))
-  (eq $loading "lazysizes") -}} 
-  {{- $class = print $class " lazyload" -}}
-{{- end -}}
-{{- if .partial.figure }}
-  {{- $figureImageClass := .partial.class | default (.partial.page.Param "image.figureImageClass") }}
-  {{- $class = $figureImageClass -}}
-{{- end -}}
-{{/* alt defaults to caption. If not caption or alt set, error. If suppressed, defaults to "image of [title]" */}}
-{{- $alt := false -}}
-{{- $alt = (.partial.caption | markdownify | plainify) | default .partial.alt -}}
-{{- if not $alt -}}
-  {{- erroridf "alt-error" "Alt text has not been provided for image %s on page %s" .img.RelPermalink .partial.page.RelPermalink -}}
-  {{- $alt = printf "Image of %s" $title -}}
-{{- end -}}
-{{- $sizesProp := false -}}
-{{- $sizes := .partial.sizes | default (.partial.page.Param "image.sizes") -}}
-{{- if $sizes -}}
-  {{- if eq $sizes "lazysizes" -}}
-    {{- $sizesProp = `data-sizes="auto"` -}}
-  {{- else -}}
-    {{- $sizes = printf `sizes="%s"` $sizes -}}
-  {{- end -}}
-{{- else if (not .partial.width) -}}
-  {{- $sizes = `sizes="100vw"` -}}
-{{- end -}}
-{{- /***************************
-  **** generate picture tag ****
-  ******************************/ -}}
 <picture>
 {{- range $format, $values := .picture }}
   <source
-  {{ if eq $loading "lazysizes" }}
+  {{ if eq $.params.loading "lazysizes" }}
     data-srcset="{{ .srcset }}"
   {{- else -}}
     srcset="{{ .srcset }}"
   {{- end -}}
-  {{- if eq $format "original" }}
-    type="{{ $.img.MediaType }}"
+  {{- if eq $.params.format "original" }}
+    type="{{ $.params.img.MediaType }}"
   {{- else }}
-    type="{{ printf "image/%s" $format }}"
+    type="{{ printf "image/%s" $.params.format }}"
   {{- end }}
   />
 {{- end }}
 {{- with .picture.original.src }}
   <img
-  {{- if eq $loading (or "auto" "lazy") }}
-    loading="{{ $loading }}"
+  {{- if eq $.params.loading (or "auto" "lazy") }}
+    loading="{{ $.params.loading }}"
   {{- end -}}
-  {{- if eq $loading "lazysizes" }}
+  {{- if eq $.params.loading "lazysizes" }}
     data-src="{{ .RelPermalink }}"
     {{- with $.picture.original.placeholder }}
     src="{{ . | safeURL }}"
     {{- end }}
-  {{- else if $provider }}
+  {{- else if $.params.provider }}
     src="{{ . }}"
-    height="{{ $.img.Height }}"
-    width="{{ $.img.Width }}"
+    height="{{ $.params.img.Height }}"
+    width="{{ $.params.img.Width }}"
   {{- else }}
     src="{{ .RelPermalink }}"
     height="{{ .Height }}"
     width="{{ .Width }}"
   {{- end }}
-  {{- with $class }}
+  {{- with $.params.class }}
     class="{{ . }}"
   {{- end -}}
-  {{- with $sizesProp }}
+  {{- with $.params.sizes }}
     {{ . | safeHTMLAttr }}
   {{- end }}
-    alt="{{ $alt }}"
-    title="{{ $title }}"
+  {{- with $.params.alt }}
+    alt="{{ . }}"
+  {{- end }}
+  {{- with $.params.title }}
+    title="{{ . }}"
+  {{- end }}
   />
 {{ end  -}}
 </picture>
