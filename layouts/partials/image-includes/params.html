@@ -113,8 +113,34 @@
   "width" $width
   "widths" $widths) }}
 
+  
+{{ $suppressWidthWarning := .suppressWidthWarning | default (.page.Param "image.suppressWidthWarning") }}
+{{ $params = merge $params (dict "suppressWidthWarning" $suppressWidthWarning) }}
+
 
 {{ $formats := .formats | default (.page.Param "image.formats") }}
+{{ with $formats }}
+  {{- $formatOpts := (slice "original" "bmp" "gif" "jpeg" "jpg" "png" "tif" "tiff" "webp") }}
+  {{- if reflect.IsSlice . -}}
+    {{- range . -}}
+      {{- if not (in $formatOpts .) -}}
+        {{ partial "inline/options-error" (dict 
+          "var" "formats array item"
+          "value" .
+          "options" (delimit $formatOpts ", " " and ")
+          "ctx" $
+        ) }}
+        {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{ partial "inline/options-error" (dict 
+        "var" "formats array"
+        "value" .
+        "options" "array of image formats"
+        "ctx" $
+      ) }}
+  {{ end }}
+{{ end }}
 {{ $params = merge $params (dict "formats" $formats) }}
 
 {{ $provider := false }}
@@ -135,10 +161,6 @@
 {{ $params = merge $params (dict "provider" $provider) }}
 
 
-
-
-{{ $suppressWidthWarning := .suppressWidthWarning | default (.page.Param "image.suppressWidthWarning") }}
-{{ $params = merge $params (dict "suppressWidthWarning" $suppressWidthWarning) }}
 
 {{- $loading := .loading | default (.page.Param "image.loading") -}}
 {{- with  $loading -}}
@@ -162,18 +184,19 @@
 
 
 
-{{ $title := .title | default .figureTitle }}
-{{ $params = merge $params (dict "title" $title) }}
-
-{{ $figureTitle := .figureTitle }}
-{{ $params = merge $params (dict "figureTitle" $figureTitle) }}
-
-
-
-
 {{- $sizes := false -}}
 {{- $sizesParam := .sizes | default (.page.Param "image.sizes") -}}
-{{- if $sizesParam -}}
+{{- with $sizesParam -}}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "inline/options-error" (dict 
+      "var" "sizes"
+      "value" .
+      "options" "strings"
+      "ctx" $
+    ) }}
+  {{ end }}
+{{ end }}
+{{ if $sizesParam }}
   {{- if eq $sizesParam "lazysizes" -}}
     {{- $sizes = `data-sizes="auto"` -}}
   {{- else -}}
@@ -184,6 +207,14 @@
 {{- end -}}
 {{ $params = merge $params (dict "sizes" $sizes) }}
 
+
+{{/* title defaults to figuretitle if set */}}
+{{ $title := .title | default .figureTitle }}
+{{ $params = merge $params (dict "title" $title) }}
+
+
+{{ $figureTitle := .figureTitle }}
+{{ $params = merge $params (dict "figureTitle" $figureTitle) }}
 
 
 {{- $figure := .figure | default (.page.Param "image.figure") -}}
@@ -220,7 +251,10 @@
 
 
 
-{{/* placeholder variables */}}
+
+{{/* ******************************
+  ** placeholder variables       **
+  *********************************/}}
 {{ $placeholderType := .placeholder | default (.page.Param "image.placeholder") }}
 {{ $lqipDivFactor := .lqipDivFactor | default (.page.Param "image.lqipDivFactor") }}
 {{ $lqipBlurAmount := .lqipBlurAmount | default (.page.Param "image.lqipBlurAmount") }}
@@ -229,16 +263,12 @@
   "placeholderType" $placeholderType
   "lqipDivFactor" $lqipDivFactor
   "lqipBlurAmount" $lqipBlurAmount
-  "gifDivFactor" $gifDivFactor)}}
-
-
+  "gifDivFactor" $gifDivFactor) }}
 
 
 {{/* ******************************
-  ** set options, variables are  **
-  ** no longer accessible        **
+  ** set options                 **
   *********************************/}}
-
 {{/* set image processing options from image, page or site config */}}
 {{ $options := slice }}
 {{ $quality := .quality | default (.page.Param "image.quality") }}
@@ -311,28 +341,11 @@
 {{ end }}
 {{ $params = merge $params (dict "options" $options) }}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+{{/* ******************************
+  ** error message               **
+  *********************************/}}
 {{ define "partials/inline/options-error" }}
-  {{ errorf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value $.params.img.RelPermalink .page.RelPermalink .options }}
+  {{ errorf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value .params.img.RelPermalink .page.RelPermalink .options }}
 {{ end }}
 
 
