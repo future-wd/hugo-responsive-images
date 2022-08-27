@@ -1,35 +1,22 @@
 {{- /* set variables */ -}}
-{{- $img := false }}
-{{- if eq .Type "global" -}}
-  {{- /* global resource */ -}}
-  {{- $img = resources.Get .src -}}
-{{- else -}}
-  {{- /* page resource */ -}}
-  {{- $img = .page.Resources.GetMatch .src -}}
+
+
+{{- /* santize inputs, merge params and process */ -}}
+{{- $params := slice }}
+{{- with partial "image-includes/params.html" . }}
+  {{- $params = . }}
 {{- end -}}
-{{- if not $img }}
-  {{- errorf "No image resource found at %s%s" .page.RelPermalink .src -}}
-{{- end -}}
-{{- /* processing options */ -}}
-{{- $widths := slice -}}
-{{- $fillRatio := false -}}
-{{- $options := slice }}
-{{ with partial "image-includes/processing-options" (dict "partial" . "img" $img) -}}
-  {{- $options = .options -}}
-  {{- $widths = .widths -}}
-  {{- $fillRatio = .fillRatio -}}
-{{- end -}}
-{{- /* generate image widths, and then generate picture tag */ -}}
+{{ $params }}
+
+
+{{- /* generate image widths, and then generate picture tag  -}}
 {{- with partial "image-includes/generate-widths" (dict
   "partial" .
-  "widths" $widths
-  "fillRatio" $fillRatio
-  "img" $img
-  "options" $options
+  "page" .page
+  "params" $params
   ) -}} 
   {{- partial "image-includes/picture-tag" (dict 
-    "partial" $
-    "img" $img 
+    "params" $params
     "picture" .) -}}
-{{- end -}}
+{{- end */ -}}
 
