@@ -19,7 +19,7 @@
   {{ $srcset := slice }}
   {{ $src := false }}
   {{ $placeholder := false }}
-  {{- range $index, $width := .params.widths -}}
+  {{- range $index, $width := $.params.widths -}}
     {{- $imgResized := "" -}}
     {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
     {{- if $.params.fillRatio -}}
@@ -48,7 +48,7 @@
         "src" $imgResized
         "param" $.param
         "page" $.page
-        ) }}
+        ) }}4
           {{ $placeholder = . }}
         {{ end }}
       {{ end }}
