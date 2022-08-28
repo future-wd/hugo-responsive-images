@@ -24,8 +24,8 @@
     {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
     {{- if $.params.fillRatio -}}
       {{- /* resulting fillHeight must be converted to integer for use with image resize */ -}}
-      {{- $fillHeight := mul ($width.width | float) $.fillRatio | int -}}
-      {{- if and (or (gt $width.width $.params.img.Width) (gt $fillHeight $.params.img.Height)) (ne $.params.suppressWidthWarning true) -}}
+      {{- $fillHeight := mul ($width.width | float) $.params.fillRatio | int -}}
+      {{- if and (or (gt $width.width $.params.img.Width) (gt $.params.fillHeight $.params.img.Height)) (ne $.params.suppressWidthWarning true) -}}
         {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.params.img.RelPermalink $.params.img.Width $.params.img.Height $.page.RelPermalink $width.width $fillHeight  -}}
       {{- end -}}
       {{- /* resize image */ -}}
