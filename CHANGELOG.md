@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](/github.com/powerfulweb/hugo-image/compare/v1.1.1...v1.1.2) (2022-08-28)
+
+
+### Bug Fixes
+
+* alt error message ([49eb129](/github.com/powerfulweb/hugo-image/commit/49eb12903c34f5e6e54bfa6288f1fafe5e9df74b))
+* no img error message ([8548d11](/github.com/powerfulweb/hugo-image/commit/8548d11746fd733c91a040bc212a506cee976463))
+* remove old param ([60a137a](/github.com/powerfulweb/hugo-image/commit/60a137abb6f8f6553a9d960c7a24d453c5d44db2))
+* Scope issue ([b5f3245](/github.com/powerfulweb/hugo-image/commit/b5f32454dda73f54885cae178c071a7782cb9412))
+
 ### [1.1.1](/github.com/powerfulweb/hugo-image/compare/v1.1.0...v1.1.1) (2022-08-27)
 
 
