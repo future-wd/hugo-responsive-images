@@ -1,9 +1,14 @@
-# Hugo responsive images [![Awesome](https://awesome.re/badge-flat.svg)](https://awesome.re) [<img src="https://d33wubrfki0l68.cloudfront.net/c38c7334cc3f23585738e40334284fddcaf03d5e/2e17c/images/hugo-logo-wide.svg" align="right" width="250">](https://gohugo.io/)
+# Hugo responsive images  [<img src="https://d33wubrfki0l68.cloudfront.net/c38c7334cc3f23585738e40334284fddcaf03d5e/2e17c/images/hugo-logo-wide.svg" align="right" width="250">](https://gohugo.io/)
 
-![](https://img.shields.io/github/downloads/future-wd/hugo-responsive-images/total?style=plastic)
-![](https://img.shields.io/github/license/future-wd/hugo-responsive-images)
-![](https://img.shields.io/github/go-mod/go-version/future-wd/hugo-responsive-images)
-![](https://img.shields.io/github/package-json/v/future-wd/hugo-responsive-images)
+<p align="center">
+
+[![GitHub License](https://img.shields.io/github/license/future-wd/hugo-responsive-images?style=flat-square)](https://github.com/future-wd/hugo-responsive-images/blob/master/LICENSE)
+[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/future-wd/hugo-responsive-images?include_prereleases&style=flat-square)](https://github.com/future-wd/hugo-responsive-images/releases)
+[![GoLang version"](https://img.shields.io/github/go-mod/go-version/future-wd/hugo-responsive-images?style=flat-square)](https://go.dev/)
+[![Awesome](https://awesome.re/badge-flat.svg)](https://awesome.re)
+
+</p>
+
 
 Hugo responsive images makes generating responsive images for either figures or standard picture elements a breeze.
 
