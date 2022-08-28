@@ -240,7 +240,7 @@
 {{/* alt defaults to caption. If not caption or alt set, error. If suppressed, defaults to "image of [title]" */}}
 {{- $alt := (.caption | markdownify | plainify) | default .alt -}}
 {{- if not $alt -}}
-  {{- erroridf "alt-error" "Alt text has not been provided for image %s on page %s" .img.RelPermalink .partial.page.RelPermalink -}}
+  {{- erroridf "alt-error" "Alt text has not been provided for image %s on page %s" $img.RelPermalink .page.RelPermalink -}}
   {{- $alt = printf "Image of %s" $title -}}
 {{- end -}}
 {{ $params = merge $params (dict "alt" $alt) }}
