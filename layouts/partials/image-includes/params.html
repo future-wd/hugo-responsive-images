@@ -6,10 +6,10 @@
   {{- $img = resources.Get .src -}}
 {{- else -}}
   {{- /* page resource */ -}}
-  {{- $img = .page.Resources.GetMatch .src -}}
+  {{- $img = .page.Resources.GetMatch (print .src)   -}}
 {{- end -}}
 {{- if not $img }}
-  {{- errorf "No image resource found at %s%s" .page.RelPermalink .src -}}
+  {{- errorf "No image resource found for image \"%s\" on page %s." .src  .page.RelPermalink  -}}
 {{- end -}}
 {{ $params = merge $params (dict "img" $img) }}
 
