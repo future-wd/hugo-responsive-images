@@ -235,7 +235,7 @@ Customize as you wish, just keep the 3rd line ( {{ partial ... }} )
 
 ## Usage as a markdown render hook
 
-By default a markdown render hook template has been included. To turn it on set the config params.image.renderHook: true. It has been disabled by default as it will break existing pages which have markdown files which reference images in the static folder.
+By default a markdown render hook template has been included. To turn it on set the config params.image.renderHook: true. It has been disabled by default as it may break existing functionality.
 
 The render hook will only render page resource images - the image path will be relative to the page's markdown file.
 
@@ -250,11 +250,14 @@ imageRenderHook: false # force the render hook to use default markdown image beh
 
 To set defaults responsive widths only for use with the shortcode (and also the render-hook if it hasn't been configured) modify the config params.image.shortcodeWidths.
 
+A image wrapper class has been provided, and the class can be changed through the following config:
+
 ```yaml
 # config.yaml
 params:
   image:
     shortcodeWidths: [600, 900, 1200] # if not set, defaults to 'widths'
+    shortcodeWrapperClass: img-wrapper
 ```
 
 ### Customizing markdown render hook behavior
@@ -263,33 +266,15 @@ The responsive image widths used in the render hook template default to the shor
 
 To set defaults responsive widths only for use with the render hook modify the config params.image.renderHookWidths.
 
+A image wrapper class has been provided, and the class can be changed through the following config:
+
 ```yaml
 # config.yaml
 params:
   image:
     renderHookWidths: [600, 900, 1200] # if not set, defaults to 'shortCodeWidths' and then 'widths'
+    renderHookWrapperClass: img-wrapper
 ```
-
-By default the render-hook image is wrapped in the following html:
-
-```html
-<div class="row d-flex justify-content-center">
-  <div class="col-md-9 d-flex justify-content-center">
-    {{ partial "image-includes/render-hook-params" . }}
-  </div>
-</div>
-```
-
-To create your own html to wrap your image/figure element create the following in your project:
-
-```html
-<!-- layouts/partials/image-includes/render-hook-template.html -->
-<div class="custom-wrapper-class">
-  {{ partial "image-includes/render-hook-params" . }}
-</div>
-```
-
-Customize as you wish, just keep the 3rd line ( {{ partial ... }} )
 
 <!-- 
 ### Noscript required HTML, JS and CSS
@@ -345,6 +330,20 @@ Lqip gaussian blur amount can be adjusted with the `lqipBlurAmount` configuratio
 Lqip image size division factor can be adjusted with the `lqipDivFactor` configuration item in site/page configuration, or per image. It is based off the smallest image in the srcset.
 
 Dominant/single color gif image size division factor can be adjusted with the `gifDivFactor` configuration item in site/page configuration, or per image. It is based off the smallest image in the srcset.
+
+example config:
+
+```yaml
+#config.yaml
+params:
+  images:
+    loading: lazysizes # must be set as lazysizes will swap out the placeholder on load
+    placeholder: lqip   # or dominant or file_name e.g. gray-300 
+    # config below this line is not required if not changing the defaults
+    lqipBlurAmount: 5 # apply gaussian blur amount of 5 to lqip
+                      # may need to be increased at a page level for larger images
+    lqipDivFactor: 5 # lqip is 5x smaller than the smallest image in srcset
+    gifDivFactor: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
 
 ## Setting up Lazysizes.js
 
