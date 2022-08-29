@@ -1,3 +1,17 @@
+{{/*
+  figure-tag-bottom
+  Generates the bottom half of the figure tag
+
+  @author @sean-au
+
+  @context . Context
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/figure-tag-bottom" . }}
+  
+*/}}
 {{- if .link }}</a>{{ end -}}
   {{ if or (or .figureTitle .caption) .attr }}
   <figcaption class="{{ .figCaptionClass }}">

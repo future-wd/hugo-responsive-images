@@ -1,4 +1,23 @@
-{{ $placeholder := false}}
+
+{{/*
+  generate-placeholder
+  Generates gif image placeholders 
+  - lqip 
+  - dominant color
+  - set color via image in /assets/images/placeholder-colors/[color].gif
+
+  @author @sean-au
+
+  @context . Context
+
+  @returns placeholder base64 encoded image string
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/generate-placeholder" . }}
+  
+*/}}{{ $placeholder := false}}
 {{ with .placeholder }}
   {{ if eq . "lqip" }}
     {{ $placeholder = $.src.Resize (printf "%vx gif" (div $.src.Width $.lqipDivFactor | int)) }}
@@ -10,7 +29,8 @@
       {{ with resources.Get (printf "images/placeholder-colors/%s.gif" . ) }}
         {{ $placeholder = . }}
       {{ else }}
-        {{ errorf "Placeholder assets/images/placeholder-colors/%s.gif for image %s on page %s cannot be found." $.placeholderType $.img.RelPermalink $.page.RelPermalink }}
+        {{ $message := printf "Placeholder assets/images/placeholder-colors/%s.gif for image %s on page %s cannot be found." $.placeholderType $.img.RelPermalink $.page.RelPermalink }}
+        {{ partial "hri/private/errorf" $message}}
       {{ end }}
       {{ $placeholder = $placeholder.Resize "1x1 gif" }}
     {{ end }}
