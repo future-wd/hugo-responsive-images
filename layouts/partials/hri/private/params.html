@@ -1,9 +1,10 @@
 {{/*
-  params
+  params.html
   Takes inputs and page context.
-  Processes some inputs
-  Some inputs default to page/site params
-  Some inputs passed through
+  - Processes some inputs
+  - Some inputs default to page/site params
+  - Some inputs passed through
+  - page context passed through
   Creates a new context for other partials to use
 
   @author @sean-au
@@ -15,15 +16,17 @@
   @access private
 
   @example - Go Template
-  {{ partial "hugo-responsive-images/private/params" . }}
+  {{ partial "hri/private/params" . }}
 */}}
 
 
 {{ $params :=  . }}
 {{ $params = merge $params (dict "page" .page) }}
 
+
+{{ $type := .type | default (.page.Param "image.type") }}
 {{- $img := false }}
-{{- if eq .type "global" -}}
+{{- if eq $type "global" -}}
   {{- /* global resource */ -}}
   {{- $img = resources.Get .src -}}
 {{- else -}}
@@ -241,8 +244,6 @@
 {{ $params = merge $params (dict "figureTitle" $figureTitle) }}
 
 
-{{- $figure := .figure | default (.page.Param "image.figure") -}}
-{{ $params = merge $params (dict "figure" $figure) }}
 
 
 
@@ -269,25 +270,24 @@
 {{- end -}}
 {{ $params = merge $params (dict "alt" $alt) }}
 
-
-
-
-
-
-
-
 {{/* ******************************
   ** placeholder variables       **
   *********************************/}}
-{{ $placeholderType := .placeholder | default (.page.Param "image.placeholder") }}
+
+{{ $placeholder := .placeholder | default (.page.Param "image.placeholder") }}
 {{ $lqipDivFactor := .lqipDivFactor | default (.page.Param "image.lqipDivFactor") }}
 {{ $lqipBlurAmount := .lqipBlurAmount | default (.page.Param "image.lqipBlurAmount") }}
 {{ $gifDivFactor := .gifDivFactor | default (.page.Param "image.gifDivFactor") }}
 {{ $params = merge $params (dict
-  "placeholderType" $placeholderType
+  "placeholder" $placeholder
   "lqipDivFactor" $lqipDivFactor
   "lqipBlurAmount" $lqipBlurAmount
   "gifDivFactor" $gifDivFactor) }}
+
+
+
+
+
 
 
 {{/* ******************************

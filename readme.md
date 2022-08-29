@@ -344,8 +344,15 @@ params:
                       # may need to be increased at a page level for larger images
     lqipDivFactor: 5 # lqip is 5x smaller than the smallest image in srcset
     gifDivFactor: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
+```
 
 ## Setting up Lazysizes.js
+
+### Add required CSS for sizes property to work
+
+```css
+img[data-sizes="auto"] { display: block; width: 100%; }
+```
 
 ### Import inline via CDN
 

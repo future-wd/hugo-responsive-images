@@ -58,10 +58,7 @@
     {{- errorf "If using positional parameters, only 1 parameter can be provided (src)" -}}
   {{- end -}}
 {{- end -}}
-{{/*******************************************
-  ** call shortcode template                **
-  ********************************************/}}
-{{- partial "image-includes/shortcode-template" $params -}}
+{{ return $params }}
 
 
 

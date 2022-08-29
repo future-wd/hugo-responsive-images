@@ -1,0 +1,28 @@
+{{/*
+  generate-widths.html
+  - Chooses external-widths partial if a provider is set
+  - otherwise chooses local-widths
+
+  @author @sean-au
+
+  @context . context
+
+  @return Map of select variables
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/figure-params" . }}
+*/}}
+
+{{- $params := false -}}
+{{- if .params.provider -}}
+  {{ with partial "hri/private/external-widths" . }}
+    {{ $params = . }}
+  {{ end }}
+{{ else }}
+  {{ with partial "hri/private/local-widths" . }}
+    {{ $params = . }}
+  {{ end }}
+{{ end }}
+{{ return $params }}
