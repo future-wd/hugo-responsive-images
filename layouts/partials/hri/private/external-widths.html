@@ -18,7 +18,23 @@
 
   other providers to follow..
   /* -}}
-
+  {{/*
+    exteral-widths
+    Generates images via external api
+    currently only supports provider: netlify
+  
+    @author @sean-au
+  
+    @context . Context
+  
+    @return Map of image widths
+  
+    @access private
+  
+    @example - Go Template
+    {{ partial "hri/private/external-widths" . }}
+    
+  */}}
 
 
 
@@ -31,35 +47,35 @@
 {{ $src := "" }}
 {{- range $format := (slice "original") -}}
 
-  {{- range $index, $width := $.params.widths -}}
+  {{- range $index, $width := $.widths -}}
     {{- $imgResized := "" -}}
     {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
-    {{- with $.params.fillRatio -}}
+    {{- with $.fillRatio -}}
       {{- /* resulting fillHeight must be converted to integer for use with image resize */ -}}
       {{- $fillHeight := mul $width.width . | int -}}
-      {{- if and (or (gt $width.width $.params.img.Width) (gt $fillHeight $.params.img.Height)) (ne $.params.suppressWidthWarning true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.params.img.RelPermalink $.params.img.Width $.params.img.Height $.page.RelPermalink $width.width $fillHeight  -}}
+      {{- if and (or (gt $width.width $.img.Width) (gt $fillHeight $.img.Height)) (ne $.suppressWidthWarning true) -}}
+        {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width $fillHeight  -}}
       {{- end -}}
       {{- /* resize image */ -}}
-      {{- $imgResized = printf "%s?nfresize=smartcrop?w=%dh=%d" $.params.img.RelPermalink $width.width $fillHeight -}}
+      {{- $imgResized = printf "%s?nfresize=smartcrop?w=%dh=%d" $.img.RelPermalink $width.width $fillHeight -}}
     {{- else -}}
       {{- /* do standard image resize */ -}}
-      {{- if and (gt $width.width $.params.img.Width) (ne $.params.suppressWidthWarning true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.params.img.RelPermalink $.params.img.Width $.params.img.Height $.page.RelPermalink $width.width }}
+      {{- if and (gt $width.width $.img.Width) (ne $.suppressWidthWarning true) -}}
+        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width }}
       {{- end -}}
       {{- /* create resize path */ -}}
-      {{- $imgResized = printf "%s?nfresize=fit?w=%d" $.params.img.RelPermalink $width.width -}}
+      {{- $imgResized = printf "%s?nfresize=fit?w=%d" $.img.RelPermalink $width.width -}}
     {{- end -}}
     {{- /* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */ -}}
     {{- $srcset = $srcset | append (printf "%s %s" $imgResized $width.desc) -}}
     {{- /* if .width and 1x density (First iteration), add image to src variable for use as fallback */ -}}
-    {{- if $.params.width  -}}
+    {{- if $.width  -}}
       {{- if eq $index 0 -}}
         {{ $src = $imgResized -}}
       {{- end -}}
     {{- else -}}
       {{- /* else largest width (last iteration), add image to src variable for use as fallback */ -}}
-      {{- if eq (len $.params.widths) (add $index 1) -}}
+      {{- if eq (len $.widths) (add $index 1) -}}
         {{ $src = $imgResized -}}
       {{- end -}}
     {{- end -}}

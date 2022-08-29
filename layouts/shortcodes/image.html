@@ -1,1 +1,20 @@
-{{- partial "image-includes/shortcode-params" . -}}
+{{- /*
+  shortcodes/figure.html
+  - sets params
+  - sends params to shortcode template
+
+  @author @sean-au
+
+  @context . Context
+
+  @access public
+
+  @example - Hugo Markdown
+  {{< image src=[string] alt=[] etc. >}}
+
+*/ -}}
+{{- $params := false }}
+{{- with partial "hri/private/shortcode-params" . -}}
+  {{- $params = . -}}
+{{- end -}}
+{{- partial "hri/private/shortcode-template" $params -}}

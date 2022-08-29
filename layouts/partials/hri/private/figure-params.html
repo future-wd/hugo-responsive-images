@@ -1,0 +1,74 @@
+{{/*
+  figure-params.html
+  - Some inputs default to page/site params
+  - Some inputs passed through
+
+
+  @author @sean-au
+
+  @context . Context (Map of inputs)
+
+  @return Map with .params (figure) and .imageParams (for image partial)
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/figure-params" . }}
+*/}}
+{{ $params := dict }}
+{{- $imageParams := . }}
+
+{{/* add figure=true to image params */}}
+{{- $imageParams := merge $imageParams (dict "figure" true) }}
+
+{{/*********************************************
+  ** these params default to page/site params **
+  **********************************************/}}
+
+{{ $target := .target | default (.page.Param "image.target") }}
+{{ $rel := .rel | default (.page.Param "image.rel") }}
+{{ $link := .link | default (.page.Param "image.link") }}
+{{ $figureClass := .figureclass | default (.page.Param "image.figureClass") }}
+{{ $figCaptionClass := .figCaptionClass | default (.page.Param "image.figCaptionClass") }}
+{{ $figureTitleH := .figureH | default (.page.Param "image.figureTitleH") }}
+
+{{/*********************************************
+  ** default open http links new window       **
+  **********************************************/}}
+
+{{ if hasPrefix .link "http" }}
+  {{ $target = $target | default "_blank" }}
+  {{ $rel = $rel | default "noopener noreferrer" }}
+{{ else }}
+  {{ $link = relref .page $link }}
+{{ end }}
+
+{{/* merge params */}}
+
+{{ $params = merge $params (dict
+  "target" $target
+  "rel" $rel
+  "link" $link
+  "figCaptionClass" $figCaptionClass
+  "figureTitleH" $figureTitleH
+  )}}
+
+{{/************************************
+  ** these params are passed through **
+  *************************************/}}
+
+{{ $caption := .caption }}
+{{ $attr := .attr }}
+{{ $attrLink := .attrLink }}
+{{ $figureTitle := .figureTitle }}
+{{ $params = merge $params (dict
+  "figureTitle" $figureTitle
+  "caption" $caption
+  "attr" $attr
+  "attrLink" $attrLink
+  "figureTitle" $figureTitle
+  )}}
+
+{{ return (dict 
+  "params" $params
+  "imageParams" $imageParams ) }}

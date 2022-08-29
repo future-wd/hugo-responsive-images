@@ -1,6 +1,27 @@
+{{- /*
+  _default/_markup/render-image.html
+  - if image.renderhook=true
+    - sets params
+    - sennds params to render-hook-template
+  - else calls render-hook-default to emulate default markdown image behavior
+
+  @author @sean-au
+
+  @context Render hook params
+
+  @access public
+
+  @example - Hugo Markdown
+  ![Image Alt](img_path.jpeg "Image title")
+  
+*/ -}}
 {{- if eq (.Page.Param "image.renderhook") true -}}
-  {{- partial "image-includes/render-hook-params" . -}}
+  {{ $params := false }}
+  {{- with partial "hri/private/render-hook-params" . -}}
+    {{- $params = . }}
+  {{- end -}}
+  {{- partial "hri/private/render-hook-template" $params -}}
 {{- else -}}
   {{- /* default markdown behavior */ -}}
-  {{- partial "image-includes/render-hook-template-default" . -}}
+  {{- partial "hri/private/render-hook-default" . -}}
 {{- end -}} 

@@ -1,14 +1,9 @@
 # Hugo responsive images  [<img src="https://d33wubrfki0l68.cloudfront.net/c38c7334cc3f23585738e40334284fddcaf03d5e/2e17c/images/hugo-logo-wide.svg" align="right" width="250">](https://gohugo.io/)
 
-<p align="center">
-
 [![GitHub License](https://img.shields.io/github/license/future-wd/hugo-responsive-images?style=flat-square)](https://github.com/future-wd/hugo-responsive-images/blob/master/LICENSE)
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/future-wd/hugo-responsive-images?include_prereleases&style=flat-square)](https://github.com/future-wd/hugo-responsive-images/releases)
 [![GoLang version"](https://img.shields.io/github/go-mod/go-version/future-wd/hugo-responsive-images?style=flat-square)](https://go.dev/)
 [![Awesome](https://awesome.re/badge-flat.svg)](https://awesome.re)
-
-</p>
-
 
 Hugo responsive images makes generating responsive images for either figures or standard picture elements a breeze.
 
@@ -349,8 +344,15 @@ params:
                       # may need to be increased at a page level for larger images
     lqipDivFactor: 5 # lqip is 5x smaller than the smallest image in srcset
     gifDivFactor: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
+```
 
 ## Setting up Lazysizes.js
+
+### Add required CSS for sizes property to work
+
+```css
+img[data-sizes="auto"] { display: block; width: 100%; }
+```
 
 ### Import inline via CDN
 

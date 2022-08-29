@@ -1,11 +1,30 @@
+{{/*
+  local-widths.html
+  Generates a .picture map of the image resized to different widths
+
+  @author @sean-au
+
+  @context . Context
+
+  @return Map including . .picture added
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/local-widths" . }}
+*/}}
+
+
+
 {{- /**********************************
   **** loop over each image format ****
   *************************************/ -}}
+{{ $params := . }}
 {{ $picture := dict }}
-{{ $options := .params.options }}
+{{ $options := .options }}
 
 
-{{ range $format := .params.formats }}
+{{ range $format := .formats }}
   {{/* add format to options array (for format transformation) if not original */}}
   {{ if ne $format "original" }}
     {{ $options = $options | append $format }}
@@ -19,24 +38,24 @@
   {{ $srcset := slice }}
   {{ $src := false }}
   {{ $placeholder := false }}
-  {{- range $index, $width := $.params.widths -}}
+  {{- range $index, $width := $.widths -}}
     {{- $imgResized := "" -}}
     {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
-    {{- if $.params.fillRatio -}}
+    {{- if $.fillRatio -}}
       {{- /* resulting fillHeight must be converted to integer for use with image resize */ -}}
-      {{- $fillHeight := mul ($width.width | float) $.params.fillRatio | int -}}
-      {{- if and (or (gt $width.width $.params.img.Width) (gt $.params.fillHeight $.params.img.Height)) (ne $.params.suppressWidthWarning true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.params.img.RelPermalink $.params.img.Width $.params.img.Height $.page.RelPermalink $width.width $fillHeight  -}}
+      {{- $fillHeight := mul ($width.width | float) $.fillRatio | int -}}
+      {{- if and (or (gt $width.width $.img.Width) (gt $.fillHeight $.img.Height)) (ne $.suppressWidthWarning true) -}}
+        {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width $fillHeight  -}}
       {{- end -}}
       {{- /* resize image */ -}}
-      {{- $imgResized = $.params.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
+      {{- $imgResized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
     {{- else -}}
       {{- /* do standard image resize */ -}}
-      {{- if and (gt $width.width $.params.img.Width) (ne $.params.suppressWidthWarning true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.params.img.RelPermalink $.params.img.Width $.params.img.Height $.page.RelPermalink $width.width }}
+      {{- if and (gt $width.width $.img.Width) (ne $.suppressWidthWarning true) -}}
+        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width }}
       {{- end -}}
       {{- /* resize image */ -}}
-      {{- $imgResized = $.params.img.Resize (printf "%dx %s" $width.width $optionsString) -}}
+      {{- $imgResized = $.img.Resize (printf "%dx %s" $width.width $optionsString) -}}
     {{- end -}}
     {{- /* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */ -}}
     {{- $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) -}}
@@ -44,20 +63,17 @@
     {{ if eq $format "original" }}
       {{ if eq $index 0}}
         {{/* smallest image width for placeholder generation */}}
-        {{ with partial "image-includes/generate-placeholder" (dict 
-        "src" $imgResized
-        "param" $.param
-        "page" $.page
-        ) }}4
+        {{ $params = merge $params (dict "src" $imgResized) }}
+        {{ with partial "hri/private/generate-placeholder" $params }}
           {{ $placeholder = . }}
         {{ end }}
       {{ end }}
       {{/* add smallest image to src for screen density srcset */}}
-      {{ if $.params.width }}
+      {{ if $.width }}
         {{ if eq $index 0}}
           {{ $src = $imgResized }}
         {{ end }}
-      {{ else if eq (len $.params.widths) (add $index 1) }}
+      {{ else if eq (len $.widths) (add $index 1) }}
         {{/* else largest width (last iteration), add image to src variable for use as fallback */}}
         {{ $src = $imgResized }}
       {{ end }}
@@ -68,4 +84,8 @@
   {{- /* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */ -}}
   {{- $picture = merge $picture (dict $format (dict "srcset" $srcset "src" $src "placeholder" $placeholder)) -}}
 {{- end -}}
-{{- return $picture -}}
+
+{{/* merge and return params */}}
+
+{{ $params = merge $params (dict "picture" $picture) }}
+{{- return $params -}}
