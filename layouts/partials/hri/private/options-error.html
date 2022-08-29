@@ -13,6 +13,12 @@
   @access private
 
   @example - Go Template
+    {{ partial "hri/private/options-error" (dict 
+    "var" "fillRatio array item"
+    "value" .
+    "options" "2x integers in an array/slice"
+    "ctx" $params
+  ) }}
 
 */}}
 

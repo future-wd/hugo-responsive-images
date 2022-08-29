@@ -9,7 +9,7 @@
 
   @author @sean-au
 
-  @context . Context
+  @context . Context from image partial
 
   @return Map including .img, .page and various inputs
 
@@ -35,7 +35,8 @@
   {{- $img = .page.Resources.GetMatch (print .src)   -}}
 {{- end -}}
 {{- if not $img }}
-  {{- errorf "No image resource found for image \"%s\" on page %s." .src  .page.RelPermalink  -}}
+  {{- $message "No image resource found for image \"%s\" on page %s." .src  .page.RelPermalink  -}}
+  {{ partial "hri/private/errorf" $message }}
 {{- end -}}
 {{ $params = merge $params (dict "img" $img) }}
 
@@ -49,7 +50,7 @@
   {{- if reflect.IsSlice . -}}
     {{- range . -}}
       {{- if ne (printf "%T" .) "int" }}
-        {{ partial "hugo-responsive-images/private/options-error" (dict 
+        {{ partial "hri/private/options-error" (dict 
           "var" "fillRatio array item"
           "value" .
           "options" "2x integers in an array/slice"
@@ -58,7 +59,7 @@
       {{- end -}}
     {{- end -}}
   {{- else -}}
-    {{ partial "hugo-responsive-images/private/options-error" (dict 
+    {{ partial "hri/private/options-error" (dict 
       "var" "fillRatio"
       "value" .
       "options" "2x integers in an array/slice"
@@ -84,7 +85,7 @@
 {{ $width := .width | default (.page.Param "image.width") }}
 {{- if $width -}}
   {{- if ne (printf "%T" .width) "int" }}
-    {{ partial "hugo-responsive-images/private/options-error" (dict 
+    {{ partial "hri/private/options-error" (dict 
       "var" "width"
       "value" .
       "options" "an integer"
@@ -109,7 +110,7 @@
     {{- if reflect.IsSlice . -}}
       {{- range . -}}
         {{- if ne (printf "%T" .) "int" }}
-          {{ partial "hugo-responsive-images/private/options-error" (dict 
+          {{ partial "hri/private/options-error" (dict 
             "var" "widths array item"
             "value" .
             "options" "2x integers in an array/slice"
@@ -118,7 +119,7 @@
         {{- end -}}
       {{- end -}}
     {{- else -}}
-      {{ partial "hugo-responsive-images/private/options-error" (dict 
+      {{ partial "hri/private/options-error" (dict 
         "var" "width array"
         "value" .
         "options" "2x integers in an array/slice"
@@ -152,7 +153,7 @@
   {{- if reflect.IsSlice . -}}
     {{- range . -}}
       {{- if not (in $formatOpts .) -}}
-        {{ partial "hugo-responsive-images/private/options-error" (dict 
+        {{ partial "hri/private/options-error" (dict 
           "var" "formats array item"
           "value" .
           "options" (delimit $formatOpts ", " " and ")
@@ -161,7 +162,7 @@
         {{- end -}}
     {{- end -}}
   {{- else -}}
-    {{ partial "hugo-responsive-images/private/options-error" (dict 
+    {{ partial "hri/private/options-error" (dict 
         "var" "formats array"
         "value" .
         "options" "array of image formats"
@@ -178,7 +179,7 @@
   {{- if in $providerOpts . -}}
       {{ $provider = $providerParam }}
   {{ else }}
-    {{ partial "hugo-responsive-images/private/options-error" (dict 
+    {{ partial "hri/private/options-error" (dict 
       "var" "provider"
       "value" .
       "options" (delimit $providerOpts ", " " and ")
@@ -200,7 +201,7 @@
     {{- $loadingOpts = (slice "auto" "lazy" "lazysizes") -}}
   {{- end -}}
   {{- if not (in $loadingOpts .) -}}
-    {{ partial "hugo-responsive-images/private/options-error" (dict 
+    {{ partial "hri/private/options-error" (dict 
       "var" "loading"
       "value" .
       "options" (delimit $loadingOpts ", " " and ")
@@ -216,7 +217,7 @@
 {{- $sizesParam := .sizes | default (.page.Param "image.sizes") -}}
 {{- with $sizesParam -}}
   {{ if not (eq (printf "%T" .) "string") }}
-    {{ partial "hugo-responsive-images/private/options-error" (dict 
+    {{ partial "hri/private/options-error" (dict 
       "var" "sizes"
       "value" .
       "options" "strings"
@@ -301,7 +302,7 @@
   {{ if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 100)) }}
     {{ $options = $options | append (printf "q%d" .) }}
   {{ else }}
-    {{ partial "hugo-responsive-images/private/options-error" (dict 
+    {{ partial "hri/private/options-error" (dict 
       "var" "quality"
       "value" .
       "options" "integers between 1-100 inclusive"
@@ -314,7 +315,7 @@
   {{ if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 360)) }}
     {{ $options = $options | append (printf "r%d" .) -}}
   {{ else }}
-    {{ partial "hugo-responsive-images/private/options-error" (dict 
+    {{ partial "hri/private/options-error" (dict 
       "var" "rotate"
       "value" .
       "options" "integers between 1-360 inclusive"
@@ -328,7 +329,7 @@
   {{ if in $filterOpts . }}
     {{ $options = $options | append . }}
   {{ else }}
-    {{ partial "hugo-responsive-images/private/options-error" (dict 
+    {{ partial "hri/private/options-error" (dict 
       "var" "resampleFilter"
       "value" .
       "options" (delimit $filterOpts ", ")
@@ -342,7 +343,7 @@
   {{ if in $hintOpts . -}}
     {{ $options = $options | append . }}
   {{ else -}}
-    {{ partial "hugo-responsive-images/private/options-error" (dict 
+    {{ partial "hri/private/options-error" (dict 
       "var" "hint"
       "value" .
       "options" (delimit $hintOpts ", ")
@@ -356,7 +357,7 @@
   {{ if in $anchorOpts . }}
     {{ $options = $options | append  . }}
   {{ else }}
-    {{ partial "hugo-responsive-images/private/options-error" (dict 
+    {{ partial "hri/private/options-error" (dict 
       "var" "anchor"
       "value" .
       "options" (delimit $anchorOpts ", ")

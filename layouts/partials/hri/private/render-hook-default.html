@@ -1,3 +1,18 @@
+{{- /*
+  render-hook-default
+  to avoid breaking sites, the render hook is disabled by default 
+  and this template is used to emulate default behavior
+
+  @author @sean-au
+
+  @context . Context from render hook
+
+  @access private
+
+  @example - Go Template
+  {{ partial "render-hook-default" . }}
+
+*/ -}}
 <img src="{{ .Destination }}" 
 alt="{{ .PlainText }}" 
 {{ with .Title}} title="{{ . }}"{{ end }}>

@@ -1,3 +1,18 @@
+{{- /*
+  shortcode template
+  wraps partial in div with configurable class and chooses
+  partial based on shortcode name
+
+  @author @sean-au
+
+  @context . Context of $params from image/figure shortcode
+
+  @access private
+
+  @example - Go Template
+  {{ partial "shortcode-template" . }}
+
+*/ -}}
 <div class="{{ .shortcodeWrapperClass }}">
   {{ partial (print .name) . }}
 </div>

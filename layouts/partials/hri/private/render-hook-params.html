@@ -1,3 +1,20 @@
+{{- /*
+  render-hook-params
+  generates params from render hook input.
+  standard params are passed through
+
+  @author @sean-au
+
+  @context . Context from _render-image template
+
+  @returns map of params
+
+  @access private
+
+  @example - Go Template
+  {{ partial "render-hook-params" . }}
+
+*/ -}}
 {{- /* default .shortcodeWrapperClass to page or site params if not set inline */ -}}
 {{- $renderHookWrapperClass := .Page.Param "image.renderHookWrapperClass" -}}
 {{- /* set widths */ -}}
