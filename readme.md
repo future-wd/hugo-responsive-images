@@ -30,20 +30,40 @@ module:
 - You hugo project must be initialized for hugo modules e.g. `hugo mod init github.com/username/project` in the root of your project.
 - Update your modules with `hugo mod get -u`
 
-## Configuration
+## Configuration - Site Config
 
 The first set of configuration items are from [Hugo's image processing configuration. See the docs for more info.](https://gohugo.io/content-management/image-processing/#processing-options).
 
-The second set of items (in params) are configuration options which have been provided in the module. To override simply copy and paste the following into your own site config:
+All the hugo image options can be set at a partial/shortcode level. See below
+
+You can suppress the no alt text error with the `ignoreErrors` config. If you suppress the error, the ALT text will default to "image of [title]` (title defaults to the page's title)
 
 ```yaml
-ignoreErrors: ["alt-error"] # suppress error message if no alt text has been provided.
+
 imaging:
-  anchor: Smart 
-  bgColor: '#ffffff' 
-  hint: photo
-  quality: 75
-  resampleFilter: Box
+  anchor: Smart # for smart cropping when setting the fillRatio
+  bgColor: '#ffffff' # when converting transparent images to formats which dont support transparency
+  hint: photo # for conversin to webp
+  quality: 75 # compression quality
+  resampleFilter: Box # compression filter
+ignoreErrors: ["alt-error"] # suppress error message if no alt text has been provided.
+```
+
+> If setting imaging options at a site level, this is the best method. You can also use image parameters if you wish to set image options just for this module, although this would probably be best used at a page level.
+
+```yaml
+params:
+  image:
+    anchor: Smart
+    bgColor: "#ffffff"
+    hint: photo
+    quality: 75
+    resampleFilter: Box
+```
+
+## Configuration - Site or page params (Defaults shown)
+
+```yaml
 params:
   image:
     widths: [600, 900, 1300] # widths to generate if widths not specified
@@ -56,17 +76,20 @@ params:
     figcaptionClass: figure-caption # default figcaption class
     figureImageClass: "figure-img img-fluid" # default figure image class (appended to image class) ## USE .class inline
     figureTitleH: 4 # heading level for figure title
-    loading: lazy/auto/lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js to handle image loading. Defaults to lazy. If you use default (`lazy`) or `lazysizes`, you will need to set above the fold images to `auto`.
-    sizes: user/lazysizes # uses lazysizes to automatically generate the sizes property. User does not generate any sizes, you need to declare them. Defaults to user
+    renderHookWrapperClass: img-wrapper # image wrapper class for render hook
+    shortcodeWrapperClass: img-wrapper # image wrapper class for shortcode
+    loading: lazy # or auto/lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js 
+    sizes: user # or lazysizes # uses lazysizes to automatically generate the sizes property
     renderHook: false # set to false to disable included markdown image render hook
                       # override by setting imageRenderHook: true/false in front matter
-    # provider: netlify # currently only supports netlify image processing.
-    # suppressWidthWarning: true # turn off image too narrow warning
-    # placeholder: lqip/dominant/file_name  (see colours set up in assets/images/placeholder-colors) use filename without .gif
+    # placeholder: lqip # or dominant/file_name  (see colours set up in assets/images/placeholder-colors) use filename without .gif
     lqipBlurAmount: 5 # apply gaussian blur amount of 5 to lqip
                       # may need to be increased at a page level for larger images
     lqipDivAmount: 5 # lqip is 5x smaller than the smallest image in srcset
     gifDivAmount: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
+    # provider: netlify # currently only supports netlify image processing.
+    # suppressWidthWarning: true # turn off image too narrow warning
+    # type: page # or global # useful for setting all images on a page to global resources, or set default
 ```
 
 > All of image parameter configuration items can also be configured on a per page basis by adding the config to the page's front matter.
@@ -81,157 +104,154 @@ image:
 ---
 ```
 
-## Usage as a layout partial
+## Partial or shortcode configuration
 
-The following example shows all configuration options. The only required option is "src".
+The following options are only available at a partial or shortcode level:
 
-Fixed/responsive width images and page/global resource images have been merged into two examples for brevity. The options are interchangable.
+```go
+# image and figure
+"src" "image_path.jpg" # relative to page, or assets folder (for global resource)
+"title" "Image Title" # defaults to figureTitle, and then the page's title
+"class" "img-fluid" # class for image (not a figure image)
+"alt" "Image Alt Text"
+"fillRatio" (slice 4 3) # width by height, image will be cropped. 
+"width" 300 # for fixed with image
+"widths" (slice 500 900 1500) # for responsive images
+# figure only
+"figureTitle" "Title for figure caption" # can be left blank
+"caption" "Figure Caption Text"
+"attr" "Author Attribution"
+"attrLink" "Attribution link"
+```
 
-// style comments have been used for clarity
+The following options can be configured at a partial/shortcode & page/site config level
 
-### Fixed width & page resource example
+See above for explanations
+
+```go
+# image and figure (with partial example)
+{{ partial "image" (dict 
+  "densities" (slice 1 2)
+  "type" "page"
+  "formats" (slice "original" "jpg")
+  "provider" "netlify"
+  "loading" "lazy"
+  "sizes" "100vw"
+) }}
+
+# figure only
+
+"target" "_blank"
+"rel" "noopener noreferrer"
+"link" "https://gohugo.io"
+"figureClass" "figure-img img-fluid"
+"figureCaptionClass" "figure-caption"
+"figureTitleH" 4
+
+# placeholder options
+
+"placeholder" "lqip" # set to lqip, dominant, [file_name] or false
+"lqipDivFactor" 5 # smallest image in srcset is divided by this number for LQIP size
+"lqipBlurAmount" 5 # amount of gaussian blur to apply to LQIP
+"gifDivFactor" 10 # dominant/gif file is resized to this division factor (of smallest image in srcset)
+
+# hugo image processing options - if setting at a site level, its recommended to use hugos native image config
+
+"quality" 75
+"rotate" 0
+"resampleFilter" "box"
+"hint" "photo"
+"anchor" "smart"
+``
+
+> See below for examples of how to set these options from within a shortcode
+
+## Usage Examples
+
+###  Partial - Fixed width & page resource
 
 ```html
 {{ partial "image"  (dict
-  "page" . // the current page context if src is a page resource.
-  "src" "image.jpg" // relative to the current pages markdown file
-  "width" "300" // width in pixels if a fixed width image is desired.
-  // optional
-  "densities" (slice 1 2 3) // creates 1x, 2x, 3x versions (defaults to 1x, 2x)
+  "page" .
+  "src" "image.jpg"
+  "width" "300"
   )}}
 ```
 
 > A "type" of "page" does not need to be provided. Default behavior is page resource images.
 >
 > By providing the "width" key, you will be generating a fixed with image.
+>
+> "src" is relative to the page's directory
 
-### Responsive width & global resource example
+### Partial - Fixed with & gobal resource
+
+```html
+{{ partial "image"  (dict
+  "page" .
+  "src" "image.jpg"
+  "width" "300"
+  "type" "global"
+  )}}
+```
+
+### Partial - Responsive width & page resource
 
 ```html
 
 {{ partial "image" (dict
-  "src" "images/image.jpg" // relative to the the assets folder as no page context has been provided
-  "type" "global"
-  "page" . // page must be provided for configuration to work
+  "src" "images/image.jpg"
+  "page" .
+  // if in config sizes=user (not needed for sizes=lazysizes) 
+  "sizes" [string] // set the sizes property for the image tag, defaults to "100vw"
   // optional 
-  "widths" (slice 400 800 1200) // override default responsive widths. 
-  "sizes" [string] // set the sizes property for the image tag, defaults to "100vw" or "auto" if lazysizes is enabled in the config and installed into the website
-  )}}
+  "widths" (slice 400 800 1200) // override default responsive widths.
+  ) }}
 ```
 
 > You don't need to provide the "widths" key to generate responsive width images, this is the default behavior and the widths config will be used.
 
-
-### Cropping an image to an aspect ratio
+### Partial - Cropping an image to an aspect ratio
 
 ```html
 {{ partial "image"  (dict
-  "page" . // the current page context if src is a page resource.
-  "src" "image.jpg" // relative to the current pages markdown file
-  "fillRatio" (slice 4 3) 
-  "anchor" "center"
+  "page" .
+  "src" "image.jpg"
+  "fillRatio" (slice 4 3)
   ) }}
 ```
 
-### All options
+### Shortcode - Cropping an image to an aspect ratio, custom respnsive widths
 
 ```html
-"page" [variable] // provide the page context
-"src" [string] // provide the path to the image, relative to the page, or assets folder. (for global assets)
-"widths" [array] // provide array (slice) of widths for resizing
-"width" [int] // provide width for fixed with image (sets image mode to fixed width)
-"type" [string] // set to global for images in `assets` folder. Defaults to page resources.
-"title" [string] // set the image title. If not set, figureTitle then the page's title will be used.
-"alt" [string] // set the alt text. If not set the figure caption is used, else "Image of [title]" used.
-"class" [string] // override the default image class (defaults to 'img-fluid')
-"fillRatio" [array] // provide array (slice) of two numbers for fill ratio
-"anchor" 
-"loading" "auto" // remove lazyloading (either via lazysizes or stock browser functionality)
-
-
-"sizes" [string] // set the sizes property for the image tag, defaults to "100vw" or "auto" if lazysizes is enabled in the config and installed into the website
+{{< image src=image.jpg fillRatio=4,3  widths=400,900 >}}
 ```
 
-## Futher options
+> The page context is already provided by the shortcode
+>
+> Double quotes (" ") don't have to be used for the property values if there are no spaces.
+>
+> Comma seperated values are converted into arrays, numbers are converted into integers.
+
+### Shortcode - Single positional parameter
 
 ```html
-"densities" [array] // provide an array (slice) of densities for fixed with image. (defaults to 1,2 x densities)
-"rotate" [int] // provide an integer between 1-360 to rotate counter-clockwise
-"resampleFilter" [string] // override default resample filter. All hugo config options can be used. Defaults to `box` or your site config.
-"quality" [int] // override default image compression quality, between 1-100. Defaults to 75 or your site config.
-"hint" [string] // override default hint for webp conversion. All hugo config options can be used. Defaults to `box` or your site config.
+{{< image image.jpg >}}
 ```
 
-## Figure used as a layout partial
+> The alt text will default to "image of [page title]" You will need to suppress the alt error (see above)
+
+## Partial - Figure
 
 ```html
 {{ partial "figure"  (dict
-  "page" . // the current page context if src is a page resource.
-  "src" "image.jpg" // relative to the current pages markdown file
+  "page" .
+  "src" "image.jpg" 
   "figureTitle" "Boat x54"
+  "caption" "My favourite boat"
+  "link" "https://www.google.com"
   ) }}
 ```
-
-The following options are available for figures (in addition to the image options above)
-
-```html
-"link" [url string] // the whole figure will be linked to a url. External urls must be prefixed with http(s). Local paths use relref paths. Check hugo's relref doc https://gohugo.io/functions/relref/ 
-"target" [string] // add a target attribute for http(s) link or attrLink. Defaults to "_blank"
-"rel" [string] // add a rel attribute for http(s) link or attrLink. Defaults to "noopender nofollow"
-"figureTitle" [string] // added to a <h4> tag in the figurecaption
-"caption" [markdown string] // added to the figure caption
-"attr" [string] // the image owner added after the caption
-"attrLink" [url string] // url path for image owner
-```
-
-## Usage as a shortcode
-
-The shortcode accepts the same parameters with the following differences:
-
-- if no configuration is needed, a single positional parameter of a page resource image path can be provided.
-- figure=true is used to enable figure behavior.
-- arrays are expressed as strings delimited with commas e.g. widths="400,800"
-- the page context is not provided, its already available in the shortcode
-- to use a global resource you need to set global=true
-
-Positional parameter example (only page resource image path)
-
-```html
-{{< image "image.jpg" >}}
-```
-
-Standard example
-
-{{< image src=image.jpg widths="400,800" alt="Image of boat model x54" title="Boat x54" >}}
-
-Figure example
-
-{{< image src=image.jpg widths="400,800" figure=true alt="Image of boat model x54" figureTitle="Boat x54" caption="This boat suits most users" >}}
-
-### Customizing shortcode behavior
-
-To set defaults responsive widths only for use with shortcodes modify the config params.image.shortcodeWidths.
-
-By default the image or figure is wrapped in the following html:
-
-```html
-<div class="row d-flex justify-content-center">
-  <div class="col-md-9 d-flex justify-content-center">
-    {{ partial "image-includes/shortcode-params.html" . }}
-  </div>
-</div>
-```
-
-To create your own html to wrap your image/figure element create the following in your project:
-
-```html
-<!-- layouts/partials/image-includes/shortcode-template.html -->
-<div class="custom-wrapper-class">
-  {{ partial "image-includes/shortcode-params.html" . }}
-</div>
-```
-
-Customize as you wish, just keep the 3rd line ( {{ partial ... }} )
 
 ## Usage as a markdown render hook
 
@@ -239,42 +259,15 @@ By default a markdown render hook template has been included. To turn it on set 
 
 The render hook will only render page resource images - the image path will be relative to the page's markdown file.
 
-You can override this configuration at a page level with the following front matter:
+You can set configuration at a page or site level e.g. 
 
-```yaml
----
-imageRenderHook: true # force the render hook to generate responsive images
-imageRenderHook: false # force the render hook to use default markdown image behavior (for images in the static folder)
----
-```
+- make all images on the page global (image.type: global)
+- turn on the render hook just for one page (image.imageRenderHook: true)
+- set the widths for the page (image.widths: [400, 900])
 
-To set defaults responsive widths only for use with the shortcode (and also the render-hook if it hasn't been configured) modify the config params.image.shortcodeWidths.
+Render hook only responsive widths default to shortcode responsive widths, and then standard widths. See above for site/page configuration. (image.RenderHookWidths > image.ShortcodeWidths > image.widths)
 
-A image wrapper class has been provided, and the class can be changed through the following config:
-
-```yaml
-# config.yaml
-params:
-  image:
-    shortcodeWidths: [600, 900, 1200] # if not set, defaults to 'widths'
-    shortcodeWrapperClass: img-wrapper
-```
-
-### Customizing markdown render hook behavior
-
-The responsive image widths used in the render hook template default to the short code widths, and then the standard default widths.
-
-To set defaults responsive widths only for use with the render hook modify the config params.image.renderHookWidths.
-
-A image wrapper class has been provided, and the class can be changed through the following config:
-
-```yaml
-# config.yaml
-params:
-  image:
-    renderHookWidths: [600, 900, 1200] # if not set, defaults to 'shortCodeWidths' and then 'widths'
-    renderHookWrapperClass: img-wrapper
-```
+A div wrapper around the image has been provided see above for configuration (image.renderHookWrapperClass)
 
 <!-- 
 ### Noscript required HTML, JS and CSS
@@ -307,7 +300,7 @@ The following elements are required for the `<noscript>` module to work. The scr
 
 Displaying a placeholder image while the actual image is loading is dependent on the use of lazysizes.js for the purpose of swapping the image. `loading: lazysizes` must be set in site/page configuration, or per image.
 
-The configuration item `placeholder` has three options; `lqip`, `dominant` (dominant color used), or specify an image in the `assets/images/placeholder-images` directory, without the .gif extension. 
+The configuration item `placeholder` has three options; `lqip`, `dominant` (dominant color used), or specify an image in the `assets/images/placeholder-images` directory, without the .gif extension. False can be used to override a placeholder configuration at a page or partial/shortcode level.
 
 The following colours (based on bootstrap) have been provided:
 
