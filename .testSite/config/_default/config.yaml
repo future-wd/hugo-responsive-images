@@ -1,6 +1,6 @@
 baseURL: https://hugo-responsive-images.netlify.app/
 languageCode: en
-title: hugo-responsive-images test site
+title: Hugo Responsive Images Test Site
 
 # disable all extra outputs
 disableKinds:

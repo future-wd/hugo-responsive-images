@@ -1,3 +1,18 @@
 {{ define "main" }}
-
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h1>Test Pages</h1>
+      <ul>
+        {{ range .Site.RegularPages }}
+        <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+        {{ end }}
+      </ul>
+      <h2>External Links</h2>
+      <ul>
+        <li><a href="http://github.com/future-wd/hugo-responsive-images" target="_blank" rel="noopener noreferrer">GitHub Page</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
 {{ end }}
