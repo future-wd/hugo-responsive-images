@@ -225,12 +225,14 @@
     ) }}
   {{ end }}
 {{ end }}
-{{ if $sizesParam }}
-  {{- if eq $sizesParam "lazysizes" -}}
-    {{- $sizes = `data-sizes="auto"` -}}
-  {{- else -}}
-    {{- $sizes = printf `sizes="%s"` $sizesParam -}}
-  {{- end -}}
+{{ if and $sizesParam (not $width) }}
+  {{ if eq $sizesParam "lazysizes" }}
+    {{ $sizes = `data-sizes="auto"` }}
+  {{ else if eq $sizesParam "user" }}
+    {{ $sizes = false }}
+  {{ else }}
+    {{ $sizes = printf `sizes="%s"` $sizesParam }}
+  {{ end }}
 {{- else if (not $width) -}}
   {{- $sizes = `sizes="100vw"` -}}
 {{- end -}}
