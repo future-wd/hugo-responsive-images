@@ -258,7 +258,7 @@
   {{- $class = .class | default (.page.Param "image.class") -}}
 {{- end -}}
 {{- if or 
-  (eq $sizes "lazysizes")
+  (eq $sizesParam "lazysizes")
   (eq $loading "lazysizes") -}} 
   {{- $class = print $class " lazyload" -}}
 {{ end }}
