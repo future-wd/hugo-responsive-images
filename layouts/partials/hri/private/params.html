@@ -240,7 +240,7 @@
 
 
 {{/* title defaults to figuretitle if set */}}
-{{ $title := .title | default .figureTitle }}
+{{ $title := .title | default .figureTitle | default .page.Title }}
 {{ $params = merge $params (dict "title" $title) }}
 
 
