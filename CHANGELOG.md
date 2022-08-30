@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.5](/github.com/powerfulweb/hugo-image/compare/v1.1.4...v1.1.5) (2022-08-30)
+
+
+### Bug Fixes
+
+* sizes=lazysizes error ([17a3221](/github.com/powerfulweb/hugo-image/commit/17a32217e6586fb373804916231e8ee76a053af4))
+* stop sizes="user" for generating ([7b6d748](/github.com/powerfulweb/hugo-image/commit/7b6d748a3ce3a2a988cd99222153a99502c08330))
+* stop sizes=user from appearing ([cab337b](/github.com/powerfulweb/hugo-image/commit/cab337b6a33d0076fe20374073e7040a80be49c6))
+* update comments ([051bb9d](/github.com/powerfulweb/hugo-image/commit/051bb9dc2c61410c2fdbac534c3147f76eabc59a))
+
 ### [1.1.4](/github.com/powerfulweb/hugo-image/compare/v1.1.3...v1.1.4) (2022-08-29)
 
 

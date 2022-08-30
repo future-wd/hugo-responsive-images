@@ -1,6 +1,6 @@
 {
   "name": "@future-wd/hugo-image",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Image processing for hugo",
   "main": "image.html",
   "scripts": {
