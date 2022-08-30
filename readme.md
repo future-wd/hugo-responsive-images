@@ -388,3 +388,8 @@ params:
   image:
     loading: lazysizes
     sizes: lazysizes
+```
+
+## Contribution
+
+Issues and pull requests are welcome. If need be, make changes to the test site directly in this repository.
