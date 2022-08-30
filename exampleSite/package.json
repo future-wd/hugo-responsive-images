@@ -4,24 +4,15 @@
   "description": "Basic Bootstrap Template - No Bloat!",
   "scripts": {
     "dev": "hugo server --gc --disableFastRender ",
-    "dev:preview": "npm run dev -- --buildDrafts --buildFuture",
     "build": "hugo -v --gc --minify --cleanDestinationDir",
     "renderToDisk": "hugo server --gc --disableFastRender --renderToDisk --cleanDestinationDir ",
-    "renderToDisk:preview": "npm run renderToDisk -- --buildDrafts --buildFuture ",
     "renderToDisk:production": "npm run renderToDisk -- --minify --environment production",
-    "npm-check": "npx npm-check -u",
-    "hugo version": "hugo version"
+    "npm-check": "npx npm-check -u"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hugo-starters/basic-bootstrap-template.git"
-  },
+  
   "author": "Sean Emerson",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/hugo-starters/basic-bootstrap-template/issues"
-  },
-  "homepage": "https://github.com/hugo-starters/basic-bootstrap-template#readme",
+  "homepage": "https://hugo-responsive-images.netlify.app/",
   "dependencies": {
     "lazysizes": "^5.3.2"
   }
