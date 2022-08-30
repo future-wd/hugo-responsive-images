@@ -1,0 +1,28 @@
+image:
+  widths: [600, 900, 1300]
+  # shortcodeWidths: [600, 900, 1300] # custom widths for shortcode use in markdown files. If unset defaults to widths
+  # renderHookWidths: [600, 900, 1300] # custom widths for render hook use in markdown files. If unset defaults to shortcode widths
+  densities: [1,2] # densities which are output when an image width is specified
+  formats: [original, webp] # set output formats. options are `original`, `bmp`, `gif`, `jpeg`, `jpg`, `png`, `tif`, `tiff`, and `webp`.
+  class: img-fluid # default image class if no class is specified
+  figureClass: figure # default figure class
+  figcaptionClass: figure-caption # default figcaption class
+  figureImageClass: "figure-img img-fluid" # default figure image class
+  figureTitleH: 4 # heading level for figure title
+  # depreciated lazysizes: true # enable integration of the lazysizes js library (`loading: lazysizes` needed for )
+  loading: lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js to handle image loading. Defaults to lazy. If you use default (`lazy`) or `lazysizes`, you will need to set above the fold images to `auto`. 
+  sizes: lazysizes # uses lazysizes to automatically generate the sizes property. User does not generate any sizes, you need to declare them. Defaults to user
+  renderHook: true # set to false to disable included markdown image render hook
+                    # override by setting imageRenderHook: true/false in front matter
+  renderHookWrapperClass: img-wrapper
+  shortcodeWrapperClass: img-wrapper
+  # suppressWidthWarning: true
+  placeholder: lqip # /dominant/file_name 
+
+  lqipBlurAmount: 5 # apply gaussian blur amount of 5 to lqip
+                    # may need to be increased at a page level for larger images
+  lqipDivFactor: 5 # lqip is 5x smaller than the smallest image in srcset
+  gifDivFactor: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
+
+
+  # provider: netlify

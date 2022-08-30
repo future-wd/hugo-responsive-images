@@ -1,0 +1,23 @@
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">{{ .Site.Title }}</a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        {{ range .Site.Menus.main }}
+          <li class="nav-item">
+            <a
+              class="nav-link{{ if $.IsMenuCurrent " main" . }}
+                active" aria-current="page
+              {{ end }}"
+              href="{{ .URL }}"
+              {{ if eq .Params.blank true }}
+                target="_blank" rel="noopener"
+              {{ end }}
+              >{{ .Name }}</a
+            >
+          </li>
+        {{ end }}
+      </ul>
+    </div>
+  </div>
+</nav>

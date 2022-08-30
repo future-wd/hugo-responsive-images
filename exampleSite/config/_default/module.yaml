@@ -1,0 +1,3 @@
+imports:
+- path: github.com/future-wd/hugo-responsive-images
+replacements: "github.com/future-wd/hugo-responsive-images -> ../../"

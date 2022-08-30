@@ -1,0 +1,28 @@
+{{ define "main" }}
+<section class="hero">
+  <div class="container col-xxl-8 g-5">
+    <div class="row align-items-center justify-content-center py-5">
+      <div class="col-10 col-sm-8 col-lg-6">
+        <img src="/img/bootstrap-themes.png" alt="Bootstrap Themes" class="img-fluid d-block mx-auto">
+      </div>
+      <div class="col-lg-6 order-lg-first">
+        <h1>{{ .Params.heading }}</h1>
+        <p class="lead">{{ .Content }}</p>
+        <div class="d-grid gap-2 d-md-flex">
+          {{ with .Params.btn1 }}
+          {{ if and .text .url }}
+          <a role="button" href="{{ .url }}" target="_blank" class="btn btn-lg btn-primary px-4 me-md-2">{{ .text }}</a>
+          {{ end }}
+          {{ end }}
+          {{ with .Params.btn2 }}
+          {{ if and .text .url }}
+          <a role="button" href="{{ .url }}" target="_blank" class="btn btn-lg btn-outline-secondary px-4">{{ .text
+            }}</a>
+          {{ end }}
+          {{ end }}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{{ end }}
