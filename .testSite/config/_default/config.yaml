@@ -2,4 +2,11 @@ baseURL: https://hugo-responsive-images.netlify.app/
 languageCode: en
 title: hugo-responsive-images test site
 
+# disable all extra outputs
+disableKinds:
+- sitemap
+- taxonomy
+- term
+- RSS
+
 
