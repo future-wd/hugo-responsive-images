@@ -35,7 +35,7 @@
   {{- $img = .page.Resources.GetMatch (print .src)   -}}
 {{- end -}}
 {{- if not $img }}
-  {{- $message := "No image resource found for image \"%s\" on page %s." .src  .page.RelPermalink  -}}
+  {{- $message := printf "No image resource found for image \"%s\" on page %s." .src  .page.RelPermalink  -}}
   {{ partial "hri/private/errorf" $message }}
 {{- end -}}
 {{ $params = merge $params (dict "img" $img) }}
