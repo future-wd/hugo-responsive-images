@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.6](/github.com/powerfulweb/hugo-image/compare/v1.1.5...v1.1.6) (2022-08-30)
+
+
+### Bug Fixes
+
+* default title to figuretitle then page title ([7bfe99d](/github.com/powerfulweb/hugo-image/commit/7bfe99d8ef32013a064defb397ccd5820fc47610))
+* no img error msg fix ([f396309](/github.com/powerfulweb/hugo-image/commit/f39630971ded93df45ed5846b27baf44cc4e0cdb))
+
 ### [1.1.5](/github.com/powerfulweb/hugo-image/compare/v1.1.4...v1.1.5) (2022-08-30)
 
 
