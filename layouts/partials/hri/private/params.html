@@ -22,7 +22,8 @@
 
 
 {{ $params :=  . }}
-{{ $params = merge $params (dict "page" .page) }}
+
+
 
 
 {{ $type := .type | default (.page.Param "image.type") }}
@@ -38,9 +39,21 @@
   {{- $message := printf "No image resource found for image \"%s\" on page %s." .src  .page.RelPermalink  -}}
   {{ partial "hri/private/errorf" $message }}
 {{- end -}}
+{{ $params = merge $params (dict 
+  "img" $img
   "type" $type) }}
 
 {{/* everything above this line must stay above this line for error messages to work as they use these variables */}}
+
+{{ $suppressWidthWarning := .suppressWidthWarning | default (.page.Param "image.suppressWidthWarning") }}
+{{ $title := .title | default .figureTitle | default .page.Title }}
+{{ $params = merge $params (dict 
+  "page" .page
+  "id" .id
+  "suppressWidthWarning" $suppressWidthWarning
+  "title" $title
+  ) }}
+
 
 {{/* ***************************
   ** set params               **
@@ -69,12 +82,8 @@
   {{- /* height to width ratio of .fillRatio */ -}}
   {{- /* numbers must be converted to float before division or they may create an answer of 0 */ -}}
   {{- $fillRatio = div (index . 1 | float) (index . 0 | float) -}}
+  {{ $params = merge $params (dict "fillRatio" $fillRatio) }}
 {{- end -}}
-{{ $params = merge $params (dict "fillRatio" $fillRatio) }}
-
-
-
-
 
 {{- /*********************************************************************
   **** if .width present for pixel density srcset                        *
@@ -102,6 +111,7 @@
       "width" (mul $.width $density)
       )) -}}
   {{- end -}}
+  {{ $params = merge $params (dict "widths" $widths) }}
 {{- else if $widths -}}
 {{/* else produce responsive srcset
   * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
@@ -137,15 +147,8 @@
       )) -}}
   {{- end -}}
   {{ $widths = $widthsArray }}
+  {{ $params = merge $params (dict "widths" $widths) }}
 {{- end -}}
-{{ $params = merge $params (dict 
-  "width" $width
-  "widths" $widths) }}
-
-  
-{{ $suppressWidthWarning := .suppressWidthWarning | default (.page.Param "image.suppressWidthWarning") }}
-{{ $params = merge $params (dict "suppressWidthWarning" $suppressWidthWarning) }}
-
 
 {{ $formats := .formats | default (.page.Param "image.formats") }}
 {{ with $formats }}
@@ -169,9 +172,11 @@
         "ctx" $params
       ) }}
   {{ end }}
+  {{ $params = merge $params (dict "formats" $formats) }}
 {{ end }}
-{{ $params = merge $params (dict "formats" $formats) }}
 
+{{/* external image processing provider /*}}
+{{/* for now just netlify /*}}
 {{ $provider := false }}
 {{ $providerParam := .provider | default (.page.Param "image.provider") }}
 {{ with $providerParam }}
@@ -186,10 +191,8 @@
       "ctx" $params
     ) }}
   {{ end }}
+  {{ $params = merge $params (dict "provider" $provider) }}
 {{ end }}
-{{ $params = merge $params (dict "provider" $provider) }}
-
-
 
 {{- $loading := .loading | default (.page.Param "image.loading") -}}
 {{- with  $loading -}}
@@ -208,10 +211,8 @@
       "ctx" $params
     ) }}
   {{- end -}}
+  {{ $params = merge $params (dict "loading" $loading) }}
 {{- end -}}
-{{ $params = merge $params (dict "loading" $loading) }}
-
-
 
 {{- $sizes := false -}}
 {{- $sizesParam := .sizes | default (.page.Param "image.sizes") -}}
@@ -238,19 +239,7 @@
 {{- end -}}
 {{ $params = merge $params (dict "sizes" $sizes) }}
 
-
-{{/* title defaults to figuretitle if set */}}
-{{ $title := .title | default .figureTitle | default .page.Title }}
-{{ $params = merge $params (dict "title" $title) }}
-
-
-{{ $figureTitle := .figureTitle }}
-{{ $params = merge $params (dict "figureTitle" $figureTitle) }}
-
-
-
-
-
+{{/* for figures $class uses figureImageClass, else uses .class */}}
 {{- $class := false -}}
 {{- if .figure }}
   {{- $class := .figureImageClass | default (.page.Param "image.figureImageClass") }}
@@ -262,8 +251,6 @@
   (eq $loading "lazysizes") -}} 
   {{- $class = print $class " lazyload" -}}
 {{ end }}
-{{ $params = merge $params (dict "class" $class) }}
-
 
 {{/* alt defaults to caption. If not caption or alt set, error. If suppressed, defaults to "image of [title]" */}}
 {{- $alt := (.caption | markdownify | plainify) | default .alt -}}
@@ -271,7 +258,10 @@
   {{- erroridf "alt-error" "Alt text has not been provided for image %s on page %s" $img.RelPermalink .page.RelPermalink -}}
   {{- $alt = printf "Image of %s" $title -}}
 {{- end -}}
-{{ $params = merge $params (dict "alt" $alt) }}
+{{ $params = merge $params (dict 
+  "alt" $alt
+  "class" $class
+  ) }}
 
 {{/* ******************************
   ** placeholder variables       **
@@ -286,12 +276,6 @@
   "lqipDivFactor" $lqipDivFactor
   "lqipBlurAmount" $lqipBlurAmount
   "gifDivFactor" $gifDivFactor) }}
-
-
-
-
-
-
 
 {{/* ******************************
   ** set options                 **
@@ -367,8 +351,5 @@
   {{ end }}
 {{ end }}
 {{ $params = merge $params (dict "options" $options) }}
-
-
-
 
 {{ return $params }}
