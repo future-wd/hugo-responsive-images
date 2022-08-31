@@ -16,10 +16,7 @@
   {{ partial "hri/private/figure-params" . }}
 */}}
 {{ $params := dict }}
-{{- $imageParams := . }}
 
-{{/* add figure=true to image params */}}
-{{- $imageParams := merge $imageParams (dict "figure" true) }}
 
 {{/*********************************************
   ** these params default to page/site params **
@@ -62,7 +59,13 @@
   "attr" .attr
   "attrLink" .attrLink
   "figureTitle" .figureTitle
+  "figureId" .figureId
   )}}
+
+
+{{- $imageParams := . }}
+{{/* add figure=true to image params */}}
+{{- $imageParams := merge $imageParams (dict "figure" true) }}
 {{ return (dict 
   "params" $params
   "imageParams" $imageParams ) }}
