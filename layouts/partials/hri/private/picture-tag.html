@@ -12,7 +12,7 @@
   {{ partial "hri/private/picture-tag" . }}
   
 */ -}}
-<picture>
+<picture {{ with .id }}id="{{ . }}"{{ end }}>
 {{- range $format, $values := .picture }}
   <source
   {{ if eq $.loading "lazysizes" }}
