@@ -56,19 +56,13 @@
 {{/************************************
   ** these params are passed through **
   *************************************/}}
-
-{{ $caption := .caption }}
-{{ $attr := .attr }}
-{{ $attrLink := .attrLink }}
-{{ $figureTitle := .figureTitle }}
 {{ $params = merge $params (dict
-  "figureTitle" $figureTitle
-  "caption" $caption
-  "attr" $attr
-  "attrLink" $attrLink
-  "figureTitle" $figureTitle
+  "figureTitle" .figureTitle
+  "caption" .caption
+  "attr" .attr
+  "attrLink" .attrLink
+  "figureTitle" .figureTitle
   )}}
-
 {{ return (dict 
   "params" $params
   "imageParams" $imageParams ) }}
