@@ -252,8 +252,8 @@
 
 
 {{- $class := false -}}
-{{- if .params.figure }}
-  {{- $class := .partial.class | default (.partial.page.Param "image.figureImageClass") }}
+{{- if .figure }}
+  {{- $class := .figureImageClass | default (.page.Param "image.figureImageClass") }}
 {{ else }}
   {{- $class = .class | default (.page.Param "image.class") -}}
 {{- end -}}
@@ -263,7 +263,6 @@
   {{- $class = print $class " lazyload" -}}
 {{ end }}
 {{ $params = merge $params (dict "class" $class) }}
-
 
 
 {{/* alt defaults to caption. If not caption or alt set, error. If suppressed, defaults to "image of [title]" */}}
