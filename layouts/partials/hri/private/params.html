@@ -38,7 +38,7 @@
   {{- $message := printf "No image resource found for image \"%s\" on page %s." .src  .page.RelPermalink  -}}
   {{ partial "hri/private/errorf" $message }}
 {{- end -}}
-{{ $params = merge $params (dict "img" $img) }}
+  "type" $type) }}
 
 {{/* everything above this line must stay above this line for error messages to work as they use these variables */}}
 
