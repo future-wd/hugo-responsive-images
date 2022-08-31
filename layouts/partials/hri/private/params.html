@@ -54,10 +54,6 @@
   "title" $title
   ) }}
 
-
-{{/* ***************************
-  ** set params               **
-  ******************************/}}
 {{ $fillRatio := .fillRatio | default (.page.Param "image.fillRatio") }}
 {{- with $fillRatio -}}
   {{- if reflect.IsSlice . -}}
@@ -89,7 +85,6 @@
   **** if .width present for pixel density srcset                        *
   **** produce array [{desc: "1x", width: 300},{desc: "2x", width: 600}] *
   ************************************************************************/ -}}
-
 {{ $widths := .widths | default (.page.Param "image.widths") }}
 {{ $width := .width | default (.page.Param "image.width") }}
 {{- if $width -}}
@@ -103,6 +98,7 @@
   {{- end -}}
   {{- $densities := .densities | default (.page.Param "image.densities") -}}
   {{- $densities = sort $densities -}}
+  {{/* clear $widths as were only working with one width */}}
   {{ $widths = slice }}
   {{- range $density := $densities }}
     {{- $widths = $widths | append (slice
@@ -176,13 +172,13 @@
 {{ end }}
 
 {{/* external image processing provider /*}}
-{{/* for now just netlify /*}}
+{{/* for now just netlify */}}
 {{ $provider := false }}
 {{ $providerParam := .provider | default (.page.Param "image.provider") }}
 {{ with $providerParam }}
   {{- $providerOpts := (slice "netlify") }}
   {{- if in $providerOpts . -}}
-      {{ $provider = $providerParam }}
+    {{ $provider = $providerParam }}
   {{ else }}
     {{ partial "hri/private/options-error" (dict 
       "var" "provider"
@@ -195,7 +191,7 @@
 {{ end }}
 
 {{- $loading := .loading | default (.page.Param "image.loading") -}}
-{{- with  $loading -}}
+{{- with $loading -}}
   {{- $loadingOpts := false -}}
   {{ if $.params.provider }}
     {{- /* disable lazy loading for external image processing */ -}}
@@ -234,8 +230,6 @@
   {{ else }}
     {{ $sizes = printf `sizes="%s"` $sizesParam }}
   {{ end }}
-{{- else if (not $width) -}}
-  {{- $sizes = `sizes="100vw"` -}}
 {{- end -}}
 {{ $params = merge $params (dict "sizes" $sizes) }}
 
