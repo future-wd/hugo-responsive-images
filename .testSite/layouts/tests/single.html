@@ -12,8 +12,9 @@
   </div>
   <div class="row">
     <div class="col-md-6">
-      <h2>Basic, with lqip settings, sizes 50vw</h2>
+      <h2>1. Basic, with lqip settings, sizes 50vw</h2>
       {{ partial "image" (dict 
+        "id" "js-picture1"
         "src" "test.jpg"
         "page" . 
         "alt" "test image"
@@ -22,24 +23,33 @@
         "lqipDivFactor" 4
         "sizes" "50vw"
       ) }}
+      <div class="results" id="js-picture1-results">
+      </div>
     </div>
     <div class="col-md-6">
-      <h2>Formats original, png, wepb, loading auto, placeholder dominant, gifDivFactor 4</h2>
+      <h2>1. Formats original, png, wepb, loading auto, placeholder dominant, gifDivFactor 4</h2>
       {{ partial "image" (dict 
         "src" "test.jpg" 
+        "id" "js-picture2"
         "page" . 
         "alt" "test image"
         "formats" (slice "original" "png" "webp")
         "loading" "auto"
         "placeholder" "dominant"
         "gifDivFactor" 4) }}
+        <div class="results" id="js-picture2-results">
+        </div>
     </div>
     <div class="col-md-6">
       <h2>Width 200, densities 1,2,3, loading "lazy", placeholder gray-200</h2>
-      {{ partial "image" (dict "src" "test.jpg" "page" . "alt" "test image"
+      {{ partial "image" (dict 
+      "src" "test.jpg" "page" . "alt" "test image"
+      "id" "js-picture3"
       "width" 200 "densities" (slice 1 2 3) 
       "loading" "lazy"
       "placeholder" "gray-200") }}
+      <div class="results" id="js-picture3-results">
+      </div>
     </div>
     <div class="col-md-6">
       <h2>Widths 400 800, class "img-fluid custom-img" loading lazysizes</h2>

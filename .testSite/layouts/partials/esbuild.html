@@ -1,0 +1,2 @@
+{{ $js := resources.Get . | js.Build (dict "sourceMap" "inline") }}
+<script src="{{ $js.RelPermalink }}"></script>
