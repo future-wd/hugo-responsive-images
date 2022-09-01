@@ -1,6 +1,7 @@
 const checkPicture = ({ divId, checks }) => {
   // results array
-  const results = [];
+  const imgResults = [];
+  const sourceResults = [];
   // debug header
   const debug = [];
   // get picture tag by id
@@ -23,19 +24,38 @@ const checkPicture = ({ divId, checks }) => {
               }
             });
             if (missingClasses.length) {
-              results.push(
+              imgResults.push(
                 `Classes of ${value.value} <span class="text-danger"><strong>FAIL</strong></span> (${missingClasses} not found)`
               );
             } else {
-              results.push(
+              imgResults.push(
                 `Classes of ${value.value} <span class="text-success"><strong>PASS</strong></span>`
+              );
+            }
+          } else if (value.prop === 'excludeClass') {
+            const matchedClasses = [];
+            value.value.forEach((className) => {
+              // img fluid then lazyloaded
+              classes = img.className.split(' ');
+              const matches = classes.includes(className);
+              if (matches === true) {
+                matchedClasses.push(className);
+              }
+            });
+            if (matchedClasses.length) {
+              imgResults.push(
+                `Exclude classes of ${value.value} <span class="text-danger"><strong>FAIL</strong></span> (${matchedClasses} found)`
+              );
+            } else {
+              imgResults.push(
+                `Exclude classes of ${value.value} <span class="text-success"><strong>PASS</strong></span>`
               );
             }
           } else {
             const propertyValue = img.getAttribute(value.prop);
             if (propertyValue) {
               if (propertyValue === value.value) {
-                results.push(
+                imgResults.push(
                   `${value.prop}="${value.value}" <span class="text-success"><strong>PASS</strong></span>`
                 );
               } else {
@@ -44,7 +64,7 @@ const checkPicture = ({ divId, checks }) => {
                 );
               }
             } else {
-              results.push(
+              imgResults.push(
                 `<span class="text-danger">Cannot find property ${value.prop}`
               );
             }
@@ -52,7 +72,7 @@ const checkPicture = ({ divId, checks }) => {
         });
       }
     } else {
-      results.push(`cannot find <img> <picture id="${divId}">`);
+      imgResults.push(`cannot find <img> <picture id="${divId}">`);
     }
     // get sources
     sourceCheck = checks.source;
@@ -72,45 +92,58 @@ const checkPicture = ({ divId, checks }) => {
                   const imageType = typeValue.slice(6);
                   sourceFormats.push(imageType);
                 } else {
-                  results.push(
+                  sourceResults.push(
                     `cannot find type property in source tag #${count}`
                   );
                 }
                 count += 1;
               }
-              if (value.value === sourceFormats) {
-                results.push(
-                  `Source formats of ${value.value} <span class="text-success"><strong>PASS</strong></span>`
+              if (value.value == sourceFormats) {
+                sourceResults.push(
+                  `Source formats of "${value.value}" <span class="text-success"><strong>PASS</strong></span>`
                 );
               } else {
-                results.push(
-                  `Source formats of ${value.value} <span class="text-danger"><strong>FAIL</strong></span> formats are ${sourceFormats}`
+                sourceResults.push(
+                  `Source formats of "${value.value}" <span class="text-danger"><strong>FAIL</strong></span> formats are "${sourceFormats}"`
                 );
               }
             }
-          } else {
-            debug.push(' no type value in config');
           }
         });
       }
     }
   } else {
-    results.push(`cannot find picture id="${divId}"`);
+    debug.push(`cannot find picture id="${divId}"`);
   }
 
   const resultsDiv = document.getElementById(`${divId}-results`);
-  let resultsList = '';
-  results.forEach((value) => {
-    resultsList += `<li>${value}</li>`;
+  let imgResultsList = '';
+  imgResults.forEach((value) => {
+    imgResultsList += `<li>${value}</li>`;
   });
+  let sourceResultsList = '';
+  sourceResults.forEach(value => {
+    sourceResultsList += `<li>${value}</li>`;
+  })
 
   if (resultsDiv) {
-    resultsDiv.innerHTML = `
-    Img tag:
-    <ul>
-      ${resultsList}
-    </ul>
-    `;
+    if (imgResultsList) {
+      resultsDiv.innerHTML += `
+      Img tag:
+      <ul>
+        ${imgResultsList}
+      </ul>
+      `;
+    }
+    if (sourceResultsList) {
+      resultsDiv.innerHTML += `
+      Source tags:
+      <ul>
+        ${sourceResultsList}
+      </ul>
+      `;
+    }
+   
   } else {
     debug.push(`cannot find &lt;div id="${divId}-results"&gt;`);
   }
@@ -138,6 +171,7 @@ checkPicture({
       { prop: 'data-sizes', value: 'auto' },
       { prop: 'alt', value: 'Test Image Alt' },
       { prop: 'title', value: 'Test Image Title' },
+      { prop: 'data-sizes', value: 'auto' },
       { prop: 'class', value: ['img-fluid', 'lazyload'] },
     ],
     source: [{ prop: 'types', value: ['webp', 'jpeg'] }],
@@ -151,6 +185,7 @@ checkPicture({
     source: [{ prop: 'types', value: ['webp', 'png', 'jpeg'] }],
   },
 });
+
 checkPicture({
   divId: 'js-test3',
   checks: {
@@ -158,17 +193,36 @@ checkPicture({
   },
 });
 
-// checkPicture({
-//   pictureId: 'js-picture3',
-//   resultsId: 'js-picture3-results',
-//   checks: {
-//     img: [
-//       { prop: 'sizes', value: '50vw' },
-//       { prop: 'alt', value: 'test image' },
-//       { prop: 'title', value: 'image title' },
-//       { prop: 'loading', value: 'lazy'},
-//       { prop: 'class', value: ['img-fluid', 'lazyload'] },
-//     ],
-//     source: [{ prop: 'types', value: ['webp', 'jpeg'] }],
-//   },
-// });
+checkPicture({
+  divId: 'js-test4',
+  checks: {
+    img: [
+      { prop: 'loading', value: 'auto' },
+      { prop: 'sizes', value: '50vw' },
+      { prop: 'class', value: ['img-fluid'] },
+      { prop: 'excludeClass', value: ['lazysizes'] },
+    ],
+  },
+});
+
+checkPicture({
+  divId: 'js-test5',
+  checks: {
+    img: [
+      { prop: 'loading', value: 'auto' },
+      { prop: 'data-sizes', value: 'auto' },
+      { prop: 'class', value: ['img-fluid', 'lazyload'] },
+    ],
+  },
+});
+
+checkPicture({
+  divId: 'js-test6',
+  checks: {
+    img: [
+      { prop: 'loading', value: 'lazy' },
+      { prop: 'data-sizes', value: 'auto' },
+      { prop: 'class', value: ['img-fluid', 'lazyload'] },
+    ],
+  },
+});
