@@ -21,7 +21,7 @@
 */}}
 
 
-{{ $params :=  . }}
+<!-- {{ $params :=  . }} -->
 
 
 
@@ -193,7 +193,7 @@
 {{- $loading := .loading | default (.page.Param "image.loading") -}}
 {{- with $loading -}}
   {{- $loadingOpts := false -}}
-  {{ if $.params.provider }}
+  {{ if $provider }}
     {{- /* disable lazy loading for external image processing */ -}}
     {{- $loadingOpts = (slice "auto" "lazy") -}}
   {{- else -}}

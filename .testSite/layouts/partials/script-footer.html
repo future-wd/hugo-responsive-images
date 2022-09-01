@@ -7,3 +7,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js"></script>
 
 {{ partial "esbuild" "test.js" }}
+<!-- 
+{{ $js := resources.Get "test.js" | resources.ExecuteAsTemplate "test.js" .  | js.Build (dict "sourceMap" "inline") }}
+<script src="{{ $js.RelPermalink }}"></script> -->
