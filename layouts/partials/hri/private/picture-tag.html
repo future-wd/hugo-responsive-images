@@ -13,17 +13,17 @@
   
 */ -}}
 <picture {{ with .id }}id="{{ . }}"{{ end }}>
-{{- range $format, $values := .picture }}
+{{- range sort .picture "weight" "desc" }}
   <source
   {{ if eq $.loading "lazysizes" }}
     data-srcset="{{ .srcset }}"
   {{- else -}}
     srcset="{{ .srcset }}"
   {{- end -}}
-  {{- if eq $format "original" }}
+  {{- if eq .format "original" }}
     type="{{ $.img.MediaType }}"
   {{- else }}
-    type="{{ printf "image/%s" $format }}"
+    type="{{ printf "image/%s" .format }}"
   {{- end }}
   />
 {{- end }}
@@ -61,3 +61,10 @@
   />
 {{ end  -}}
 </picture>
+
+{{- range sort .picture "weight" "desc" }}
+<p>
+{{ . }}
+</p>
+format: {{ .format }}
+{{ end }}
