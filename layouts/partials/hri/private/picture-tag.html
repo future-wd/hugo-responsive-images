@@ -62,9 +62,3 @@
 {{ end  -}}
 </picture>
 
-{{- range sort .picture "weight" "desc" }}
-<p>
-{{ . }}
-</p>
-format: {{ .format }}
-{{ end }}
