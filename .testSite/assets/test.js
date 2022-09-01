@@ -54,12 +54,13 @@ const checkPicture = ({ divId, checks }) => {
           } else {
             const propertyValue = img.getAttribute(value.prop);
             if (propertyValue) {
-              if (propertyValue === value.value) {
+              // == used as value.value is int, propertyValue is string
+              if (propertyValue == value.value) {
                 imgResults.push(
                   `${value.prop}="${value.value}" <span class="text-success"><strong>PASS</strong></span>`
                 );
               } else {
-                results.push(
+                imgResults.push(
                   `${value.prop}="${value.value}" <span class="text-danger"><strong>FAIL</strong></span> (${value.prop}="${propertyValue}")`
                 );
               }
