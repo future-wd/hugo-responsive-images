@@ -238,9 +238,6 @@ const checkPicture = (divId, checks) => {
   }
 };
 
-
-
-
 const images = window.testImages;
 
 images.forEach((image) => {
