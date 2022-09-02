@@ -27,6 +27,27 @@ testImages:
     alt: Width, densities
     width: 400
     densities: [1,2,3]
+- id: js-test4
+  title: 4. Loading auto, sizes 50vw
+  subtitle: no lazysizes
+  params:
+    alt: loading, sizes
+    loading: auto
+    sizes: 50vw
+- id: js-test5
+  title: 5. loading auto, sizes lazysizes
+  subtitle: lazysizes enabled
+  params:
+    alt: lazysizes enabled
+    loading: auto
+    sizes: lazysizes
+- id: js-test6
+  title: 6. loading lazy, sizes lazysizes
+  subtitle: lazysizes enabled
+  params:
+    alt: lazysizes enabled
+    loading: lazy
+    sizes: lazysizes
 --- 
 
 <!-- Image with renderHook: false

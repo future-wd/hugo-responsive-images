@@ -34,6 +34,8 @@
   {{- end -}}
   {{- if eq $.loading "lazysizes" }}
     data-src="{{ .RelPermalink }}"
+    height="{{ .Height }}"
+    width="{{ .Width }}"
     {{- with $.picture.original.placeholder }}
     src="{{ . | safeURL }}"
     {{- end }}
