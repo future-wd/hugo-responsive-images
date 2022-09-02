@@ -23,8 +23,7 @@
 {{ $picture := dict }}
 {{ $options := .options }}
 
-
-{{ range $format := .formats }}
+{{ range $index, $format:= .formats }}
   {{/* add format to options array (for format transformation) if not original */}}
   {{ if ne $format "original" }}
     {{ $options = $options | append $format }}
@@ -82,7 +81,7 @@
   {{- /* convert srcset array into a string, delimit with , between each image */ -}}
   {{- $srcset := delimit $srcset ", " -}}
   {{- /* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */ -}}
-  {{- $picture = merge $picture (dict $format (dict "srcset" $srcset "src" $src "placeholder" $placeholder)) -}}
+  {{- $picture = merge $picture (dict $format (dict "weight" $index "format" $format "srcset" $srcset "src" $src "placeholder" $placeholder)) -}}
 {{- end -}}
 
 {{/* merge and return params */}}
