@@ -6,6 +6,6 @@
 ></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js"></script> -->
 
-{{ partial "esbuild" "js/test.js" }}
-{{ partial "esbuild" "js/vendor.js"}}
+{{ partial "esbuild-template" (dict "src" "js/test.js" "page" . ) }}
+{{ partial "esbuild" (dict "src" "js/vendor.js") }}
 

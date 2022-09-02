@@ -1,4 +1,4 @@
-const checkPicture = ({ divId, checks }) => {
+const checkPicture = (divId, checks) => {
   // results array
   const imgResults = [];
   const sourceResults = [];
@@ -238,73 +238,13 @@ const checkPicture = ({ divId, checks }) => {
   }
 };
 
-checkPicture({
-  divId: 'js-test1',
-  checks: {
-    img: {
-      dataSizes: 'auto',
-      alt: 'Test Image Alt',
-      title: 'Test Image Title',
-      dataSizes: 'auto',
-      class: ['img-fluid', 'lazyload'],
-    },
-    source: {
-      types: ['webp', 'jpeg'],
-      dataWidths: ['600w', '900w', '1300w'],
-    },
-  },
-});
 
-checkPicture({
-  divId: 'js-test2',
-  checks: {
-    img: {},
-    source: { types: ['webp', 'png', 'jpeg'] },
-  },
-});
 
-checkPicture({
-  divId: 'js-test3',
-  checks: {
-    img: {
-      width: 400,
-    },
-    source: {
-      dataDensities: ['1x', '2x', '3x'],
-    },
-  },
-});
 
-checkPicture({
-  divId: 'js-test4',
-  checks: {
-    img: {
-      loading: 'auto',
-      sizes: '50vw',
-      class: ['img-fluid'],
-      notClass: ['lazysizes'],
-    },
-  },
-});
+const images = window.testImages;
 
-checkPicture({
-  divId: 'js-test5',
-  checks: {
-    img: {
-      loading: 'auto',
-      dataSizes: 'auto',
-      class: ['img-fluid', 'lazyload'],
-    },
-  },
-});
-
-checkPicture({
-  divId: 'js-test6',
-  checks: {
-    img: {
-      loading: 'lazy',
-      dataSizes: 'auto',
-      class: ['img-fluid', 'lazyload'],
-    },
-  },
+images.forEach((image) => {
+  if (image.id && image.tests) {
+    checkPicture(image.id, image.tests);
+  }
 });
