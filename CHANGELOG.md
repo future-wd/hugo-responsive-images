@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.7](/github.com/powerfulweb/hugo-image/compare/v1.1.6...v1.1.7) (2022-09-02)
+
+
+### Bug Fixes
+
+* add .type to params ([4eafe95](/github.com/powerfulweb/hugo-image/commit/4eafe95805e97a55b86fdb02e11a3d0700e1c00b))
+* add example site ([1bb4a30](/github.com/powerfulweb/hugo-image/commit/1bb4a30500c93caccdeadebdbfaa749241a7e7ec))
+* add id to picture tag ([6c48d16](/github.com/powerfulweb/hugo-image/commit/6c48d1676e7f0009efdee1716549a0cba322555d))
+* clean test site ([8199134](/github.com/powerfulweb/hugo-image/commit/819913497a84e65083bdcd3ed2798cb5c64d4ff9))
+* clean up figure params ([2fac5cc](/github.com/powerfulweb/hugo-image/commit/2fac5cc06164487fb68437b13fc1a09599d48857))
+* disable all extra outputs ([8578e4e](/github.com/powerfulweb/hugo-image/commit/8578e4e500b19b11ddd9b58020880304d3028c7f))
+* home page ([78a09a4](/github.com/powerfulweb/hugo-image/commit/78a09a4c057c7783b34eabf0043a567e3766f557))
+* image formats in desc order ([a3f6c96](/github.com/powerfulweb/hugo-image/commit/a3f6c962b839db532f3d1194f8ac78377ea12779))
+* img and source tests working ([2889314](/github.com/powerfulweb/hugo-image/commit/2889314177a172ee569e6a5e6f1cd4e1fefd0528))
+* in progress ([5a014c1](/github.com/powerfulweb/hugo-image/commit/5a014c1c8678e9504cf417af64317acebec17d87))
+* print height and width for lazysize ([e89617c](/github.com/powerfulweb/hugo-image/commit/e89617c481c690f2fa979852d0532938a9b7e07c))
+* readme ([4cd5f96](/github.com/powerfulweb/hugo-image/commit/4cd5f960a599aa41221840aa6b6eefcfed080ad9))
+* refactor and add .figureId ([970b063](/github.com/powerfulweb/hugo-image/commit/970b063503c469e07c8ad7aa3064672a609267c8))
+* refactor and add .id to $params ([9455ebf](/github.com/powerfulweb/hugo-image/commit/9455ebf94d172b0072392b958ccef95976f2a417))
+* remove comment bug ([8ccc0a2](/github.com/powerfulweb/hugo-image/commit/8ccc0a2fdb5563e44e49a539fd9d875d73f56ea2))
+* rename dir so go module ignores ([bcd03d5](/github.com/powerfulweb/hugo-image/commit/bcd03d52427e46ecf49c327d32518621d839c8e6))
+* update figureImageClass to new format ([69a2489](/github.com/powerfulweb/hugo-image/commit/69a248934c17928754bde79b4ff04efcc7a44649))
+* update test site url ([d11468a](/github.com/powerfulweb/hugo-image/commit/d11468a120f73cbb0875391fb73711552c4a98cb))
+
 ### [1.1.6](/github.com/powerfulweb/hugo-image/compare/v1.1.5...v1.1.6) (2022-08-30)
 
 
