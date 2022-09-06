@@ -1,1 +1,46 @@
-@import 'bootstrap/scss/bootstrap.scss'
+@import 'bootstrap/scss/bootstrap.scss';
+
+img[data-sizes="auto"] { display: block; width: 100%; }
+
+
+
+.img-wrapper {
+  justify-content: center;
+}
+
+@media (min-width: 1400px) {
+  .img-wrapper > .img.fluid {
+    max-width: 1200px;
+  }
+}
+
+@media (min-width: 576px) {
+  .img-wrapper {
+    padding: 0 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .img-wrapper {
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .img-wrapper {
+    padding: 0 3rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .img-wrapper {
+    padding: 0 6rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .img-wrapper {
+    padding: 0 8rem;
+  }
+}
+
