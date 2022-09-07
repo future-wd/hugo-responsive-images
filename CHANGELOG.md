@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.8](/github.com/powerfulweb/hugo-image/compare/v1.1.7...v1.1.8) (2022-09-07)
+
+
+### Bug Fixes
+
+* bump required hugo version ([df1e16d](/github.com/powerfulweb/hugo-image/commit/df1e16d61286a289fa2ee2e7d37527f6091c1ff2))
+* figure bugs ([b0215e9](/github.com/powerfulweb/hugo-image/commit/b0215e935f3264fdb802f50a66774ff628625c01))
+* loading conditional ([d7bfdad](/github.com/powerfulweb/hugo-image/commit/d7bfdadfbdfe56e8990a1b7c1489b5891d7be729))
+* moved test params to md ([211aa3c](/github.com/powerfulweb/hugo-image/commit/211aa3c8a288d51365ad7096ccc326448fa6934f))
+* only enable lazysizes with loading=lazysizes ([5a69485](/github.com/powerfulweb/hugo-image/commit/5a69485a2b47e98182f68f2b877f5cc86914c3d0))
+* pass .width to generate img src ([08fe68d](/github.com/powerfulweb/hugo-image/commit/08fe68d6b33130e20974ba07598a53a3c8a7eac7))
+* update path ([8cf49b5](/github.com/powerfulweb/hugo-image/commit/8cf49b59e00ce1c6fb44d57ebd83a5bfb22eb94d))
+* update test site ([ad606f3](/github.com/powerfulweb/hugo-image/commit/ad606f3e0cee17e284fc089b0b6cf1ce4a838302))
+
 ### [1.1.7](/github.com/powerfulweb/hugo-image/compare/v1.1.6...v1.1.7) (2022-09-02)
 
 
