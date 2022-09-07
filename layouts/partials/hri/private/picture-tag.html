@@ -29,7 +29,7 @@
 {{- end }}
 {{- with .picture.original.src }}
   <img
-  {{- if eq $.loading (or "auto" "lazy") }}
+  {{- if (or (eq $.loading "auto") (eq $.loading "lazy")) }}
     loading="{{ $.loading }}"
   {{- end -}}
   {{- if eq $.loading "lazysizes" }}

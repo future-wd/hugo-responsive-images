@@ -21,7 +21,7 @@
 */}}
 
 
-<!-- {{ $params :=  . }} -->
+{{ $params :=  dict }}
 
 
 
@@ -107,7 +107,10 @@
       "width" (mul $.width $density)
       )) -}}
   {{- end -}}
-  {{ $params = merge $params (dict "widths" $widths) }}
+  {{ $params = merge $params (dict 
+    "widths" $widths
+    "width" $width
+    ) }}
 {{- else if $widths -}}
 {{/* else produce responsive srcset
   * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
@@ -235,14 +238,12 @@
 
 {{/* for figures $class uses figureImageClass, else uses .class */}}
 {{- $class := false -}}
-{{- if .figure }}
-  {{- $class := .figureImageClass | default (.page.Param "image.figureImageClass") }}
+{{- if eq .figure true }}
+  {{- $class = .figureImageClass | default (.page.Param "image.figureImageClass") }}
 {{ else }}
   {{- $class = .class | default (.page.Param "image.class") -}}
 {{- end -}}
-{{- if or 
-  (eq $sizesParam "lazysizes")
-  (eq $loading "lazysizes") -}} 
+{{- if eq $loading "lazysizes" -}} 
   {{- $class = print $class " lazyload" -}}
 {{ end }}
 

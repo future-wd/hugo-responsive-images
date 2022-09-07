@@ -345,6 +345,8 @@ params:
 
 ```css
 img[data-sizes="auto"] { display: block; width: 100%; }
+/* so bootstrap 5 figures display correctly */
+.figure {display: block}
 ```
 
 ### Import inline via CDN
@@ -355,7 +357,7 @@ https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js
 
 ### JavaScript Module via NPM
 
-Install 
+Install
 
 ```bash
 npm install lazysizes
@@ -395,3 +397,5 @@ params:
 Issues and pull requests are welcome. If need be, make changes to the test site directly in this repository.
 
 Test site is visible @ <https://hugo-responsive-image.netlify.app/>
+
+Test site resides in /.testSite

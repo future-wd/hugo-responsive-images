@@ -1,8 +1,6 @@
 {{/*
   figure-params.html
   - Some inputs default to page/site params
-  - Some inputs passed through
-
 
   @author @sean-au
 
@@ -25,9 +23,9 @@
 {{ $target := .target | default (.page.Param "image.target") }}
 {{ $rel := .rel | default (.page.Param "image.rel") }}
 {{ $link := .link | default (.page.Param "image.link") }}
-{{ $figureClass := .figureclass | default (.page.Param "image.figureClass") }}
+{{ $figureClass := .figureClass | default (.page.Param "image.figureClass") }}
 {{ $figCaptionClass := .figCaptionClass | default (.page.Param "image.figCaptionClass") }}
-{{ $figureTitleH := .figureH | default (.page.Param "image.figureTitleH") }}
+{{ $figureTitleH := .figureTitleH | default (.page.Param "image.figureTitleH") }}
 
 {{/*********************************************
   ** default open http links new window       **
@@ -46,6 +44,7 @@
   "target" $target
   "rel" $rel
   "link" $link
+  "figureClass" $figureClass
   "figCaptionClass" $figCaptionClass
   "figureTitleH" $figureTitleH
   )}}
@@ -58,14 +57,7 @@
   "caption" .caption
   "attr" .attr
   "attrLink" .attrLink
-  "figureTitle" .figureTitle
-  "figureId" .figureId
   )}}
 
 
-{{- $imageParams := . }}
-{{/* add figure=true to image params */}}
-{{- $imageParams := merge $imageParams (dict "figure" true) }}
-{{ return (dict 
-  "params" $params
-  "imageParams" $imageParams ) }}
+{{ return $params  }}

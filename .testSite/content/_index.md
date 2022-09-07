@@ -1,15 +1,104 @@
 ---
-title: "Home"
-date: 2022-07-06T00:30:07-08:00
+title: "Tests"
+date: 2022-08-28T15:35:39-07:00
 draft: false
-menu: main
-weight: 10
-heading: My first Bootstrap & Hugo Site
-btn1:
-  text: Bootstrap 5 Docs
-  url: https://getbootstrap.com/
-btn2:
-  text: Hugo Docs
-  url: https://gohugo.io/
----
-Lorem ipsum dolor sit amet consectetur, adipisicing elit. Optio ullam corrupti sed nam aut officia eius veritatis ipsum corporis! Cupiditate aut ducimus dolorem mollitia nobis sed perspiciatis delectus maxime molestiae.
+image:
+  renderHook: false
+testImages:
+- id: js-test1
+  title: 1. Basic
+  subtitle: Alt and title set
+  params:
+    alt: Test Image Alt
+    title: Test Image Title
+  tests:
+    img:
+      dataSizes: 'auto'
+      alt: 'Test Image Alt'
+      title: 'Test Image Title'
+      dataSizes: 'auto'
+      class: ['img-fluid', 'lazyload']
+    source: 
+      types: ['webp', 'jpeg']
+      dataWidths: ['600w', '900w', '1300w']
+- id: js-test2
+  title: 2. Formats
+  subtitle: original (jpeg), png, webp
+  params:
+    alt: Formats
+    formats: [original, png, webp]
+  tests: 
+    source:
+      types: ['webp', 'png', 'jpeg'] 
+- id: js-test3
+  title: 3. Width and densities
+  subtitle: widths 400, densities 1,2,3
+  params:
+    alt: Width, densities
+    width: 400
+    densities: [1,2,3]
+  tests:
+    img:
+      width: 400
+    source: 
+      dataDensities: ['1x', '2x', '3x']
+- id: js-test4
+  title: 4. Loading auto, sizes 50vw
+  subtitle: no lazysizes
+  params:
+    alt: loading, sizes
+    loading: auto
+    sizes: 50vw
+  tests:
+    img: 
+      loading: 'auto'
+      sizes: '50vw'
+      class: ['img-fluid']
+      notClass: ['lazysizes']
+- id: js-test5
+  title: 5. loading lazy, sizes 60vw
+  subtitle: no lazysizes
+  params:
+    alt: no lazysizes
+    loading: lazy
+    sizes: 60vw
+  tests:
+    img: 
+      loading: lazy
+      sizes: 60vw
+      class: [img-fluid]
+- id: js-test6
+  title: 6. loading lazysizes, sizes lazysizes
+  subtitle: lazysizes enabled
+  params:
+    alt: lazysizes enabled
+    loading: lazysizes
+    sizes: lazysizes
+  tests:
+    img:
+      dataSizes: 'auto'
+      class: ['img-fluid', 'lazyload']
+- id: js-test7
+  title: 7. figure
+  subtitle: 
+  partial: figure
+  params:
+    alt: figure
+    figureTitle: Figure Title
+    figureTitleH: 3
+    caption: Figure Caption
+    attr: Attribution Text
+    attrLink: http://www.author.com
+    link: /
+  tests:
+    img:
+      dataSizes: auto
+      class: ['figure-img', 'img-fluid', 'lazyload']
+    figure:
+      class: [figure]
+    figcaption:
+      class: [figure-caption]
+--- 
+
+<!-- Image with renderHook: false
+![Alt Text](test.jpg "Test Title") -->

@@ -23,5 +23,5 @@
 */}}
 
 {{ $message := printf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value .ctx.img.RelPermalink .ctx.page.RelPermalink .options }}
-{{ partial "hugo-responsive-images/private/errorf" $message }}
+{{ partial "hri/private/errorf" $message }}
 

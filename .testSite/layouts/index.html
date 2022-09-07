@@ -1,18 +1,34 @@
 {{ define "main" }}
+<script>
+  window.testImages = {{ .Params.testImages }}
+</script>
 <div class="container">
   <div class="row">
     <div class="col">
-      <h1>Test Pages</h1>
-      <ul>
-        {{ range .Site.RegularPages }}
-        <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-        {{ end }}
-      </ul>
-      <h2>External Links</h2>
-      <ul>
-        <li><a href="http://github.com/future-wd/hugo-responsive-images" target="_blank" rel="noopener noreferrer">GitHub Page</a></li>
-      </ul>
+      <article>
+        <header>
+          <h1>{{ .Title }}</h1>
+        </header>
+        {{ .Content }}
+        <div class="" id="js-debug"></div>
+      </article>
     </div>
+  </div>
+  <div class="row">
+    {{ range .Params.testImages }}
+    <div class="col-md-6" id="{{ .id }}">
+      <h2>{{ .title }}</h2>
+      <p>{{ .subtitle }}</p>
+      
+      {{ $partial := .partial | default "image" }}
+      {{ with .params }}
+      {{ $params := (dict "page" $ "src" "test.jpg") }}
+      {{ $params = merge $params . }}
+      {{ partial $partial $params }}
+      {{ end }}
+      <div id="{{ .id }}-results"></div>
+    </div>
+    {{ end }}
   </div>
 </div>
 {{ end }}
