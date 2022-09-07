@@ -95,7 +95,7 @@ testImages:
   tests:
     img:
       dataSizes: auto
-      class: ['img-fluid', 'figure-img', 'lazyload']
+      class: ['figure-img', 'img-fluid', 'lazyload']
     figure:
       class: [figure-image]
     figcaption:
