@@ -56,27 +56,26 @@ testImages:
       class: ['img-fluid']
       notClass: ['lazysizes']
 - id: js-test5
-  title: 5. loading auto, sizes lazysizes
-  subtitle: lazysizes enabled
+  title: 5. loading lazy, sizes 60vw
+  subtitle: no lazysizes
   params:
-    alt: lazysizes enabled
-    loading: auto
-    sizes: lazysizes
+    alt: no lazysizes
+    loading: lazy
+    sizes: 60vw
   tests:
     img: 
-      loading: 'auto'
-      dataSizes: 'auto'
-      class: ['img-fluid', 'lazyload']
+      loading: lazy
+      sizes: 60vw
+      class: [img-fluid]
 - id: js-test6
-  title: 6. loading lazy, sizes lazysizes
+  title: 6. loading lazysizes, sizes lazysizes
   subtitle: lazysizes enabled
   params:
     alt: lazysizes enabled
-    loading: laz
+    loading: lazysizes
     sizes: lazysizes
   tests:
     img:
-      loading: 'lazy'
       dataSizes: 'auto'
       class: ['img-fluid', 'lazyload']
 - id: js-test7
