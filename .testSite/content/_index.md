@@ -72,7 +72,7 @@ testImages:
   subtitle: lazysizes enabled
   params:
     alt: lazysizes enabled
-    loading: lazy
+    loading: laz
     sizes: lazysizes
   tests:
     img:
@@ -87,7 +87,6 @@ testImages:
     alt: figure
     figureTitle: Figure Title
     figureTitleH: 3
-    figureClass: hello
     caption: Figure Caption
     attr: Attribution Text
     attrLink: http://www.author.com
@@ -97,28 +96,7 @@ testImages:
       dataSizes: auto
       class: ['figure-img', 'img-fluid', 'lazyload']
     figure:
-      class: [figure-image]
-    figcaption:
-      class: [figure-caption]
-- id: js-test8
-  title: 8. figure
-  subtitle: 
-  partial: figure
-  params:
-    alt: figure
-    figureTitle: Figure Title
-    figureTitleH: 3
-    figureClass: hello
-    caption: Figure Caption
-    attr: Attribution Text
-    attrLink: http://www.author.com
-    link: /
-  tests:
-    img:
-      dataSizes: auto
-      class: ['img-fluid', 'figure-img', 'lazyload']
-    figure:
-      class: [figure-image]
+      class: [figure]
     figcaption:
       class: [figure-caption]
 --- 

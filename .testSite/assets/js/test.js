@@ -192,7 +192,7 @@ const checkPicture = (divId, checks) => {
                 }
               } else {
                 results.push(
-                  `<span class="text-danger">Cannot find property ${propName}`
+                  `<span class="text-danger">Cannot find property ${propName} (for ${propName}="${value}")`
                 );
               }
             }

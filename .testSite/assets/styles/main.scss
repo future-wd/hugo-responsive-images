@@ -1,7 +1,8 @@
 @import 'bootstrap/scss/bootstrap.scss';
 
-img[data-sizes="auto"] { display: block; width: 100%; }
+img[data-sizes="auto"], { display: block; width: 100%; }
 
+.figure {display: block}
 
 
 .img-wrapper {
