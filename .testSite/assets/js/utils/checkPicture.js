@@ -1,14 +1,5 @@
-import dash from './utils/camelToDash';
-
-const resultsToList = (results) => {
-  const resultsList = results.map((value) => `<li>${value}</li>`);
-  const list = `
-    <ul>
-    ${resultsList.join('')}
-    </ul>
-    `;
-  return list;
-};
+import dash from './camelToDash';
+import resultsToList from './resultsToList';
 
 const checkPicture = (divId, checks) => {
   // results array
@@ -222,27 +213,16 @@ const checkPicture = (divId, checks) => {
 
   // create debug info
   // for top of the page
-  // push text to debug variable
+  // push text to debug div
   const debugDiv = document.getElementById('js-debug');
 
   if (debugDiv) {
-    let debugList = '';
-    debug.forEach((value) => {
-      debugList += `<li>${value}</li>`;
-    });
-
-    debugDiv.innerHTML = `
-    <ul>
-      ${debugList}
-    </ul>
-    `;
+    debugDiv.innerHTML += resultsToList(debug);
+  } else {
+    console.error('Cannot find js-debug div for debug info display')
   }
 };
 
-const images = window.testImages;
+export default checkPicture;
 
-images.forEach((image) => {
-  if (image.id && image.tests) {
-    checkPicture(image.id, image.tests);
-  }
-});
+

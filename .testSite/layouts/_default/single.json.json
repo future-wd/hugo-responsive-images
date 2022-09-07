@@ -1,0 +1,13 @@
+
+{{ with site.GetPage "/" }}
+{{ $params := .Params.testImages }}
+
+{{ $exportParams := slice }}
+
+{{ range $params }}
+{{ $exportParams = $exportParams | append (slice (dict "id" .id "tests" .tests)) }}
+{{ end }}
+
+{{ $exportParams | jsonify (dict "prefix" "" "indent" "  ") }}
+{{ end }}
+

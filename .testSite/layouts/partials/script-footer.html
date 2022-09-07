@@ -1,3 +1,8 @@
-{{ partial "esbuild-template" (dict "src" "js/test.js" "page" . ) }}
+
 {{ partial "esbuild" (dict "src" "js/vendor.js") }}
+
+{{- /* development esbuild options */ -}}
+{{- $testOpts := (dict "sourceMap" "inline" "target" "es2015" ) -}}
+{{- $testsJs := resources.Get "js/tests.js" | resources.ExecuteAsTemplate "js/tests.js" . | js.Build $testOpts | fingerprint -}}
+  <script src="{{ $testsJs.RelPermalink }}" integrity="{{ $testsJs.Data.Integrity }}"></script>
 
