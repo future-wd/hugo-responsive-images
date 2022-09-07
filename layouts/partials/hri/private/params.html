@@ -107,7 +107,10 @@
       "width" (mul $.width $density)
       )) -}}
   {{- end -}}
-  {{ $params = merge $params (dict "widths" $widths) }}
+  {{ $params = merge $params (dict 
+    "widths" $widths
+    "width" $width
+    ) }}
 {{- else if $widths -}}
 {{/* else produce responsive srcset
   * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
