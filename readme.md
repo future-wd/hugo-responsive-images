@@ -269,6 +269,28 @@ Render hook only responsive widths default to shortcode responsive widths, and t
 
 A div wrapper around the image has been provided see above for configuration (image.renderHookWrapperClass)
 
+You can also set configuration via image resources meta data using the following example:
+
+```yaml
+---
+resources:
+- src: img1.jpg
+  title: Optionally Set title here
+  params:
+    alt: Optionally set alt here
+    width: 300
+    class: custom-class # etc
+---
+```
+
+Then..
+
+```mardown
+![](img1.jpg)
+```
+
+(I have opted to set alt and title via frontmatter to make the example more informative..)
+
 <!-- 
 ### Noscript required HTML, JS and CSS
 
@@ -276,7 +298,7 @@ The following elements are required for the `<noscript>` module to work. The scr
 
 ```HTML
 
-<html class="no-js">
+1<html class="no-js">
   <head>
     <script>
       document.documentElement.className = document.documentElement.className.replace("no-js", "js");

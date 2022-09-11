@@ -1,5 +1,5 @@
 ---
-title: "Tests"
+title: "Page Resources"
 date: 2022-08-28T15:35:39-07:00
 draft: false
 resources:
@@ -22,7 +22,7 @@ testImages:
       alt: 'Test Image Alt'
       title: 'Test Image Title'
       dataSizes: 'auto'
-      class: ['img-fluid', 'lazyload']
+      class: ['img-fluid', 'lazyloaded', lazyautosizes]
     source: 
       types: ['webp', 'jpeg']
       dataWidths: ['600w', '900w', '1300w']
@@ -82,7 +82,7 @@ testImages:
   tests:
     img:
       dataSizes: 'auto'
-      class: ['img-fluid', 'lazyload']
+      class: ['img-fluid', 'lazyloaded', lazyautosizes]
 - id: js-test7
   title: 7. figure
   subtitle: 

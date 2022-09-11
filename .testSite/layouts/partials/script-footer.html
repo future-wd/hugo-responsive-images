@@ -1,3 +1,6 @@
 {{ partial "esbuild-template" (dict "src" "js/test.js" "page" . ) }}
 {{ partial "esbuild" (dict "src" "js/vendor.js") }}
 
+{{ if eq .Type "tests" }}
+  {{ partial "esbuild" (dict "src" "js/tests.js") }}
+{{ end }}

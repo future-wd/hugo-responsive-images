@@ -15,14 +15,9 @@
   {{ partial "image" (dict "src" "image.jpg" "alt" "alt text") }}
 
 */ -}}
-{{- /* santize inputs, merge params and process */ -}}
-{{- $params := false }}
-{{- with partial "hri/private/params.html" . }}
-  {{- $params = . }}
-{{- end -}}
+{{- /* santize inputs, process params */ -}}
+{{- $params := partial "hri/private/params.html" . }}
 {{- /* generate image widths*/ -}}
-{{- with partial "hri/private/generate-widths" $params -}} 
-  {{ $params = . }}
-{{- end -}}
+{{- $params = partial "hri/private/generate-widths" $params -}}
 {{- /* generate picture tag */ -}}
 {{- partial "hri/private/picture-tag" $params -}}

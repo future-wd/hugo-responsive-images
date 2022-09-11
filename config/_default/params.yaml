@@ -20,4 +20,4 @@ image:
   gifDivFactor: 10
   # provider: netlify
   # suppressWidthWarning: true
-  # type: page # or global
+  type: page # or global
