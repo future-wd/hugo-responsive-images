@@ -1,3 +1,3 @@
 import lazysizes from 'lazysizes';
-
-import { Collapse } from 'bootstrap';
+// menu removed from test site
+// import { Collapse } from 'bootstrap';
