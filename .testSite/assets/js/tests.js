@@ -1,6 +1,6 @@
 import checkPicture from './utils/checkPicture';
 
-fetch('/api/index.json')
+fetch('index.json')
   .then((response) => {
     return response.json();
   })

@@ -1,8 +1,32 @@
-{{ define "main"}}
-<h1>{{ .Title }}</h1>
-output formats:
-{{ range .AlternativeOutputFormats -}}
-link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .Permalink | safeURL }}"
-{{ end -}}
-{{ .Content }}
+{{ define "main" }}
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <article>
+        <header>
+          <h1>{{ .Title }}</h1>
+        </header>
+        {{ .Content }}
+      </article>
+    </div>
+  </div>
+  <div class="row">
+    {{ if ne .Params.disableRange true }}
+    {{ range .Params.testImages }}
+    <div class="col-md-6" id="{{ .id }}">
+      <h2>{{ .title }}</h2>
+      <p>{{ .subtitle }}</p>
+      
+      {{ $partial := .partial | default "image" }}
+      {{ with .params }}
+      {{ $params := (dict "page" $ "src" "test.jpg") }}
+      {{ $params = merge $params . }}
+      {{ partial $partial $params }}
+      {{ end }}
+      <div id="{{ .id }}-results"></div>
+    </div>
+    {{ end }}
+    {{ end }}
+  </div>
+</div>
 {{ end }}

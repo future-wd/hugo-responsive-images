@@ -16,10 +16,7 @@
   
 */ -}}
 {{- if eq (.Page.Param "image.renderhook") true -}}
-  {{ $params := false }}
-  {{- with partial "hri/private/render-hook-params" . -}}
-    {{- $params = . }}
-  {{- end -}}
+  {{- $params := partial "hri/private/render-hook-params" . }}
   {{- partial "hri/private/render-hook-template" $params -}}
 {{- else -}}
   {{- /* default markdown behavior */ -}}

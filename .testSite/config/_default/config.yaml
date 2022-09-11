@@ -9,4 +9,13 @@ disableKinds:
 - term
 - RSS
 
+outputs:
+  # home:
+  # - HTML
+  # - JSON
+  page:
+  - HTML
+  - JSON
+
+enableInlineShortcodes: true
 

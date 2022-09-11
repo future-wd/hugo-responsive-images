@@ -15,17 +15,22 @@
   {{ partial "render-hook-params" . }}
 
 */ -}}
+
+{{/* extract image meta data for param below */}}
+{{ $img := .Page.Resources.GetMatch .Destination }}
+{{ $imgParams := $img.Params }}
+
 {{- /* default .shortcodeWrapperClass to page or site params if not set inline */ -}}
-{{- $renderHookWrapperClass := .Page.Param "image.renderHookWrapperClass" -}}
-{{- /* set widths */ -}}
-{{- $widths := .Page.Param "image.renderHookWidths" | default (.Page.Param "image.shortcodeWidths") | default (.Page.Param "image.widths" ) -}}
-{{- /* add neccessary shorcode params to image params */ -}}
+{{- $renderHookWrapperClass := $imgParams.renderHookWrapperClass | default (.Page.Param "image.renderHookWrapperClass") -}}
+
+{{- /* add neccessary render-hook params to image params */ -}}
 {{- $params := (dict 
   "page" .Page 
   "src" .Destination 
   "alt" .PlainText 
   "title" .Title 
-  "widths" $widths
+  "renderHook" true
   "renderHookWrapperClass" $renderHookWrapperClass
   ) -}}
+
 {{ return $params }}
