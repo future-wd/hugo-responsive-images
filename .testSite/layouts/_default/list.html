@@ -11,15 +11,19 @@
       </article>
       <ul class="list-unstyled">
       <!-- Ranges through content/posts/*.md -->
-      {{ range .Paginator.Pages }}
+      {{- $pages := "" -}}
+      {{- if .IsHome -}}
+        {{- $pages = where .Site.RegularPages "Type" "tests" -}}
+      {{- else -}}
+        {{- $pages = .Pages -}}
+      {{- end -}}
+
+      {{ range $pages }}
           <li>
               <a href="{{.Permalink}}">{{.Date.Format "2006-01-02"}} | {{.Title}}</a>
           </li>
       {{ end }}
       </ul>
-      <div class="d-flex justify-content-center">
-        {{ template "_internal/pagination.html" . }}
-    </div>
     </div>
   </div>
 

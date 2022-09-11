@@ -11,7 +11,7 @@ testImages:
     img:
       alt: 'Alt text'
       title: 'Title text'
-      class: ['img-fluid', 'lazyload']
+      class: ['img-fluid', 'lazyloaded', lazyautosizes]
 - id: js-test2
   title: 1. Basic
   subtitle: Alt and title set
