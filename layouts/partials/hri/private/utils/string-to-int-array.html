@@ -1,3 +1,0 @@
-{{ $array := partial "hri/private/utils/string-to-array" . }}
-{{- /* convert int strings to int */ -}}
-{{- $array = apply $array "int" "." -}}

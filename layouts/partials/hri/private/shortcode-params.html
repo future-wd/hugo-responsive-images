@@ -29,41 +29,32 @@
   ** check for named params in shortcode **
   *****************************************/ -}}
 {{- if .IsNamedParams -}}
-  {{- /* merge shortcode .Params map with $params map */ -}}
-  {{- $params = merge $params .Params -}}
-  {{- /* override some params where neccessary */ -}}
-  {{- with (.Get "widths") -}}
-    {{ $widths := partial "hri/private/utils/string-to-int-array" . }}
-    {{- $params = merge $params (dict "widths" $widths) -}}
-  {{- else -}}
-    {{- /* if no widths provided, provide shortcodeWidths (if configured)
-      else the image partial has its own default widths */ -}}
-    {{- with site.Params.image.shortcodeWidths -}}
-      {{- $params = merge $params (dict "widths" . ) -}}
-    {{- end -}}
-  {{- end -}}
-  {{- with (.Get "densities") -}}
-    {{ $densities := partial "hri/private/utils/string-to-int-array" . }}
-    {{- $params = merge $params (dict "widths" $densities) -}}
-  {{- end -}}
-  {{- with (.Get "fillRatio") -}}
-    {{ $fillRatio := partial "hri/private/utils/string-to-int-array" . }}
-    {{- $params = merge $params (dict "fillRatio" $fillRatio) -}}
-  {{- end }}
-  {{- with (.Get "formats") -}}
-  {{ $formats := partial "hri/private/utils/string-to-array" . }}
-  {{- $params = merge $params (dict "fillRatio" $formats) -}}
-{{- end }}
+
+  {{/* santize params (convert string-arrays and string-integers) */}}
+  {{ $shortcodeParams := partial "hri/private/utils/sanitize-shortcode-params" .Params }}
+
+  {{/* merge shortcode .Params map with $params map */}}
+  {{ $params = merge $params $shortcodeParams }}
+
+  {{/* if no widths provided, provide shortcodeWidths (if configured)
+    else the image partial has its own default widths */}}
+  {{ if not (.Get "widths") }}
+    {{ $widths := site.Params.image.shortcodeWidths | default site.Params.image.widths }}
+    {{ $params = merge $params (dict "widths" $widths ) }}
+  {{ end }}
+
   {{- /* check for src if not throw error */ -}}
   {{- if not (.Get "src") -}}
     {{- errorf "The %q shortcode on page %s requires the 'src' named parameter. See %s" .Name .Page .Position -}}
   {{- end -}}
-{{- else -}}
-{{- /**************************************************************
+
+{{ else }}
+{{/**************************************************************
   ** single positional parameter                               **
-  ** this will generate an error as not alt has been provided, **
+  ** this will generate an error as no alt has been provided,  **
   ** but the error can be suppressed if required               **
-  ***************************************************************/ -}}
+  ** alt may have been provided in page resource meta data     **
+  ***************************************************************/}}
 {{- /* if only 1 un named param in shortcode */ -}}
   {{- with (.Get 0) -}}
   {{- $params = merge $params (dict "src" .) -}}
@@ -72,6 +63,7 @@
     {{- errorf "If using positional parameters, only 1 parameter can be provided (src)" -}}
   {{- end -}}
 {{- end -}}
+
 {{ return $params }}
 
 

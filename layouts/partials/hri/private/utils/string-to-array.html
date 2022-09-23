@@ -1,5 +1,34 @@
-{{- /* create array ',' delimiter for creation */ -}}
-{{- $array := split . "," -}}
-{{- /* remove leading spaces from each string */ -}}
-{{- $array = apply $array "strings.TrimLeft" " " "." -}}
-{{ return $array }}
+{{/*
+  string-to-array.html
+  Converts comma delimited string-arrays to arrays
+  Spaces after commas will be removed
+
+  @author @sean-au
+
+  @context string
+
+  @return input with converstion complete
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/utils/string-to-array" "1,2,3" }}
+  {{ partial "hri/private/utils/string-to-array" "1, 2, 3" }}
+  
+*/}}
+
+{{ $param := . }}
+
+{{/* check for comma delimited array (string) */}}
+{{ if (findRE "," $param) }}
+  {{/* create array ',' delimiter for creation */}}
+  {{ $param = split . "," -}}
+  {{/* remove leading spaces from each string */}}
+  {{ $param = apply $param "strings.TrimLeft" " " "." }}
+{{ end }}
+
+{{ return $param }}
+
+
+
+

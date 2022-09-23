@@ -1,0 +1,39 @@
+{{/*
+  sanitize-shortcode-params.html
+  Checks for string-arrays and string-integers and converts to arrays and integers
+
+  @author @sean-au
+
+  @context map of .Params from shortcode
+
+  @return input sanitized
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/utils/sanitize-shortcode-params" .Params }}
+  
+*/}}
+
+{{/* the verbose form below doesnt work */}}
+{{/* $params = apply $params "partial" "hri/private/string-to-array" "." */}}
+{{/* $params := apply . "partial" "hri/private/utils/string-to-int" "." */}}
+
+
+{{/* convert any comma delimited string-arrays to arrays */}}
+{{ $withArrays := dict}}
+{{ range $key, $elem := . }}
+  {{ $elem = partial "hri/private/utils/string-to-array" $elem }}
+  {{ $withArrays = merge $withArrays (dict $key $elem) }}
+{{ end }}
+
+{{/* convert any string-integers to integers */}}
+{{ $withInts := dict}}
+{{ range $key, $elem := $withArrays }}
+  {{ $elem = partial "hri/private/utils/string-to-int" $elem }}
+  {{ $withInts = merge $withInts (dict $key $elem) }}
+{{ end }}
+
+
+
+{{ return $withInts }}
