@@ -418,6 +418,6 @@ params:
 
 Issues and pull requests are welcome. If need be, make changes to the test site directly in this repository.
 
-Test site is visible @ <https://hugo-responsive-image.netlify.app/>
+Test site is visible @ <https://hugo-responsive-images.netlify.app/>
 
 Test site resides in /.testSite
