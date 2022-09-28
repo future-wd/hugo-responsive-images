@@ -21,27 +21,26 @@
 */}}
 
 
-
+{{ $imgMetaTitle := false }}
 {{ $imgParams := dict }}
 {{ $params :=  dict }}
-{{- $img := false }}
+{{ $img := false }}
 {{/* this needs to be tested, can a global resource be hacked via image meta */}}
 {{ $type := .type | default (.page.Param "image.type") }}
-{{- if eq $type "global" -}}
-  {{- /* global resource */ -}}
-  {{- $img = resources.Get .src -}}
-{{- else -}}
-  {{- /* page resource */ -}}
-  {{- $img = .page.Resources.GetMatch (print .src)   -}}
+{{ if eq $type "global" }}
+  {{/* global resource */}}
+  {{ $img = resources.Get .src }}
+{{ else }}
+  {{/* page resource */}}
+  {{ $img = .page.Resources.GetMatch (print .src)   }}
   {{/* add page resource image params to variable */}}
   {{ $imgParams = $img.Params }}
-  {{ $imgTitle := (dict "title" $img.Title) }}
-  {{ $imgParams = merge $imgParams $imgTitle }}
-{{- end -}}
-{{- if not $img }}
-  {{- $message := printf "No image resource found for image \"%s\" on page %s." .src  .page.RelPermalink  -}}
+  {{ $imgMetaTitle = $img.Title }}
+{{ end }}
+{{ if not $img }}
+  {{ $message := printf "No image resource found for image \"%s\" on page %s." .src  .page.RelPermalink  }}
   {{ partial "hri/private/errorf" $message }}
-{{- end -}}
+{{ end }}
 {{ $params = merge $params (dict 
   "img" $img
   "type" $type) }}
@@ -50,7 +49,7 @@
 
 {{ $suppressWidthWarning := .suppressWidthWarning | default (.page.Param "image.suppressWidthWarning") }}
 {{/* .figureTitle has already been merged with $imgParams */}}
-{{ $title := .title | default $imgParams.title | default .figureTitle | default .page.Title }}
+{{ $title := .title | default $imgMetaTitle | default $imgParams.title | default .figureTitle | default .page.Title }}
 {{ $params = merge $params (dict 
   "page" .page
   "suppressWidthWarning" $suppressWidthWarning
@@ -58,36 +57,36 @@
   ) }}
 
 {{ $fillRatio := .fillRatio | default $imgParams.fillRatio | default (.page.Param "image.fillRatio") }}
-{{- with $fillRatio -}}
-  {{- if reflect.IsSlice . -}}
-    {{- range . -}}
-      {{- if ne (printf "%T" .) "int" }}
+{{ with $fillRatio }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
         {{ partial "hri/private/options-error" (dict 
           "var" "fillRatio array item"
           "value" .
           "options" "2x integers in an array/slice"
           "ctx" $params
         ) }}
-      {{- end -}}
-    {{- end -}}
-  {{- else -}}
+      {{ end }}
+    {{ end }}
+  {{ else }}
     {{ partial "hri/private/options-error" (dict 
       "var" "fillRatio"
       "value" .
       "options" "2x integers in an array/slice"
       "ctx" $params
     ) }}
-  {{- end -}}
-  {{- /* height to width ratio of .fillRatio */ -}}
-  {{- /* numbers must be converted to float before division or they may create an answer of 0 */ -}}
-  {{- $fillRatio = div (index . 1 | float) (index . 0 | float) -}}
+  {{ end }}
+  {{/* height to width ratio of .fillRatio */}}
+  {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
+  {{ $fillRatio = div (index . 1 | float) (index . 0 | float) }}
   {{ $params = merge $params (dict "fillRatio" $fillRatio) }}
-{{- end -}}
+{{ end }}
 
-{{- /*********************************************************************
+{{/*********************************************************************
   **** if .width present for pixel density srcset                        *
   **** produce array [{desc: "1x", width: 300},{desc: "2x", width: 600}] *
-  ************************************************************************/ -}}
+  ************************************************************************/}}
 
 
 {{ $widths := .widths | default $imgParams.widths | default (.page.Param "image.widths") }}
@@ -99,83 +98,83 @@
   {{ $widths = $shortcodeWidths }}
 {{ end }}
 {{ $width := .width | default $imgParams.widths | default (.page.Param "image.width") }}
-{{- if $width -}}
-  {{- if ne (printf "%T" .width) "int" }}
+{{ if $width }}
+  {{ if ne (printf "%T" .width) "int" }}
     {{ partial "hri/private/options-error" (dict 
       "var" "width"
       "value" .
       "options" "an integer"
       "ctx" $params
     ) }}
-  {{- end -}}
-  {{- $densities := .densities | default $imgParams.densities | default (.page.Param "image.densities") -}}
-  {{- $densities = sort $densities -}}
+  {{ end }}
+  {{ $densities := .densities | default $imgParams.densities | default (.page.Param "image.densities") }}
+  {{ $densities = sort $densities }}
   {{/* clear $widths as were only working with one width */}}
   {{ $widths = slice }}
-  {{- range $density := $densities }}
-    {{- $widths = $widths | append (slice
+  {{ range $density := $densities }}
+    {{ $widths = $widths | append (slice
       (dict
       "desc" (printf "%dx" $density)
       "width" (mul $.width $density)
-      )) -}}
-  {{- end -}}
+      )) }}
+  {{ end }}
   {{ $params = merge $params (dict 
     "widths" $widths
     "width" $width
     ) }}
-{{- else if $widths -}}
+{{ else if $widths }}
 {{/* else produce responsive srcset
   * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
 */}}
-  {{- with $widths -}}
-    {{- if reflect.IsSlice . -}}
-      {{- range . -}}
-        {{- if ne (printf "%T" .) "int" }}
+  {{ with $widths }}
+    {{ if reflect.IsSlice . }}
+      {{ range . }}
+        {{ if ne (printf "%T" .) "int" }}
           {{ partial "hri/private/options-error" (dict 
             "var" "widths array item"
             "value" .
             "options" "2x integers in an array/slice"
             "ctx" $params
           ) }}
-        {{- end -}}
-      {{- end -}}
-    {{- else -}}
+        {{ end }}
+      {{ end }}
+    {{ else }}
       {{ partial "hri/private/options-error" (dict 
         "var" "width array"
         "value" .
         "options" "2x integers in an array/slice"
         "ctx" $params
       ) }}
-    {{- end -}}
-  {{- end -}}
-  {{- $widths = sort $widths -}}
+    {{ end }}
+  {{ end }}
+  {{ $widths = sort $widths }}
   {{ $widthsArray := slice }}
-  {{- range $width := $widths }}
-    {{- $widthsArray = $widthsArray | append (slice
+  {{ range $width := $widths }}
+    {{ $widthsArray = $widthsArray | append (slice
       (dict
       "desc" (printf "%dw" $width)
       "width" $width
-      )) -}}
-  {{- end -}}
+      )) }}
+  {{ end }}
   {{ $widths = $widthsArray }}
   {{ $params = merge $params (dict "widths" $widths) }}
-{{- end -}}
+{{ end }}
 
 {{ $formats := .formats | default $imgParams.formats | default (.page.Param "image.formats") }}
 {{ with $formats }}
-  {{- $formatOpts := (slice "original" "bmp" "gif" "jpeg" "jpg" "png" "tif" "tiff" "webp") }}
-  {{- if reflect.IsSlice . -}}
-    {{- range . -}}
-      {{- if not (in $formatOpts .) -}}
+  {{ $formatOpts := (slice "original" "bmp" "gif" "jpeg" "jpg" "png" "tif" "tiff" "webp") }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if not (in $formatOpts .) }}
         {{ partial "hri/private/options-error" (dict 
           "var" "formats array item"
           "value" .
           "options" (delimit $formatOpts ", " " and ")
           "ctx" $params
         ) }}
-        {{- end -}}
-    {{- end -}}
-  {{- else -}}
+        {{ end }}
+    {{ end }}
+  {{ else }}
     {{ partial "hri/private/options-error" (dict 
         "var" "formats array"
         "value" .
@@ -191,8 +190,8 @@
 {{ $provider := false }}
 {{ $providerParam := .provider | default $imgParams.provider | default (.page.Param "image.provider") }}
 {{ with $providerParam }}
-  {{- $providerOpts := (slice "netlify") }}
-  {{- if in $providerOpts . -}}
+  {{ $providerOpts := (slice "netlify") }}
+  {{ if in $providerOpts . }}
     {{ $provider = $providerParam }}
   {{ else }}
     {{ partial "hri/private/options-error" (dict 
@@ -205,29 +204,29 @@
   {{ $params = merge $params (dict "provider" $provider) }}
 {{ end }}
 
-{{- $loading := .loading | default $imgParams.loading | default (.page.Param "image.loading") -}}
-{{- with $loading -}}
-  {{- $loadingOpts := false -}}
+{{ $loading := .loading | default $imgParams.loading | default (.page.Param "image.loading") }}
+{{ with $loading }}
+  {{ $loadingOpts := false }}
   {{ if $provider }}
-    {{- /* disable lazy loading for external image processing */ -}}
-    {{- $loadingOpts = (slice "auto" "lazy") -}}
-  {{- else -}}
-    {{- $loadingOpts = (slice "auto" "lazy" "lazysizes") -}}
-  {{- end -}}
-  {{- if not (in $loadingOpts .) -}}
+    {{/* disable lazy loading for external image processing */}}
+    {{ $loadingOpts = (slice "auto" "lazy") }}
+  {{ else }}
+    {{ $loadingOpts = (slice "auto" "lazy" "lazysizes") }}
+  {{ end }}
+  {{ if not (in $loadingOpts .) }}
     {{ partial "hri/private/options-error" (dict 
       "var" "loading"
       "value" .
       "options" (delimit $loadingOpts ", " " and ")
       "ctx" $params
     ) }}
-  {{- end -}}
+  {{ end }}
   {{ $params = merge $params (dict "loading" $loading) }}
-{{- end -}}
+{{ end }}
 
-{{- $sizes := false -}}
-{{- $sizesParam := .sizes | default $imgParams.sizes | default (.page.Param "image.sizes") -}}
-{{- with $sizesParam -}}
+{{ $sizes := false }}
+{{ $sizesParam := .sizes | default $imgParams.sizes | default (.page.Param "image.sizes") }}
+{{ with $sizesParam }}
   {{ if not (eq (printf "%T" .) "string") }}
     {{ partial "hri/private/options-error" (dict 
       "var" "sizes"
@@ -245,27 +244,27 @@
   {{ else }}
     {{ $sizes = printf `sizes="%s"` $sizesParam }}
   {{ end }}
-{{- end -}}
+{{ end }}
 {{ $params = merge $params (dict "sizes" $sizes) }}
 
 {{/* for figures $class uses figureImageClass, else uses .class */}}
-{{- $class := false -}}
-{{- if eq .figure true }}
-  {{- $class = .figureImageClass | default $imgParams.figureImageClass | default (.page.Param "image.figureImageClass") }}
+{{ $class := false }}
+{{ if eq .figure true }}
+  {{ $class = .figureImageClass | default $imgParams.figureImageClass | default (.page.Param "image.figureImageClass") }}
 {{ else }}
-  {{- $class = .class | default $imgParams.class | default (.page.Param "image.class") -}}
-{{- end -}}
-{{- if eq $loading "lazysizes" -}} 
-  {{- $class = print $class " lazyload" -}}
+  {{ $class = .class | default $imgParams.class | default (.page.Param "image.class") }}
+{{ end }}
+{{ if eq $loading "lazysizes" }} 
+  {{ $class = print $class " lazyload" }}
 {{ end }}
 
 {{/* alt defaults to caption. If not caption or alt set, error. If suppressed, defaults to "image of [title]" */}}
 {{/* .caption has already been processed */}}
-{{- $alt := (.caption | markdownify | plainify) | default $imgParams.alt | default .alt -}}
-{{- if not $alt -}}
-  {{- erroridf "alt-error" "Alt text has not been provided for image %s on page %s" $img.RelPermalink .page.RelPermalink -}}
-  {{- $alt = printf "Image of %s" $title -}}
-{{- end -}}
+{{ $alt := (.caption | markdownify | plainify) | default $imgParams.alt | default .alt }}
+{{ if not $alt }}
+  {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s" $img.RelPermalink .page.RelPermalink }}
+  {{ $alt = printf "Image of %s" $title }}
+{{ end }}
 {{ $params = merge $params (dict 
   "alt" $alt
   "class" $class
@@ -307,7 +306,7 @@
 {{ $rotate := .rotate | default $imgParams.rotate | default (.page.Param "image.rotate") }}
 {{ with $rotate }}
   {{ if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 360)) }}
-    {{ $options = $options | append (printf "r%d" .) -}}
+    {{ $options = $options | append (printf "r%d" .) }}
   {{ else }}
     {{ partial "hri/private/options-error" (dict 
       "var" "rotate"
@@ -334,9 +333,9 @@
 {{ $hint := .hint | default $imgParams.hint | default (.page.Param "image.hint") }}
 {{ with $hint }}
   {{ $hintOpts := (slice "picture" "photo" "drawing" "icon" "text") }}
-  {{ if in $hintOpts . -}}
+  {{ if in $hintOpts . }}
     {{ $options = $options | append . }}
-  {{ else -}}
+  {{ else }}
     {{ partial "hri/private/options-error" (dict 
       "var" "hint"
       "value" .
