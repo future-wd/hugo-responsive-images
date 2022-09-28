@@ -25,7 +25,6 @@
 {{ $imgParams := dict }}
 {{ $params :=  dict }}
 {{ $img := false }}
-{{/* this needs to be tested, can a global resource be hacked via image meta */}}
 {{ $type := .type | default (.page.Param "image.type") }}
 {{ if eq $type "global" }}
   {{/* global resource */}}
@@ -97,7 +96,7 @@
 {{ else if (eq .shortcode true) }}
   {{ $widths = $shortcodeWidths }}
 {{ end }}
-{{ $width := .width | default $imgParams.widths | default (.page.Param "image.width") }}
+{{ $width := .width | default $imgParams.widths | default .page.Params.image.width }}
 {{ if $width }}
   {{ if ne (printf "%T" .width) "int" }}
     {{ partial "hri/private/options-error" (dict 
@@ -260,7 +259,7 @@
 
 {{/* alt defaults to caption. If not caption or alt set, error. If suppressed, defaults to "image of [title]" */}}
 {{/* .caption has already been processed */}}
-{{ $alt := (.caption | markdownify | plainify) | default $imgParams.alt | default .alt }}
+{{ $alt :=  .alt | default $imgParams.alt | default (.caption | markdownify | plainify) }}
 {{ if not $alt }}
   {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s" $img.RelPermalink .page.RelPermalink }}
   {{ $alt = printf "Image of %s" $title }}

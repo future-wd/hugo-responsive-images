@@ -25,12 +25,16 @@
 {{/*********************************************
   ** these params have defaults               **
   **********************************************/}}
-{{ $link := .link | default $imgParams.link | default (.page.Param "image.link") }}
+{{ $link := .link | default $imgParams.link }}
 {{ $target := .target | default $imgParams.target | default (.page.Param "image.target") }}
 {{ $rel := .rel | default $imgParams.rel | default (.page.Param "image.rel") }}
 {{ $figureClass := .figureClass | default $imgParams.figureClass | default (.page.Param "image.figureClass") }}
 {{ $figCaptionClass := .figCaptionClass | default $imgParams.figureCaptionClass | default (.page.Param "image.figCaptionClass") }}
 {{ $figureTitleH := .figureTitleH | default $imgParams.figureTitleH | default (.page.Param "image.figureTitleH") }}
+{{ $figureTitle := .figureTitle | default $imageParams.figureTitle }}
+{{ $caption := .caption | default $imageParams.caption }}
+{{ $attr := .attr | default $imageParams.attr }}
+{{ $attrLink := .attrLink | default $imageParams.attrLink }}
 
 
 
@@ -55,17 +59,10 @@
   "figureClass" $figureClass
   "figCaptionClass" $figCaptionClass
   "figureTitleH" $figureTitleH
-  )}}
-
-{{/************************************
-  ** these params are passed through **
-  *************************************/}}
-{{ $params = merge $params (dict
-  "figureTitle" .figureTitle
+  "figureTitle" $figureTitle
   "caption" .caption
   "attr" .attr
   "attrLink" .attrLink
   )}}
-
 
 {{ return $params  }}
