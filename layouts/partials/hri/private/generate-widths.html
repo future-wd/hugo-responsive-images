@@ -15,8 +15,8 @@
   {{ partial "hri/private/figure-params" . }}
 */}}
 
-{{- $params := false -}}
-{{- if .params.provider -}}
+{{ $params := false }}
+{{ if .params.provider }}
   {{ with partial "hri/private/external-widths" . }}
     {{ $params = . }}
   {{ end }}
