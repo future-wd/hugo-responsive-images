@@ -16,9 +16,9 @@
 
 
 
-{{- /**********************************
+{{/**********************************
   **** loop over each image format ****
-  *************************************/ -}}
+  *************************************/}}
 {{ $params := . }}
 {{ $picture := dict }}
 {{ $options := .options }}
@@ -37,28 +37,28 @@
   {{ $srcset := slice }}
   {{ $src := false }}
   {{ $placeholder := false }}
-  {{- range $index, $width := $.widths -}}
-    {{- $imgResized := "" -}}
-    {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
-    {{- if $.fillRatio -}}
-      {{- /* resulting fillHeight must be converted to integer for use with image resize */ -}}
-      {{- $fillHeight := mul ($width.width | float) $.fillRatio | int -}}
-      {{- if and (or (gt $width.width $.img.Width) (gt $.fillHeight $.img.Height)) (ne $.suppressWidthWarning true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width $fillHeight  -}}
-      {{- end -}}
-      {{- /* resize image */ -}}
-      {{- $imgResized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) -}}
-    {{- else -}}
-      {{- /* do standard image resize */ -}}
-      {{- if and (gt $width.width $.img.Width) (ne $.suppressWidthWarning true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width }}
-      {{- end -}}
-      {{- /* resize image */ -}}
-      {{- $imgResized = $.img.Resize (printf "%dx %s" $width.width $optionsString) -}}
-    {{- end -}}
-    {{- /* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */ -}}
-    {{- $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) -}}
-    {{- /* if .width and 1x density (First iteration), add image to src variable for use as fallback */ -}}
+  {{ range $index, $width := $.widths }}
+    {{ $imgResized := "" }}
+    {{/* output images with altered aspect ratio, if .fillRatio is provided */}}
+    {{ if $.fillRatio }}
+      {{/* resulting fillHeight must be converted to integer for use with image resize */}}
+      {{ $fillHeight := mul ($width.width | float) $.fillRatio | int }}
+      {{ if and (or (gt $width.width $.img.Width) (gt $.fillHeight $.img.Height)) (ne $.suppressWidthWarning true) }}
+        {{ warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width $fillHeight  }}
+      {{ end }}
+      {{/* resize image */}}
+      {{ $imgResized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) }}
+    {{ else }}
+      {{/* do standard image resize */}}
+      {{ if and (gt $width.width $.img.Width) (ne $.suppressWidthWarning true) }}
+        {{ warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width }}
+      {{ end }}
+      {{/* resize image */}}
+      {{ $imgResized = $.img.Resize (printf "%dx %s" $width.width $optionsString) }}
+    {{ end }}
+    {{/* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */}}
+    {{ $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) }}
+    {{/* if .width and 1x density (First iteration), add image to src variable for use as fallback */}}
     {{ if eq $format "original" }}
       {{ if eq $index 0}}
         {{/* smallest image width for placeholder generation */}}
@@ -77,14 +77,14 @@
         {{ $src = $imgResized }}
       {{ end }}
     {{ end }}
-  {{- end -}}
-  {{- /* convert srcset array into a string, delimit with , between each image */ -}}
-  {{- $srcset := delimit $srcset ", " -}}
-  {{- /* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */ -}}
-  {{- $picture = merge $picture (dict $format (dict "weight" $index "format" $format "srcset" $srcset "src" $src "placeholder" $placeholder)) -}}
-{{- end -}}
+  {{ end }}
+  {{/* convert srcset array into a string, delimit with , between each image */}}
+  {{ $srcset := delimit $srcset ", " }}
+  {{/* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */}}
+  {{ $picture = merge $picture (dict $format (dict "weight" $index "format" $format "srcset" $srcset "src" $src "placeholder" $placeholder)) }}
+{{ end }}
 
 {{/* merge and return params */}}
 
 {{ $params = merge $params (dict "picture" $picture) }}
-{{- return $params -}}
+{{ return $params }}

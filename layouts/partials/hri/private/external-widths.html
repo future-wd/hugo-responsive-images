@@ -1,4 +1,4 @@
-{{- /* 
+{{/* 
 
   providers: 
   
@@ -17,7 +17,7 @@
   vercel?
 
   other providers to follow..
-  /* -}}
+  /* }}
   {{/*
     exteral-widths
     Generates images via external api
@@ -38,53 +38,53 @@
 
 
 
-{{- /***********************************
+{{/***********************************
   **** loop over each width         ****
-  **************************************/ -}}
+  **************************************/}}
 
-{{- $picture := dict -}}
+{{ $picture := dict }}
 {{ $srcset := slice }}
 {{ $src := "" }}
-{{- range $format := (slice "original") -}}
+{{ range $format := (slice "original") }}
 
-  {{- range $index, $width := $.widths -}}
-    {{- $imgResized := "" -}}
-    {{- /* output images with altered aspect ratio, if .fillRatio is provided */ -}}
-    {{- with $.fillRatio -}}
-      {{- /* resulting fillHeight must be converted to integer for use with image resize */ -}}
-      {{- $fillHeight := mul $width.width . | int -}}
-      {{- if and (or (gt $width.width $.img.Width) (gt $fillHeight $.img.Height)) (ne $.suppressWidthWarning true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width $fillHeight  -}}
-      {{- end -}}
-      {{- /* resize image */ -}}
-      {{- $imgResized = printf "%s?nfresize=smartcrop?w=%dh=%d" $.img.RelPermalink $width.width $fillHeight -}}
-    {{- else -}}
-      {{- /* do standard image resize */ -}}
-      {{- if and (gt $width.width $.img.Width) (ne $.suppressWidthWarning true) -}}
-        {{- warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width }}
-      {{- end -}}
-      {{- /* create resize path */ -}}
-      {{- $imgResized = printf "%s?nfresize=fit?w=%d" $.img.RelPermalink $width.width -}}
-    {{- end -}}
-    {{- /* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */ -}}
-    {{- $srcset = $srcset | append (printf "%s %s" $imgResized $width.desc) -}}
-    {{- /* if .width and 1x density (First iteration), add image to src variable for use as fallback */ -}}
-    {{- if $.width  -}}
-      {{- if eq $index 0 -}}
-        {{ $src = $imgResized -}}
-      {{- end -}}
-    {{- else -}}
-      {{- /* else largest width (last iteration), add image to src variable for use as fallback */ -}}
-      {{- if eq (len $.widths) (add $index 1) -}}
-        {{ $src = $imgResized -}}
-      {{- end -}}
-    {{- end -}}
-  {{- end -}}
-  {{- /* convert srcset array into a string, delimit with , between each image */ -}}
-  {{- $srcset := delimit $srcset ", " -}}
-  {{- /* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */ -}}
-  {{- $picture = merge $picture (dict $format (dict "srcset" $srcset "src" $src)) -}}
+  {{ range $index, $width := $.widths }}
+    {{ $imgResized := "" }}
+    {{/* output images with altered aspect ratio, if .fillRatio is provided */}}
+    {{ with $.fillRatio }}
+      {{/* resulting fillHeight must be converted to integer for use with image resize */}}
+      {{ $fillHeight := mul $width.width . | int }}
+      {{ if and (or (gt $width.width $.img.Width) (gt $fillHeight $.img.Height)) (ne $.suppressWidthWarning true) }}
+        {{ warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width $fillHeight  }}
+      {{ end }}
+      {{/* resize image */}}
+      {{ $imgResized = printf "%s?nfresize=smartcrop?w=%dh=%d" $.img.RelPermalink $width.width $fillHeight }}
+    {{ else }}
+      {{/* do standard image resize */}}
+      {{ if and (gt $width.width $.img.Width) (ne $.suppressWidthWarning true) }}
+        {{ warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width }}
+      {{ end }}
+      {{/* create resize path */}}
+      {{ $imgResized = printf "%s?nfresize=fit?w=%d" $.img.RelPermalink $width.width }}
+    {{ end }}
+    {{/* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */}}
+    {{ $srcset = $srcset | append (printf "%s %s" $imgResized $width.desc) }}
+    {{/* if .width and 1x density (First iteration), add image to src variable for use as fallback */}}
+    {{ if $.width  }}
+      {{ if eq $index 0 }}
+        {{ $src = $imgResized }}
+      {{ end }}
+    {{ else }}
+      {{/* else largest width (last iteration), add image to src variable for use as fallback */}}
+      {{ if eq (len $.widths) (add $index 1) }}
+        {{ $src = $imgResized }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+  {{/* convert srcset array into a string, delimit with , between each image */}}
+  {{ $srcset := delimit $srcset ", " }}
+  {{/* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */}}
+  {{ $picture = merge $picture (dict $format (dict "srcset" $srcset "src" $src)) }}
 {{ end }}
-{{- return $picture -}}
+{{ return $picture }}
 
 

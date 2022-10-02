@@ -13,25 +13,37 @@
   @example - Go Template
   {{ partial "hri/private/figure-params" . }}
 */}}
-{{ $params := dict }}
 
+{{ $params := dict }}
+{{ $imgParams := dict }}
+
+{{  with .page.Resources.GetMatch (print .src)   }}
+  {{/* add page resource image params to variable if image is page resource */}}
+  {{ $imgParams = .Params }}
+{{ end }}
 
 {{/*********************************************
-  ** these params default to page/site params **
+  ** these params have defaults               **
   **********************************************/}}
+{{ $link := .link | default $imgParams.link }}
+{{ $target := .target | default $imgParams.target | default (.page.Param "image.target") }}
+{{ $rel := .rel | default $imgParams.rel | default (.page.Param "image.rel") }}
+{{ $figureClass := .figureClass | default $imgParams.figureClass | default (.page.Param "image.figureClass") }}
+{{ $figCaptionClass := .figCaptionClass | default $imgParams.figureCaptionClass | default (.page.Param "image.figCaptionClass") }}
+{{ $figureTitleH := .figureTitleH | default $imgParams.figureTitleH | default (.page.Param "image.figureTitleH") }}
+{{ $figureTitle := .figureTitle | default $imageParams.figureTitle }}
+{{ $caption := .caption | default $imageParams.caption }}
+{{ $attr := .attr | default $imageParams.attr }}
+{{ $attrLink := .attrLink | default $imageParams.attrLink }}
 
-{{ $target := .target | default (.page.Param "image.target") }}
-{{ $rel := .rel | default (.page.Param "image.rel") }}
-{{ $link := .link | default (.page.Param "image.link") }}
-{{ $figureClass := .figureClass | default (.page.Param "image.figureClass") }}
-{{ $figCaptionClass := .figCaptionClass | default (.page.Param "image.figCaptionClass") }}
-{{ $figureTitleH := .figureTitleH | default (.page.Param "image.figureTitleH") }}
+
 
 {{/*********************************************
   ** default open http links new window       **
+  ** use relref for internal links            **
   **********************************************/}}
 
-{{ if hasPrefix .link "http" }}
+{{ if hasPrefix $link "http" }}
   {{ $target = $target | default "_blank" }}
   {{ $rel = $rel | default "noopener noreferrer" }}
 {{ else }}
@@ -47,17 +59,10 @@
   "figureClass" $figureClass
   "figCaptionClass" $figCaptionClass
   "figureTitleH" $figureTitleH
-  )}}
-
-{{/************************************
-  ** these params are passed through **
-  *************************************/}}
-{{ $params = merge $params (dict
-  "figureTitle" .figureTitle
+  "figureTitle" $figureTitle
   "caption" .caption
   "attr" .attr
   "attrLink" .attrLink
   )}}
-
 
 {{ return $params  }}
