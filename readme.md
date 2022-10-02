@@ -421,3 +421,58 @@ Issues and pull requests are welcome. If need be, make changes to the test site 
 Test site is visible @ <https://hugo-responsive-images.netlify.app/>
 
 Test site resides in /.testSite
+
+## Parameters
+
+| Name  | Inline | Meta | Page Param | Site Param | Description | Default |
+| --------- | --- | --- | --- | --- | ----------- | ------- |
+| src       | YES | NO  | NO  | NO  | Provide resource path | `undefined` |
+| type      | YES | YES | YES | YES | page/global - Type of image resource | `"page"` |
+| title     | YES | YES | NO  | NO  | Image title | `figureTitle` then the page's `.Title`
+| fillRatio | YES | YES | YES | YES | Fill ratio for image | `null` |
+| widths    | YES | YES | YES | YES | Widths for responsive width image generation | [600, 900, 1300] |
+| width     | YES | YES | YES | NO  | Set widths for fixed with image. Disables widths | 'null' |
+| densities | YES | YES | YES | YES | Densities for fixed with image generation | [1,2] |
+| formats   | YES | YES | YES | YES | Image formats to generate. One must be original. In order of browser support. | ["original", "webp" ] |
+| provider  | YES | YES | YES | YES | External image processing provider. Only netlify supported for now | `null` |
+| loading   | YES | YES | YES | YES | auto/lazy/lazysizes - Type of image loading | `"auto"` |
+| sizes     | YES | YES | YES | YES | [string]/lazysuzes - Image sizes for responsive widths images | `"100vw"` |
+| class     | YES | YES | YES | YES | Image class | `"img-fluid"` |
+| alt       | YES | YES | NO  | NO  | Image alt text | `caption` (see figure parameters) |
+
+## Placeholder variables
+
+| Name | Inline | Meta | Page Param | Site Param | Description | Default |
+| -------------- | --- | --- | --- | --- | ----------- | ------- |
+| placeholder    | YES | YES | YES | YES | lqip/dominant/[gif file name] - Set the placeholder type | `null` |
+| lqipDivFactor  | YES | YES | YES | YES | Division factor for lqip gif size | 5 |
+| lqipBlurAmount | YES | YES | YES | YES | Amount of gaussian blur for lqip | 5 |
+| gifDivFactor   | YES | YES | YES | YES | Division factor for solid gif placeholder | 10 |
+
+## Image processing parameters (overrides hugo image processing defaults if set at any level)
+
+See <link> for settings
+
+| Name           | Inline | Meta | Page Param | Site Param | Description |
+| -------------- | --- | --- | --- | --- | ----------- | 
+| quality        | YES | YES | YES | YES | Override hugo image processing default |
+| rotate         | YES | YES | YES | YES | Override hugo image processing default |
+| resampleFilter | YES | YES | YES | YES | Override hugo image processing default |
+| hint           | YES | YES | YES | YES | Override hugo image processing default |
+| anchor         | YES | YES | YES | YES | Override hugo image processing default |
+
+## Figure Specific Parameters
+
+| Name              | Inline | Meta | Page Param | Site Param | Description | Default |
+| ------------------ | --- | --- | --- | --- | ----------- | ------- |
+| link               | YES | YES | NO  | NO  | Figure image link | `null` |
+| target             | YES | YES | YES | YES | Figure link or attrLink target | `"_blank"` for http links |
+| rel                | YES | YES | YES | YES | Figure link or attrLink rel| `"noopender, noreferrer"` for http links |
+| figureClass        | YES | YES | YES | YES | Figure class | `"figure"` |
+| figureImageClass   | YES | YES | YES | YES | Figure image class | `"figure-img img-fluid"` |
+| figureCaptionClass | YES | YES | YES | YES | Figcaption class | `"figure-caption"` |
+| figureTitleH       | YES | YES | YES | YES | Figcaption title level | 4 |
+| figureTitle        | YES | YES | NO  | NO  | Figcaption Title | `null` |
+| attr               | YES | YES | NO  | NO  | Figcaption atttribute | `null` |
+| attrLink           | YES | YES | NO  | NO  | Figcaption attribute link | `null` |
+| caption            | YES | YES | NO  | NO  | Figcaption caption | `null` |

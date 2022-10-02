@@ -17,7 +17,8 @@
   @example - Go Template
   {{ partial "hri/private/generate-placeholder" . }}
   
-*/}}{{ $placeholder := false}}
+*/}}
+{{ $placeholder := false}}
 {{ with .placeholder }}
   {{ if eq . "lqip" }}
     {{ $placeholder = $.src.Resize (printf "%vx gif" (div $.src.Width $.lqipDivFactor | int)) }}

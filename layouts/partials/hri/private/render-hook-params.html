@@ -1,4 +1,4 @@
-{{- /*
+{{/*
   render-hook-params
   generates params from render hook input.
   standard params are passed through
@@ -14,23 +14,25 @@
   @example - Go Template
   {{ partial "render-hook-params" . }}
 
-*/ -}}
+*/}}
 
 {{/* extract image meta data for param below */}}
-{{ $img := .Page.Resources.GetMatch .Destination }}
-{{ $imgParams := $img.Params }}
+{{ $imgParams := dict }}
+{{ with .Page.Resources.GetMatch .Destination }}
+  {{ $imgParams := .Params }}
+{{ end }}
 
-{{- /* default .shortcodeWrapperClass to page or site params if not set inline */ -}}
-{{- $renderHookWrapperClass := $imgParams.renderHookWrapperClass | default (.Page.Param "image.renderHookWrapperClass") -}}
+{{/* default .shortcodeWrapperClass to page or site params if not set inline */}}
+{{ $renderHookWrapperClass := $imgParams.renderHookWrapperClass | default (.Page.Param "image.renderHookWrapperClass") }}
 
-{{- /* add neccessary render-hook params to image params */ -}}
-{{- $params := (dict 
+{{/* add neccessary render-hook params to image params */}}
+{{ $params := (dict 
   "page" .Page 
   "src" .Destination 
   "alt" .PlainText 
   "title" .Title 
   "renderHook" true
   "renderHookWrapperClass" $renderHookWrapperClass
-  ) -}}
+  ) }}
 
 {{ return $params }}
