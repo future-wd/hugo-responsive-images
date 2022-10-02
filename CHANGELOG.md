@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.11](/github.com/future-wd/hugo-responsive-image/compare/v1.1.10...v1.1.11) (2022-10-02)
+
+
+### Bug Fixes
+
+* clean up imgMetaTitle ([6441c36](/github.com/future-wd/hugo-responsive-image/commit/6441c369883c573995b79ac830450924e399dbe4))
+* conditionally use image meta for page res ([d00e7f9](/github.com/future-wd/hugo-responsive-image/commit/d00e7f9e5fc04537dd6ea251cf554420c0b6c934))
+* handle string arrays ([1b34cc9](/github.com/future-wd/hugo-responsive-image/commit/1b34cc96adca55d5d1a3824c20d37f559bebcbc3))
+* remove - ([9c544a5](/github.com/future-wd/hugo-responsive-image/commit/9c544a59d34fbc5364ca14ce7ed14199efa4bf88))
+* remove - ([58ed8e2](/github.com/future-wd/hugo-responsive-image/commit/58ed8e27ff508267712b92d36e2d427b79c0a047))
+* shortcode params sanitized ([822a593](/github.com/future-wd/hugo-responsive-image/commit/822a59374bd474a5691b533185855066736903cb))
+* update params and readme ([0a0a263](/github.com/future-wd/hugo-responsive-image/commit/0a0a26352361535c800772a5a5674209a4229a3c))
+* use variable to avoid printing "true" ([f702f00](/github.com/future-wd/hugo-responsive-image/commit/f702f00e871fd7883423692fdccaca29e1b4bfa1))
+
 ### [1.1.10](/github.com/future-wd/hugo-responsive-image/compare/v1.1.9...v1.1.10) (2022-09-13)
 
 
