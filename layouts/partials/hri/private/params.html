@@ -125,6 +125,7 @@
 {{/* else produce responsive srcset
   * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
 */}}
+  {{/* sanitize and sort .widths */}}
   {{ with $widths }}
     {{ if reflect.IsSlice . }}
       {{ range . }}
@@ -147,6 +148,7 @@
     {{ end }}
   {{ end }}
   {{ $widths = sort $widths }}
+  {{/* create and export variable */}}
   {{ $widthsArray := slice }}
   {{ range $width := $widths }}
     {{ $widthsArray = $widthsArray | append (slice
