@@ -55,7 +55,7 @@
   "title" $title
   ) }}
 
-{{ $fillRatio := .fillRatio | default $imgParams.fillRatio | default (.page.Param "image.fillRatio") }}
+{{ $fillRatio := .fillRatio | default $imgParams.fillRatio | default (.page.Param "image.fillRatio") | default 0 }}
 {{ with $fillRatio }}
   {{ if reflect.IsSlice . }}
     {{ range . }}
@@ -148,9 +148,84 @@
     {{ end }}
   {{ end }}
   {{ $widths = sort $widths }}
+
+
+  {{/* check that image is not narrower than the resize widths
+    ** if narrower, remove wider widths. Add image width if minWidthDifference
+    ** greater than the largest new resize width */}}
+  {{ $newWidths := slice }}
+  {{ $removed := true }}
+  {{ $difference := site.Params.minWidthDifference }}
+  {{ if $fillRatio }}
+    {{/* modify widths for fillratio taking into account the desired height */}}
+    {{/* 4:3 = 3/4 = 0.75    9:16(vert) = 16/9 = 1.7  */}}
+    {{/* inverse of 1.7 is 1 / 1.7 = 0.5882 
+    
+    square 1000x1000
+    588x1000
+    /*}}
+
+    {{ $vertical := gt 1 $fillRatio }}
+
+    {{ range $widths }}
+      {{ $new_height := mul . $fillRatio }}
+      {{ if and (gt $img.Width .) (gt $img.Height $new_height) }}
+        {{ $newWidths = $newWidths | append . }}
+      {{ else }}
+        {{ $removed = true }}
+      {{ end }}
+    {{ end }}
+
+
+    {{ if $removed }}
+      {{ $largest := index $newWidths (sub (len $newWidths) 1) }}
+      {{ if $vertical }}
+        {{/* image width * 1/$fillRatio (inverse)  to get full height and narrower width }}
+        {{ $inverse := div 1 $fillRatio }}
+        {{ $full_width := mul $img.Width $inverse }}
+        {{ $min := sub $full_width 50 }}
+        {{ if gt $min $largest }}
+          {{ $newWidths = $newWidths | append ($full_width | int) }}  
+        {{ end }}
+      {{ else }}
+        {{ $min := sub $img.Width 50 }}
+        {{ if gt $min $largest }}
+            {{ $newWidths = $newWidths | append ($img.Width | int) }}  
+        {{ end }}
+      {{ end }}
+      {{ if not $suppressWidthWarning }}
+        {{ warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide. Resized to %dpx wide" $img.RelPermalink $img.Width $img.Height $.page.RelPermalink (index $widths (sub (len $widths) 1)) (index $newWidths (sub (len $newWidths) 1)) }}
+      {{ end }}
+    {{ end }}
+
+
+  {{ else }}
+    {{/* simple width check - dont resize greater than image */}}
+    {{ range $widths }}
+      {{ if gt $img.Width . }}
+        {{ $newWidths = $newWidths | append . }}
+      {{ else }}
+        {{ $removed = true }}
+      {{ end }}
+    {{ end }}
+    {{/* create extra resize width if image is DIFFERENCE greater than the largest resize width thats left */}}
+    {{ if $removed }}
+      {{/* check */}}
+      {{ $largest := index $newWidths (sub (len $newWidths) 1) }}
+      {{ $min := sub $img.Width 50 }}
+      {{ if gt $min $largest }}
+        {{ $newWidths = $newWidths | append ($img.Width | int) }}  
+      {{ end }}
+      {{ if not $suppressWidthWarning }}
+        {{ warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide. Resized to %dpx wide" $img.RelPermalink $img.Width $img.Height $.page.RelPermalink (index $widths (sub (len $widths) 1)) (index $newWidths (sub (len $newWidths) 1)) }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+
   {{/* create and export variable */}}
   {{ $widthsArray := slice }}
-  {{ range $width := $widths }}
+  {{ range $width := $newWidths }}
     {{ $widthsArray = $widthsArray | append (slice
       (dict
       "desc" (printf "%dw" $width)

@@ -2,7 +2,7 @@
 title: "Page Resources"
 date: 2022-08-28T15:35:39-07:00
 draft: false
-resources:
+resources: # for test 8 (metadata)
 - src: test1.jpg
   title: Title set via metadata
   params: 
@@ -105,13 +105,23 @@ testImages:
       class: [figure-caption]
 - id: js-test8
   title: 8. Image metadata
-  subtitle: title and alt set
+  subtitle: title and alt set in markup metadata
   params:
     src: test1.jpg
   tests:
     img:
       title: Title set via metadata
       alt: Alt set via metadata
+- id: js-test9
+  title: 9. Standard resize, larger than original width
+  subtitle: Width 900, 2000
+  params:
+    alt: Test Image Alt
+    title: Test Image Title
+    widths: [900, 2000]
+  tests:
+    source: 
+      dataWidths: ['900w', '1900w']
 --- 
 
 <!-- ![Alt Text](test1.jpg "Test Title") -->
