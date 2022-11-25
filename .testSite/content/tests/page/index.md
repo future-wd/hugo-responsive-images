@@ -82,7 +82,7 @@ testImages:
   tests:
     img:
       dataSizes: 'auto'
-      class: ['img-fluid', 'lazyloaded', lazyautosizes]
+      class: ['img-fluid', 'lazysizes']
 - id: js-test7
   title: 7. figure
   subtitle: 
@@ -113,15 +113,26 @@ testImages:
       title: Title set via metadata
       alt: Alt set via metadata
 - id: js-test9
-  title: 9. Standard resize, larger than original width
-  subtitle: Width 900, 2000
+  title: 9. Standard resize, larger than original width. orig width 1920px
+  subtitle: Width 900, 1200, 2000 down to 1920
   params:
     alt: Test Image Alt
     title: Test Image Title
-    widths: [900, 2000]
+    widths: [900, 1200, 2000]
   tests:
     source: 
-      dataWidths: ['900w', '1900w']
+      dataWidths: ['900w', '1200w', '1920w']
+- id: js-test10
+  title: 10. Fill ratio 9:16, larger than original width/height. orig width 1920px
+  subtitle: Width 200, 400, 900 down to  607
+  params:
+    alt: Test Image Alt
+    title: Test Image Title
+    widths: [200, 400, 900]
+    fillRatio: [9, 16]
+  tests:
+    source: 
+      dataWidths: ['200w', '400w', '607w']
 --- 
 
 <!-- ![Alt Text](test1.jpg "Test Title") -->
