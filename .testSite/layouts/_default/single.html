@@ -11,21 +11,18 @@
     </div>
   </div>
   <div class="row">
-    {{ if ne .Params.disableRange true }}
     {{ range .Params.testImages }}
     <div class="col-md-6" id="{{ .id }}">
       <h2>{{ .title }}</h2>
       <p>{{ .subtitle }}</p>
-      
       {{ $partial := .partial | default "image" }}
       {{ with .params }}
-      {{ $params := (dict "page" $ "src" "test.jpg") }}
-      {{ $params = merge $params . }}
-      {{ partial $partial $params }}
+        {{ $params := (dict "page" $ "src" "test.jpg") }}
+        {{ $params = merge $params . }}
+        {{ partial $partial $params }}
       {{ end }}
       <div id="{{ .id }}-results"></div>
     </div>
-    {{ end }}
     {{ end }}
   </div>
 </div>

@@ -21,3 +21,4 @@ image:
   # provider: netlify
   # suppressWidthWarning: true
   type: page # or global
+  minWidthDifference: 40

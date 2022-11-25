@@ -38,7 +38,7 @@
 {{ end }}
 {{ if not $img }}
   {{ $message := printf "No image resource found for image \"%s\" on page %s." .src  .page.RelPermalink  }}
-  {{ partial "hri/private/errorf" $message }}
+  {{ partial "hri/private/utils/errorf" $message }}
 {{ end }}
 {{ $params = merge $params (dict 
   "img" $img
@@ -125,6 +125,7 @@
 {{/* else produce responsive srcset
   * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
 */}}
+  {{/* sanitize and sort .widths */}}
   {{ with $widths }}
     {{ if reflect.IsSlice . }}
       {{ range . }}
@@ -147,8 +148,57 @@
     {{ end }}
   {{ end }}
   {{ $widths = sort $widths }}
+
+
+  {{/* check that the image is not smaller than the resized version */}}
+  {{ $newWidths := slice }}
+  {{ $removed := false }}
+  {{ $difference := site.Params.minWidthDifference | int}}
+
+  {{ range $widths }}
+    {{ if $fillRatio }}
+      {{ if and (gt $img.Width .) (gt $img.Height (mul . $fillRatio)) }}
+        {{ $newWidths = $newWidths | append . }}
+      {{ else }}
+        {{ $removed = true }}
+      {{ end }}
+    {{ else }}
+      {{ if gt $img.Width . }}
+        {{ $newWidths = $newWidths | append . }}
+      {{ else }}
+        {{ $removed = true }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  {{ if $removed }}
+    {{ $vertical := gt $fillRatio 1  }}
+    {{ $largest := index $newWidths (sub (len $newWidths) 1) | int }}
+    {{ $min := sub $img.Width $difference }}
+    {{ $max_resize_width := $img.Width }}
+    {{ if and $fillRatio $vertical }}
+      {{ $inverse := div 1 $fillRatio }}
+      {{ $max_resize_width := mul $img.Height $inverse }}
+    {{ end }}
+    {{ if gt $min $largest }}
+      {{ $newWidths = $newWidths | append ($max_resize_width | int) }}  
+    {{ end }}
+    {{ if not $suppressWidthWarning }}
+      {{ $old_width := index $widths (sub (len $newWidths) 1) | int }}
+      {{ $new_width := index $newWidths (sub (len $newWidths) 1) | int }}
+      {{ if $fillRatio }}
+        {{ $old_height := mul $old_width $fillRatio | int }}
+        {{ $new_height := mul $new_width $fillRatio | int }}
+        {{ warnf "Source image %s (%dx%dpx) on page %s cannot be resized to %dx%dpx wide. Resized to %dx%dpx" $img.RelPermalink $img.Width $img.Height $.page.RelPermalink $old_width $old_height $new_width $new_height }}
+      {{ else }}
+      {{ warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide. Resized to %dpx wide" $img.RelPermalink $img.Width $img.Height $.page.RelPermalink $old_width $new_width }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  {{/* create and export variable */}}
   {{ $widthsArray := slice }}
-  {{ range $width := $widths }}
+  {{ range $width := $newWidths }}
     {{ $widthsArray = $widthsArray | append (slice
       (dict
       "desc" (printf "%dw" $width)
