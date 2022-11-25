@@ -43,17 +43,10 @@
     {{ if $.fillRatio }}
       {{/* resulting fillHeight must be converted to integer for use with image resize */}}
       {{ $fillHeight := mul ($width.width | float) $.fillRatio | int }}
-      {{ if and (or (gt $width.width $.img.Width) (gt $.fillHeight $.img.Height)) (ne $.suppressWidthWarning true) }}
-        {{ warnf "Source image %s (%dx%dpx) on page %s is not large enough to resize to %dx%dpx." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width $fillHeight  }}
-      {{ end }}
-      {{/* resize image */}}
+      {{/* resize image with fill option */}}
       {{ $imgResized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) }}
     {{ else }}
       {{/* do standard image resize */}}
-      {{ if and (gt $width.width $.img.Width) (ne $.suppressWidthWarning true) }}
-        {{ warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide." $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $width.width }}
-      {{ end }}
-      {{/* resize image */}}
       {{ $imgResized = $.img.Resize (printf "%dx %s" $width.width $optionsString) }}
     {{ end }}
     {{/* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */}}
