@@ -151,7 +151,7 @@
 
   {{/* SANTIZE WIDTHS WITH UTIL */}}
   {{ $new_widths := partial "hri/private/utils/sanitize-widths" (dict 
-    "page" $.page
+    "ctx" $.page
     "img" $img
     "widths" $widths
     "fill_ratio" $fillRatio

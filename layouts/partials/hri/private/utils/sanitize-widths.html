@@ -5,8 +5,11 @@
 
   @author @sean-au
 
+  @version 1.0.0
+    Also used in github.com/future-wd/hugo-responsive-background-images
+
   @context dict
-    .page - page context
+    .ctx - page context
     .img - image resource
     .widths - user provided widths
     .fill_ratio - ratio for fill transform
@@ -19,7 +22,7 @@
 
   @example - Go Template
     {{ $new_widths := partial "hri/private/utils/sanitize-widths" (dict 
-    "page" $.page
+    "ctx" $.ctx
     "img" $img
     "widths" $widths
     "fill_ratio" $fillRatio
@@ -67,9 +70,9 @@
     {{ if $.fill_Ratio }}
       {{ $old_height := mul $old_width $.fill_ratio | int }}
       {{ $new_height := mul $new_width $.fill_ratio | int }}
-      {{ warnf "Source image %s (%dx%dpx) on page %s cannot be resized to %dx%dpx wide. Resized to %dx%dpx" $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $old_width $old_height $new_width $new_height }}
+      {{ warnf "Source image %s (%dx%dpx) on page %s cannot be resized to %dx%dpx wide. Resized to %dx%dpx" $.img.RelPermalink $.img.Width $.img.Height $.ctx.RelPermalink $old_width $old_height $new_width $new_height }}
     {{ else }}
-    {{ warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide. Resized to %dpx wide" $.img.RelPermalink $.img.Width $.img.Height $.page.RelPermalink $old_width $new_width }}
+    {{ warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide. Resized to %dpx wide" $.img.RelPermalink $.img.Width $.img.Height $.ctx.RelPermalink $old_width $new_width }}
     {{ end }}
   {{ end }}
 {{ end }}
