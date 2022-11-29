@@ -17,11 +17,11 @@
 
 {{ $params := false }}
 {{ if .params.provider }}
-  {{ with partial "hri/private/external-widths" . }}
+  {{ with partial "hri/private/gen/external-widths" . }}
     {{ $params = . }}
   {{ end }}
 {{ else }}
-  {{ with partial "hri/private/local-widths" . }}
+  {{ with partial "hri/private/gen/local-widths" . }}
     {{ $params = . }}
   {{ end }}
 {{ end }}

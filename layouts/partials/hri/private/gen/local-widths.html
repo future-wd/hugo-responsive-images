@@ -56,7 +56,7 @@
       {{ if eq $index 0}}
         {{/* smallest image width for placeholder generation */}}
         {{ $params = merge $params (dict "src" $imgResized) }}
-        {{ with partial "hri/private/generate-placeholder" $params }}
+        {{ with partial "hri/private/gen/placeholder" $params }}
           {{ $placeholder = . }}
         {{ end }}
       {{ end }}

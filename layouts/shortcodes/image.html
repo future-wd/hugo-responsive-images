@@ -14,7 +14,7 @@
 
 */ -}}
 {{- $params := false }}
-{{- with partial "hri/private/shortcode-params" . -}}
+{{- with partial "hri/private/params/shortcode" . -}}
   {{- $params = . -}}
 {{- end -}}
-{{- partial "hri/private/shortcode-template" $params -}}
+{{- partial "hri/private/print/shortcode" $params -}}

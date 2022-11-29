@@ -16,8 +16,8 @@
 
 */ -}}
 {{- /* santize inputs, process params */ -}}
-{{- $params := partial "hri/private/params.html" . }}
+{{- $params := partial "hri/private/params/image.html" . }}
 {{- /* generate image widths*/ -}}
-{{- $params = partial "hri/private/generate-widths" $params -}}
+{{- $params = partial "hri/private/gen/widths" $params -}}
 {{- /* generate picture tag */ -}}
-{{- partial "hri/private/picture-tag" $params -}}
+{{- partial "hri/private/print/picture" $params -}}

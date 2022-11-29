@@ -16,11 +16,11 @@
 
 */ -}}
 {{- /* process figure params */ -}}
-{{- $figureParams := partial "hri/private/figure-params" . -}}
+{{- $figureParams := partial "hri/private/params/figure" . -}}
 {{- /* add figure=true to image params */ -}}
 {{- $imageParams := merge . (dict "figure" true) -}}
 {{- $imageParams := merge $imageParams (dict "caption" $figureParams.caption) -}}
 {{- /* call 3 partials for each part of figure */ -}}
-{{- partial "hri/private/figure-tag-top" $figureParams }}
+{{- partial "hri/private/print/figure-top" $figureParams }}
 {{- partial "image" $imageParams -}}
-{{- partial "hri/private/figure-tag-bottom" $figureParams }}
+{{- partial "hri/private/print/figure-bottom" $figureParams }}
