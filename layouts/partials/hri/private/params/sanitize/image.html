@@ -182,74 +182,67 @@
   {{ end }}
 {{ end }}
 
-{{/*****************************************
-  ** inline, meta and page params (not site) 
-  ***************************************/}}
-{{ if ne .type "site" }}
 
-  {{ $fill_ratio := .params.fill_ratio | default .params.fillRatio }}
-  {{ with $fill_ratio }}
-    {{ if reflect.IsSlice . }}
-      {{ range . }}
-        {{ if ne (printf "%T" .) "int" }}
-          {{ partial "hri/private/utils/options-error" (dict 
-          "var" "fillRatio slice item"
-          "val" .
-          "opts" "2x integers in a slice"
-          "ctx" $error_ctx
-          ) }}
-        {{ end }}
+
+{{ $fill_ratio := .params.fill_ratio | default .params.fillRatio }}
+{{ with $fill_ratio }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
+        {{ partial "hri/private/utils/options-error" (dict 
+        "var" "fillRatio slice item"
+        "val" .
+        "opts" "2x integers in a slice"
+        "ctx" $error_ctx
+        ) }}
       {{ end }}
-    {{ else }}
-      {{ partial "hri/private/utils/options-error" (dict 
-      "var" "fill_ratio"
-      "val" .
-      "opts" "2x integers in a slice"
-      "ctx" $error_ctx
-      ) }}
     {{ end }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+    "var" "fill_ratio"
+    "val" .
+    "opts" "2x integers in a slice"
+    "ctx" $error_ctx
+    ) }}
   {{ end }}
-
-  {{ with .params.title }}
-    {{ if ne (printf "%T" .) "string" }}
-      {{ partial "hri/private/utils/options-error" (dict 
-        "var" "title"
-        "val" .
-        "opts" "a string"
-        "ctx" $error_ctx
-      ) }}
-    {{ end }}
-  {{ end }}
-
-  
-  {{ with .params.width }}
-    {{ if ne (printf "%T" .) "int" }}
-      {{ partial "hri/private/utils/options-error" (dict 
-        "var" "width"
-        "val" .
-        "opts" "an integer"
-        "ctx" $error_ctx
-      ) }}
-    {{ end }}
-  {{ end }}
-
-  {{ with .sizesParam }}
-    {{ if not (eq (printf "%T" .) "string") }}
-      {{ partial "hri/private/utils/options-error" (dict 
-        "var" "sizes"
-        "val" .
-        "opts" "strings"
-        "ctx" $error_ctx
-      ) }}
-    {{ end }}
-  {{ end }}
-
-
 {{ end }}
 
-{{/*****************************************
-  ** site params only
-  ***************************************/}}
+{{ with .params.title }}
+  {{ if ne (printf "%T" .) "string" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "title"
+      "val" .
+      "opts" "a string"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+
+{{ with .params.width }}
+  {{ if ne (printf "%T" .) "int" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "width"
+      "val" .
+      "opts" "an integer"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .sizesParam }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "sizes"
+      "val" .
+      "opts" "strings"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+
+
 
 
 
