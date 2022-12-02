@@ -21,19 +21,19 @@
 
 
 {{/* convert any comma delimited string-arrays to arrays */}}
-{{ $withArrays := dict}}
+{{ $arrays := dict}}
 {{ range $key, $elem := . }}
   {{ $elem = partial "hri/private/utils/string-to-array" $elem }}
-  {{ $withArrays = merge $withArrays (dict $key $elem) }}
+  {{ $arrays = merge $arrays (dict $key $elem) }}
 {{ end }}
 
 {{/* convert any string-integers to integers */}}
-{{ $withInts := dict}}
-{{ range $key, $elem := $withArrays }}
+{{ $ints := dict}}
+{{ range $key, $elem := $arrays }}
   {{ $elem = partial "hri/private/utils/string-to-int" $elem }}
-  {{ $withInts = merge $withInts (dict $key $elem) }}
+  {{ $ints = merge $ints (dict $key $elem) }}
 {{ end }}
 
 
 
-{{ return $withInts }}
+{{ return $ints }}

@@ -51,7 +51,7 @@
   {{- with $.class }}
     class="{{ . }}"
   {{- end -}}
-  {{- with $.sizes }}
+  {{- with $.sizes_prop }}
     {{ . | safeHTMLAttr }}
   {{- end }}
   {{- with $.alt }}

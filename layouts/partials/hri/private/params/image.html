@@ -17,33 +17,45 @@
 
   @example - Go Template
   {{ partial "hri/private/params" . }}
+
+  UPGRADE:
+
+  santize siteParams > pageParams > pageMeta > inlineParams
   
 */}}
 
-{{ $s := newScratch }}
-{{/* should params be pulled in explicitly? */}}
-{{/*  $s.Set "params" . */}}
 
-{{ $imgMetaTitle := false }}
-{{ $imgParams := dict }}
+{{ $meta := dict }}
 {{ $params :=  . }}
 {{ $img := false }}
-{{ $type := .type | default (.page.Param "image.type") }}
+{{ $type := .type | default (.ctx.Param "image.type") }}
 {{ if eq $type "global" }}
   {{/* global resource */}}
   {{ $img = resources.Get .src }}
 {{ else }}
   {{/* page resource */}}
-  {{ $img = .page.Resources.GetMatch (print .src)   }}
+  {{ $img = .ctx.Resources.GetMatch (print .src)   }}
   {{/* add page resource image params to variable */}}
-  {{ $imgParams = $img.Params }}
-  {{ $imgMetaTitle = $img.Title }}
+  {{ $meta = $img.Params }}
 {{ end }}
-
 
 {{ $params = merge $params (dict 
   "img" $img
   "type" $type) }}
+
+
+{{/*
+  ** Sanitize different param sources
+  */}}
+{{ partial "hri/private/params/sanitize-image" (dict "ctx" .ctx "img" $img "type" "site"   "params" site.Params.image) }}
+{{ if .ctx.Params.image }}
+{{ partial "hri/private/params/sanitize-image" (dict "ctx" .ctx "img" $img "type" "page"   "params" .ctx.Params.image) }}
+{{ end }}
+{{ partial "hri/private/params/sanitize-image" (dict "ctx" .ctx "img" $img "type" "meta"   "params" $meta) }}
+{{ partial "hri/private/params/sanitize-image" (dict "ctx" .ctx "img" $img "type" "inline" "params" . ) }}
+
+
+
 
 
 {{/* everything above this line must stay above this line for error messages to work as they use these variables */}}
@@ -51,36 +63,38 @@
 {{/* camelCase params have been kept to avoid breaking changes, will be depreciated in future versions */}}
 
 {{/* GET PARAMS FROM VARIOUS PLACES */}}
-{{ $suppressWidthWarning := .suppress_width_warning | default (.page.Param "image.suppress_width_warning") | default .suppressWidthWarning | default (.page.Param "image.suppressWidthWarning") }}
-{{/* .figureTitle has already been merged with $imgParams */}}
-{{ $title := .title | default $imgMetaTitle | default $imgParams.title | default .figure_title | default .figureTitle | default .page.Title }}
-{{ $fillRatio :=  .fill_ratio | default $imgParams.fill_ratio | default (.page.Param "image.fill_ratio") | default .fillRatio | default $imgParams.fillRatio | default (.page.Param "image.fillRatio") }}
-{{ $widths := .widths | default $imgParams.widths | default (.page.Param "image.widths") }}
-{{ $shortcodeWidths := .page.Param "shortcode_widths" | default (.page.Param "shortcodeWidths") | default $widths }}
-{{ $renderHookWidths := .page.Param "render_hook_widths" | default (.page.Param "renderHookWidths") | default $shortcodeWidths }}
-{{ if eq .renderHook true }}
-  {{ $widths = $renderHookWidths }}
-{{ else if (eq .shortcode true) }}
-  {{ $widths = $shortcodeWidths }}
-{{ end }}
-{{ $width := .width | default $imgParams.width | default .page.Params.image.width }}
+{{ $suppressWidthWarning := .suppress_width_warning | default (.ctx.Param "image.suppress_width_warning") | default .suppressWidthWarning | default (.ctx.Param "image.suppressWidthWarning") }}
+{{ $title := .title | default $img.Title | default $meta.title | default .figure_title | default .figureTitle | default $meta.figure_title | default $meta.figureTitle }}
+{{ $fillRatio :=  .fill_ratio | default $meta.fill_ratio | default (.ctx.Param "image.fill_ratio") | default .fillRatio | default $meta.fillRatio | default (.ctx.Param "image.fillRatio") }}
+{{ $width := .width | default $meta.width | default .ctx.Params.image.width }}
+
+
 
 {{/* TO TEST and check if they are being sanitized */}}
-{{ $densities := .densities | default $imgParams.densities | default (.page.Param "image.densities") }}
+{{ $densities := .densities | default $meta.densities | default (.ctx.Param "image.densities") }}
 {{ $densities = sort $densities }}
-{{ $formats := .formats | default $imgParams.formats | default (.page.Param "image.formats") }}
-{{ $provider := .provider | default $imgParams.provider | default (.page.Param "image.provider") }}
-{{ $loading := .loading | default $imgParams.loading | default (.page.Param "image.loading") }}
-{{ $sizesParam := .sizes | default $imgParams.sizes | default (.page.Param "image.sizes") }}
-{{ $class := .class | default $imgParams.class | default (.page.Param "image.class") }}
-{{/* .caption has already been processed??? should this be passed through as something else e.g. .figure_caption? */}}
-{{ $alt :=  .alt | default $imgParams.alt }}
+{{ $formats := .formats | default $meta.formats | default (.ctx.Param "image.formats") }}
+{{ $provider := .provider | default $meta.provider | default (.ctx.Param "image.provider") }}
+{{ $loading := .loading | default $meta.loading | default (.ctx.Param "image.loading") }}
+{{ $sizes := .sizes | default $meta.sizes | default (.ctx.Param "image.sizes") }}
+{{ $alt :=  .alt | default $meta.alt }}
 
-{{/* placeholder params */}}
-{{ $placeholder := .placeholder | default $imgParams.placeholder | default (.page.Param "image.placeholder") }}
-{{ $lqipDivFactor := .lqip_div_factor | default $imgParams.lqip_div_factor | default (.page.Param "image.lqip_div_factor") | default .lqipDivFactor | default $imgParams.lqipDivFactor | default (.page.Param "image.lqipDivFactor") }}
-{{ $lqipBlurAmount := .lqip_blur_amount | default $imgParams.lqip_blur_amount | default (.page.Param "image.lqip_blur_amount") | default .lqipBlurAmount | default $imgParams.lqipBlurAmount | default (.page.Param "image.lqipBlurAmount") }}
-{{ $gifDivFactor := .gif_div_factor | default $imgParams.gif_div_factor |default (.page.Param "image.gif_div_factor") | default .gifDivFactor | default $imgParams.gifDivFactor |default (.page.Param "image.gifDivFactor") }}
+{{ $class := "" }}
+{{ $caption := "" }}
+{{ if eq .input "figure" }}
+  {{ $class = .class }}
+  {{ $caption = .caption }}
+{{ else }}
+  {{ $class = .class | default $meta.class | default (.ctx.Param "image.class") }}
+{{ end }}
+{{ $widths := "" }}
+{{ if or (eq .input "render_hook") (eq .input "shortcode") }}
+  {{ $widths = .widths }}
+{{ else }}
+  {{ $widths = .widths | default $meta.widths | default (.ctx.Param "image.widths") }}
+{{ end }}
+
+
 
 {{/* MERGE NEW PARAMS */}}
 {{ $params = merge $params (dict 
@@ -88,30 +102,34 @@
   "title" $title
   "fillRatio" $fillRatio
   "widths" $widths
-  "shortcodeWidths" $shortcodeWidths
-  "renderHookWidths" $renderHookWidths
   "width" $width
   "densities" $densities
   "formats" $formats
   "provider" $provider
   "loading" $loading
-  "sizesParam" $sizesParam
+  "sizes" $sizes
   "class" $class
-  "alt" $alt
+  "caption" $caption
+  "alt" $alt ) }}
+
+{{/* placeholder params */}}
+{{ $placeholder := .placeholder | default $meta.placeholder | default (.ctx.Param "image.placeholder") }}
+{{ $lqipDivFactor := .lqip_div_factor | default $meta.lqip_div_factor | default (.ctx.Param "image.lqip_div_factor") | default .lqipDivFactor | default $meta.lqipDivFactor | default (.ctx.Param "image.lqipDivFactor") }}
+{{ $lqipBlurAmount := .lqip_blur_amount | default $meta.lqip_blur_amount | default (.ctx.Param "image.lqip_blur_amount") | default .lqipBlurAmount | default $meta.lqipBlurAmount | default (.ctx.Param "image.lqipBlurAmount") }}
+{{ $gifDivFactor := .gif_div_factor | default $meta.gif_div_factor |default (.ctx.Param "image.gif_div_factor") | default .gifDivFactor | default $meta.gifDivFactor |default (.ctx.Param "image.gifDivFactor") }}
+
+{{ $params := merge $params (dict 
   "placeholder" $placeholder
   "lqipDivFactor" $lqipDivFactor
   "lqipBlurAmount" $lqipBlurAmount
-  "gifDivFactor" $gifDivFactor) }}
+  "gifDivFactor" $gifDivFactor)}}
 
-{{/* SANITIZE PARAMS */}}
-{{ partial "hri/private/params/sanitize-inputs" $params }}
-
-{{/* image processing options - dont export these params */}}
-{{ $quality := .quality | default $imgParams.quality | default (.page.Param "image.quality") }}
-{{ $rotate := .rotate | default $imgParams.rotate | default (.page.Param "image.rotate") }}
-{{ $resample_filter := .resample_filter | default $imgParams.resample_filter | default (.page.Param "image.resample_filter") | default .resampleFilter | default $imgParams.resampleFilter | default (.page.Param "image.resampleFilter") }}
-{{ $hint := .hint | default $imgParams.hint | default (.page.Param "image.hint") }}
-{{ $anchor := .anchor | default $imgParams.anchor | default (.page.Param "image.anchor") }}
+{{/* image processing params - dont export these params */}}
+{{ $quality := .quality | default $meta.quality | default (.ctx.Param "image.quality") }}
+{{ $rotate := .rotate | default $meta.rotate | default (.ctx.Param "image.rotate") }}
+{{ $resample_filter := .resample_filter | default $meta.resample_filter | default (.ctx.Param "image.resample_filter") | default .resampleFilter | default $meta.resampleFilter | default (.ctx.Param "image.resampleFilter") }}
+{{ $hint := .hint | default $meta.hint | default (.ctx.Param "image.hint") }}
+{{ $anchor := .anchor | default $meta.anchor | default (.ctx.Param "image.anchor") }}
 
 {{ $options := dict 
   "quality" $quality 
@@ -119,8 +137,6 @@
   "resample_filter" $resample_filter
   "hint" $hint
   "anchor" $anchor }}
-
-{{ partial "hri/private/params/sanitize-options" (dict "page" .page "img" $img "opts" $options) }}
 {{ $params := merge $params (dict "options" $options) }}
 
 {{/* POST SANITIZATION MODIFICATIONS TO PARAMS */}}
@@ -178,26 +194,25 @@
   {{ $params = merge $params (dict "widths" $widths) }}
 {{ end }}
 
-{{ $sizes := false }}
-{{ if and $sizesParam (not $width) }}
-  {{ if eq $sizesParam "lazysizes" }}
-    {{ $sizes = `data-sizes="auto"` }}
-  {{ else if (eq $sizesParam "user") }}
-    {{ $sizes = false }}
+
+{{ if and $sizes (not $width) }}
+  {{ $sizes_prop := false }}
+  {{ if eq $sizes "lazysizes" }}
+    {{ $sizes_prop = `data-sizes="auto"` }}
+  {{ else if (eq $sizes "user") }}
+    {{ $sizes_prop = false }}
   {{ else }}
-    {{ $sizes = printf `sizes="%s"` $sizesParam }}
+    {{ $sizes_prop = printf `sizes="%s"` $sizes }}
   {{ end }}
+  {{ $params = merge $params (dict "sizes_prop" $sizes_prop) }}
 {{ end }}
-{{ $params = merge $params (dict "sizes" $sizes) }}
+
 
 
 {{/* depreciate this (but keep for legacy), just modify .class inside figure params and pass via context to here */}}
-{{ $figure_image_class := default .figureImageClass | default $imgParams.figureImageClass | default (.page.Param "image.figureImageClass") }}
+{{ $figure_image_class := default .figureImageClass | default $meta.figureImageClass | default (.ctx.Param "image.figureImageClass") }}
 
-{{/* for figures $class uses figureImageClass, else uses .class */}}
-{{ if eq .figure true }}
-  {{ $class = $figure_image_class }}
-{{ end }}
+
 {{ if eq $loading "lazysizes" }} 
   {{ $class = print $class " lazyload" }}
 {{ end }}
@@ -211,7 +226,7 @@
   {{ else if $title }}
     {{ $alt = printf "Image of %s" $title }}
   {{ else }}
-    {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $img.RelPermalink .page.RelPermalink }}
+    {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $img.RelPermalink .ctx.RelPermalink }}
   {{ end }}
 {{ end }}
 {{ $params = merge $params (dict 

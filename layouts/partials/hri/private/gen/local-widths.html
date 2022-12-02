@@ -38,24 +38,24 @@
   {{ $src := false }}
   {{ $placeholder := false }}
   {{ range $index, $width := $.widths }}
-    {{ $imgResized := "" }}
+    {{ $img_resized := "" }}
     {{/* output images with altered aspect ratio, if .fillRatio is provided */}}
     {{ if $.fillRatio }}
       {{/* resulting fillHeight must be converted to integer for use with image resize */}}
       {{ $fillHeight := mul ($width.width | float) $.fillRatio | int }}
       {{/* resize image with fill option */}}
-      {{ $imgResized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) }}
+      {{ $img_resized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) }}
     {{ else }}
       {{/* do standard image resize */}}
-      {{ $imgResized = $.img.Resize (printf "%dx %s" $width.width $optionsString) }}
+      {{ $img_resized = $.img.Resize (printf "%dx %s" $width.width $optionsString) }}
     {{ end }}
     {{/* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */}}
-    {{ $srcset = $srcset | append (printf "%s %s" $imgResized.RelPermalink $width.desc) }}
+    {{ $srcset = $srcset | append (printf "%s %s" $img_resized.RelPermalink $width.desc) }}
     {{/* if .width and 1x density (First iteration), add image to src variable for use as fallback */}}
     {{ if eq $format "original" }}
       {{ if eq $index 0}}
         {{/* smallest image width for placeholder generation */}}
-        {{ $params = merge $params (dict "src" $imgResized) }}
+        {{ $params = merge $params (dict "src" $img_resized) }}
         {{ with partial "hri/private/gen/placeholder" $params }}
           {{ $placeholder = . }}
         {{ end }}
@@ -63,11 +63,11 @@
       {{/* add smallest image to src for screen density srcset */}}
       {{ if $.width }}
         {{ if eq $index 0}}
-          {{ $src = $imgResized }}
+          {{ $src = $img_resized }}
         {{ end }}
       {{ else if eq (len $.widths) (add $index 1) }}
         {{/* else largest width (last iteration), add image to src variable for use as fallback */}}
-        {{ $src = $imgResized }}
+        {{ $src = $img_resized }}
       {{ end }}
     {{ end }}
   {{ end }}

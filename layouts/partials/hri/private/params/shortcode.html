@@ -16,21 +16,21 @@
   {{ partial "shortcode-params" . }}
 
 */}}
-{{ $params := (dict 
-  "page" .Page
-  "name" .Name
-  "shortcode" true
-  ) }}
+{{ $site := site.Params.images }}
+{{ $page := .Page.Params }}
+
+{{ $meta := dict }}
+{{ $params := dict }}
 {{/****************************************
   ** check for named params in shortcode **
   *****************************************/}}
 {{ if .IsNamedParams }}
 
   {{/* santize params (convert string-arrays and string-integers) */}}
-  {{ $shortcodeParams := partial "hri/private/utils/sanitize-shortcode-params" .Params }}
+  {{ $shortcode_params := partial "hri/private/utils/sanitize-shortcode-params" .Params }}
 
   {{/* merge shortcode .Params map with $params map */}}
-  {{ $params = merge $params $shortcodeParams }}
+  {{ $params = merge $params $shortcode_params }}
 
   {{/* check for src if not throw error */}}
   {{ if not (.Get "src") }}
@@ -53,17 +53,27 @@
   {{ end }}
 {{ end }}
 
-{{/* sort out wrapper class here as its used in the next step */}}
-{{ if not $params.shortcodeWrapperClass }}
-  {{ $imgParams := dict }}
-  {{  with $params.page.Resources.GetMatch (print $params.src)   }}
-    {{/* add page resource image params to variable if image is page resource */}}
-    {{ $imgParams = .Params }}
-  {{ end }}
-  {{/* default .shortcodeWrapperClass to page or site params if not set inline */}}
-  {{ $shortcodeWrapperClass :=  $imgParams.shortCodeWrapperClass |  default (.Page.Param "image.shortcodeWrapperClass") }}
-  {{/* add neccessary shorcode params to image params */}}
-  {{ $params = merge $params (dict "shortcodeWrapperClass" $shortcodeWrapperClass) }}
+{{ with .Page.Resources.GetMatch (print $params.src)   }}
+  {{/* add page resource image params to variable if image is page resource */}}
+  {{ $meta = .Params }}
 {{ end }}
 
-{{ return $params }}
+{{ $shortcode_wrapper_class := $params.shortcode_wrapper_class | default $params.shortcodeWrapperClass | default $meta.shortcode_wrapper_class | default $meta.shortcodeWrapperClass  | default (.Page.Param "shortcode_wrapper_class") | default (.Page.Param "shortcodeWrapperClass") }}
+
+{{ $shortcode_params := dict
+  "shortcode_wrapper_class" $shortcode_wrapper_class
+  "name" .Name }}
+
+{{ $widths_site := $site.shortcode_widths | default $site.shortcodeWidths | default $site.widths }}
+{{ $withs_page  := $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
+{{ $widths_meta := $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths | default $withs_page  }}
+{{ $widths := $params.widths | default $widths_meta }}
+
+{{ $params = merge $params dict
+  "widths" $widths
+  "input" "shortcode" 
+  "ctx" .Page }}
+
+{{ return dict
+  "params" $params
+  "shortcode_params" $shortcode_params }}

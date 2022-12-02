@@ -5,8 +5,12 @@
 
   @author @sean-au
 
-  @version 1.0.0
+  @version 1.0.1
     Also used in github.com/future-wd/hugo-responsive-background-images
+
+  @change-log
+    1.0.1 - remove colon line 64 $max_resize_width was being re defined
+          - use warning partial to utilise warning header
 
   @context dict
     .ctx - page context
@@ -35,6 +39,7 @@
 {{ $new_widths := slice }}
 {{ $removed := false }}
 {{ $difference := site.Params.minWidthDifference | int }}
+{{ $message := false }}
 
 {{ range .widths }}
   {{ if $.fill_ratio }}
@@ -52,14 +57,12 @@
   {{ end }}
 {{ end }}
 
+
 {{ if $removed }}
   {{ $vertical := gt $.fill_ratio 1  }}
- 
   {{ $largest := index $new_widths (sub (len $new_widths) 1) | int }}
-
   {{ $min := sub $.img.Width $difference }}
   {{ $max_resize_width := $.img.Width }}
-  
   {{ if and $.fill_ratio $vertical }}
     {{ $inverse := div 1 $.fill_ratio }}
     {{ $max_resize_width = mul $.img.Height $inverse }}
@@ -73,11 +76,14 @@
     {{ if $.fill_Ratio }}
       {{ $old_height := mul $old_width $.fill_ratio | int }}
       {{ $new_height := mul $new_width $.fill_ratio | int }}
-      {{ warnf "Source image %s (%dx%dpx) on page %s cannot be resized to %dx%dpx wide. Resized to %dx%dpx" $.img.RelPermalink $.img.Width $.img.Height $.ctx.RelPermalink $old_width $old_height $new_width $new_height }}
+      {{ $message = printf "Source image %s (%dx%dpx) on page %s cannot be resized to %dx%dpx wide. Resized to %dx%dpx" $.img.RelPermalink $.img.Width $.img.Height $.ctx.RelPermalink $old_width $old_height $new_width $new_height }}
     {{ else }}
-    {{ warnf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide. Resized to %dpx wide" $.img.RelPermalink $.img.Width $.img.Height $.ctx.RelPermalink $old_width $new_width }}
+    {{ $message = printf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide. Resized to %dpx wide" $.img.RelPermalink $.img.Width $.img.Height $.ctx.RelPermalink $old_width $new_width }}
     {{ end }}
   {{ end }}
 {{ end }}
 
+{{ if $message }}
+  {{ partial "hri/private/utils/warnf" (dict "message" $message "module" "Hugo Responsive Images") }}
+{{ end }}
 {{ return $new_widths }}

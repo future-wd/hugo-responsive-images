@@ -1,7 +1,7 @@
 {{/*
-  bg-images/private/utils/errorf.html
-  Emits an error with the modules name on a new line as a header, 
-  error message on new line
+  bg-images/private/utils/warnf.html
+  Emits an warning with the modules name on a new line as a header, 
+  warning message on new line
 
   @author @sean-au
 
@@ -18,6 +18,6 @@
   {{ partial "hri/private/error" (dict "message" "error message" "module" "Hugo Responsive Images") }}
 */}}
 
-{{ errorf "\n%s:\n%s" .module .message }}
+{{ warnf "\n%s:\n%s" .module .message }}
 
 {{ return true }}

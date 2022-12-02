@@ -18,20 +18,9 @@ testImages:
       alt: 'Alt text'
       title: 'Title text'
       class: ['img-fluid', 'lazyload']
-- id: js-test2
-  title: 1. Basic
-  subtitle: Alt and title set
-  tests: 
-    source:
-      types: ['webp', 'png', 'jpeg'] 
 --- 
-
-
-
-
-
 {{< shortcode1.inline >}}
-<div class="col-md-6" id="js-test1">
+<div class="col-md-6 render-hook-test" id="js-test1">
   <h2>1. Basic</h2>
   <p>test.jpg</p>
 {{< /shortcode1.inline >}}

@@ -13,6 +13,6 @@
   {{ partial "shortcode-template" . }}
 
 */ -}}
-<div class="{{ .shortcodeWrapperClass }}">
-  {{ partial (print .name) . }}
+<div class="{{ .shortcode_params.shortcode_wrapper_class }}">
+  {{ partial (print .shortcode_params.name) .params }}
 </div>

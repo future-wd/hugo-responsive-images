@@ -13,6 +13,6 @@
   {{ partial "render-hook-template" . }}
 
 */ -}}
-<div class="{{ .renderHookWrapperClass }}">
-  {{ partial "image" . }}
+<div class="{{ .render_hook_params.renderHookWrapperClass }}">
+  {{ partial "image" .image_params }}
 </div>
