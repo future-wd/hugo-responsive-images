@@ -26,7 +26,7 @@
 {{ range $index, $format:= .formats }}
   {{/* add format to options array (for format transformation) if not original */}}
   {{ if ne $format "original" }}
-    {{ $options = $options | append $format }}
+    {{ $options = merge $options (dict "format" $format) }}
   {{ end }}
   {{/* change options array into space delimited string. 
         new options string, srcset and src variables created so they are unique to this iteration */}}

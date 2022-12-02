@@ -36,7 +36,8 @@ testImages:
     source:
       types: ['webp', 'png', 'jpeg'] 
 - id: js-test3
-  title: 3. Width and densities
+  # title: 3. Width and densities
+  title: 3
   subtitle: widths 400, densities 1,2,3
   params:
     alt: Width, densities
@@ -82,7 +83,7 @@ testImages:
   tests:
     img:
       dataSizes: 'auto'
-      class: ['img-fluid', 'lazysizes']
+      class: ['img-fluid', 'lazyloaded']
 - id: js-test7
   title: 7. figure
   subtitle: 
@@ -98,7 +99,7 @@ testImages:
   tests:
     img:
       dataSizes: auto
-      class: ['figure-img', 'img-fluid', 'lazyload']
+      class: ['figure-img', 'img-fluid', 'lazyloaded']
     figure:
       class: [figure]
     figcaption:

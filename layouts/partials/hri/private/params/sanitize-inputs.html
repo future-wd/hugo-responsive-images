@@ -1,0 +1,183 @@
+{{/*
+  bg-images/private/sanitize-inputs.html 
+  Sanitizes user inputs and returns error messages
+
+  @author @sean-au
+
+  @context (dict)
+    "ctx" (object) - page context
+    "src" (string) - page resource relative path
+    "selector" (string) - css selector
+    "widths" (array of ints) - array of resize widths
+    "lazy" (bool) - lazy load setting
+    )
+
+  @access private
+
+  @example - Go Template
+    {{ partial "bg-images/private/validate-variables" (merge . (dict "ctx" $ctx)) }}
+
+*/}}
+{{ $error_ctx := dict 
+  "page" .page
+  "img" .img
+  "element" "image"
+  "module" "Hugo Responsive Images" }}
+
+{{/* if not .img }}
+  {{ $message := printf "No image resource found for image \"%s\" on page %s." .src  .page.RelPermalink  }}
+  {{ partial "hri/private/utils/errorf" $message }}
+{{ end */}}
+
+{{/* if not .img }}
+  {{ partial "hri/private/utils/options-error" (dict 
+  "var" "src"
+  "val" .src
+  "opts" "an image resource relative path string"
+  "ctx" $error_ctx
+  ) }}
+{{ end */}}
+
+
+
+{{ with .suppressWidthWarning }}
+  {{ if ne (printf "%T" .) "bool" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "suppressWidthWarning"
+      "val" .
+      "opts" "true/false"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+
+{{ with .title }}
+  {{ if ne (printf "%T" .) "string" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "title"
+      "val" .
+      "opts" "a string"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .fillRatio }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
+        {{ partial "hri/private/utils/options-error" (dict 
+        "var" "fillRatio slice item"
+        "val" .
+        "opts" "2x integers in a slice"
+        "ctx" $error_ctx
+        ) }}
+      {{ end }}
+    {{ end }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+    "var" "fillRatio"
+    "val" .
+    "opts" "2x integers in a slice"
+    "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .width }}
+  {{ if ne (printf "%T" .) "int" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "width"
+      "val" .
+      "opts" "an integer"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .densities }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
+        {{ partial "hri/private/utils/options-error" (dict 
+        "var" "densities slice item"
+        "val" .
+        "opts" "integers in a slice"
+        "ctx" $error_ctx
+        ) }}
+      {{ end }}
+    {{ end }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+    "var" "densities"
+    "val" .
+    "opts" "integers in a slice"
+    "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .formats }}
+  {{ $formatOpts := (slice "original" "bmp" "gif" "jpeg" "jpg" "png" "tif" "tiff" "webp") }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if not (in $formatOpts .) }}
+        {{ partial "hri/private/utils/options-error" (dict 
+          "var" "formats array item"
+          "val" .
+          "opts" (delimit $formatOpts ", " " and ")
+          "ctx" $error_ctx
+        ) }}
+        {{ end }}
+    {{ end }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+        "var" "formats array"
+        "val" .
+        "opts" "array of image formats"
+        "ctx" $error_ctx
+      ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .provider}}
+  {{ $providerOpts := (slice "netlify") }}
+  {{ if not ( in $providerOpts . ) }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "provider"
+      "val" .
+      "opts" (delimit $providerOpts ", " " and ")
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .loading }}
+  {{ $loadingOpts := false }}
+  {{ if $.provider }}
+    {{/* disable lazy loading for external image processing */}}
+    {{ $loadingOpts = (slice "auto" "lazy") }}
+  {{ else }}
+    {{ $loadingOpts = (slice "auto" "lazy" "lazysizes") }}
+  {{ end }}
+  {{ if not (in $loadingOpts .) }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "loading"
+      "val" .
+      "opts" (delimit $loadingOpts ", " " and ")
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .sizesParam }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "sizes"
+      "val" .
+      "opts" "strings"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}

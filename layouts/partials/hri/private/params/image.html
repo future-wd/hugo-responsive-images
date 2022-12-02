@@ -20,10 +20,13 @@
   
 */}}
 
+{{ $s := newScratch }}
+{{/* should params be pulled in explicitly? */}}
+{{/*  $s.Set "params" . */}}
 
 {{ $imgMetaTitle := false }}
 {{ $imgParams := dict }}
-{{ $params :=  dict }}
+{{ $params :=  . }}
 {{ $img := false }}
 {{ $type := .type | default (.page.Param "image.type") }}
 {{ if eq $type "global" }}
@@ -36,46 +39,93 @@
   {{ $imgParams = $img.Params }}
   {{ $imgMetaTitle = $img.Title }}
 {{ end }}
-{{ if not $img }}
-  {{ $message := printf "No image resource found for image \"%s\" on page %s." .src  .page.RelPermalink  }}
-  {{ partial "hri/private/utils/errorf" $message }}
-{{ end }}
+
+
 {{ $params = merge $params (dict 
   "img" $img
   "type" $type) }}
 
+
 {{/* everything above this line must stay above this line for error messages to work as they use these variables */}}
 
-{{ $suppressWidthWarning := .suppressWidthWarning | default (.page.Param "image.suppressWidthWarning") }}
+{{/* camelCase params have been kept to avoid breaking changes, will be depreciated in future versions */}}
+
+{{/* GET PARAMS FROM VARIOUS PLACES */}}
+{{ $suppressWidthWarning := .suppress_width_warning | default (.page.Param "image.suppress_width_warning") | default .suppressWidthWarning | default (.page.Param "image.suppressWidthWarning") }}
 {{/* .figureTitle has already been merged with $imgParams */}}
-{{ $title := .title | default $imgMetaTitle | default $imgParams.title | default .figureTitle | default .page.Title }}
+{{ $title := .title | default $imgMetaTitle | default $imgParams.title | default .figure_title | default .figureTitle | default .page.Title }}
+{{ $fillRatio :=  .fill_ratio | default $imgParams.fill_ratio | default (.page.Param "image.fill_ratio") | default .fillRatio | default $imgParams.fillRatio | default (.page.Param "image.fillRatio") }}
+{{ $widths := .widths | default $imgParams.widths | default (.page.Param "image.widths") }}
+{{ $shortcodeWidths := .page.Param "shortcode_widths" | default (.page.Param "shortcodeWidths") | default $widths }}
+{{ $renderHookWidths := .page.Param "render_hook_widths" | default (.page.Param "renderHookWidths") | default $shortcodeWidths }}
+{{ if eq .renderHook true }}
+  {{ $widths = $renderHookWidths }}
+{{ else if (eq .shortcode true) }}
+  {{ $widths = $shortcodeWidths }}
+{{ end }}
+{{ $width := .width | default $imgParams.width | default .page.Params.image.width }}
+
+{{/* TO TEST and check if they are being sanitized */}}
+{{ $densities := .densities | default $imgParams.densities | default (.page.Param "image.densities") }}
+{{ $densities = sort $densities }}
+{{ $formats := .formats | default $imgParams.formats | default (.page.Param "image.formats") }}
+{{ $provider := .provider | default $imgParams.provider | default (.page.Param "image.provider") }}
+{{ $loading := .loading | default $imgParams.loading | default (.page.Param "image.loading") }}
+{{ $sizesParam := .sizes | default $imgParams.sizes | default (.page.Param "image.sizes") }}
+{{ $class := .class | default $imgParams.class | default (.page.Param "image.class") }}
+{{/* .caption has already been processed??? should this be passed through as something else e.g. .figure_caption? */}}
+{{ $alt :=  .alt | default $imgParams.alt }}
+
+{{/* placeholder params */}}
+{{ $placeholder := .placeholder | default $imgParams.placeholder | default (.page.Param "image.placeholder") }}
+{{ $lqipDivFactor := .lqip_div_factor | default $imgParams.lqip_div_factor | default (.page.Param "image.lqip_div_factor") | default .lqipDivFactor | default $imgParams.lqipDivFactor | default (.page.Param "image.lqipDivFactor") }}
+{{ $lqipBlurAmount := .lqip_blur_amount | default $imgParams.lqip_blur_amount | default (.page.Param "image.lqip_blur_amount") | default .lqipBlurAmount | default $imgParams.lqipBlurAmount | default (.page.Param "image.lqipBlurAmount") }}
+{{ $gifDivFactor := .gif_div_factor | default $imgParams.gif_div_factor |default (.page.Param "image.gif_div_factor") | default .gifDivFactor | default $imgParams.gifDivFactor |default (.page.Param "image.gifDivFactor") }}
+
+{{/* MERGE NEW PARAMS */}}
 {{ $params = merge $params (dict 
-  "page" .page
   "suppressWidthWarning" $suppressWidthWarning
   "title" $title
-  ) }}
+  "fillRatio" $fillRatio
+  "widths" $widths
+  "shortcodeWidths" $shortcodeWidths
+  "renderHookWidths" $renderHookWidths
+  "width" $width
+  "densities" $densities
+  "formats" $formats
+  "provider" $provider
+  "loading" $loading
+  "sizesParam" $sizesParam
+  "class" $class
+  "alt" $alt
+  "placeholder" $placeholder
+  "lqipDivFactor" $lqipDivFactor
+  "lqipBlurAmount" $lqipBlurAmount
+  "gifDivFactor" $gifDivFactor) }}
 
-{{ $fillRatio := .fillRatio | default $imgParams.fillRatio | default (.page.Param "image.fillRatio") }}
+{{/* SANITIZE PARAMS */}}
+{{ partial "hri/private/params/sanitize-inputs" $params }}
+
+{{/* image processing options - dont export these params */}}
+{{ $quality := .quality | default $imgParams.quality | default (.page.Param "image.quality") }}
+{{ $rotate := .rotate | default $imgParams.rotate | default (.page.Param "image.rotate") }}
+{{ $resample_filter := .resample_filter | default $imgParams.resample_filter | default (.page.Param "image.resample_filter") | default .resampleFilter | default $imgParams.resampleFilter | default (.page.Param "image.resampleFilter") }}
+{{ $hint := .hint | default $imgParams.hint | default (.page.Param "image.hint") }}
+{{ $anchor := .anchor | default $imgParams.anchor | default (.page.Param "image.anchor") }}
+
+{{ $options := dict 
+  "quality" $quality 
+  "rotate" $rotate 
+  "resample_filter" $resample_filter
+  "hint" $hint
+  "anchor" $anchor }}
+
+{{ partial "hri/private/params/sanitize-options" (dict "page" .page "img" $img "opts" $options) }}
+{{ $params := merge $params (dict "options" $options) }}
+
+{{/* POST SANITIZATION MODIFICATIONS TO PARAMS */}}
+
 {{ with $fillRatio }}
-  {{ if reflect.IsSlice . }}
-    {{ range . }}
-      {{ if ne (printf "%T" .) "int" }}
-        {{ partial "hri/private/options-error" (dict 
-          "var" "fillRatio array item"
-          "value" .
-          "options" "2x integers in an array/slice"
-          "ctx" $params
-        ) }}
-      {{ end }}
-    {{ end }}
-  {{ else }}
-    {{ partial "hri/private/options-error" (dict 
-      "var" "fillRatio"
-      "value" .
-      "options" "2x integers in an array/slice"
-      "ctx" $params
-    ) }}
-  {{ end }}
   {{/* height to width ratio of .fillRatio */}}
   {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
   {{ $fillRatio = div (index . 1 | float) (index . 0 | float) }}
@@ -87,34 +137,14 @@
   **** produce array [{desc: "1x", width: 300},{desc: "2x", width: 600}] *
   ************************************************************************/}}
 
-
-{{ $widths := .widths | default $imgParams.widths | default (.page.Param "image.widths") }}
-{{ $shortcodeWidths := .page.Param "shortcodeWidths" | default $widths }}
-{{ $renderHookWidths := .page.Param "renderHookWidths" | default $shortcodeWidths }}
-{{ if eq .renderHook true }}
-  {{ $widths = $renderHookWidths }}
-{{ else if (eq .shortcode true) }}
-  {{ $widths = $shortcodeWidths }}
-{{ end }}
-{{ $width := .width | default $imgParams.widths | default .page.Params.image.width }}
 {{ if $width }}
-  {{ if ne (printf "%T" .width) "int" }}
-    {{ partial "hri/private/options-error" (dict 
-      "var" "width"
-      "value" .
-      "options" "an integer"
-      "ctx" $params
-    ) }}
-  {{ end }}
-  {{ $densities := .densities | default $imgParams.densities | default (.page.Param "image.densities") }}
-  {{ $densities = sort $densities }}
   {{/* clear $widths as were only working with one width */}}
   {{ $widths = slice }}
   {{ range $density := $densities }}
     {{ $widths = $widths | append (slice
       (dict
       "desc" (printf "%dx" $density)
-      "width" (mul $.width $density)
+      "width" (mul $width $density)
       )) }}
   {{ end }}
   {{ $params = merge $params (dict 
@@ -123,32 +153,9 @@
     ) }}
 {{ else if $widths }}
 {{/* else produce responsive srcset
-  * produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
-*/}}
-  {{/* sanitize and sort .widths */}}
-  {{ with $widths }}
-    {{ if reflect.IsSlice . }}
-      {{ range . }}
-        {{ if ne (printf "%T" .) "int" }}
-          {{ partial "hri/private/options-error" (dict 
-            "var" "widths array item"
-            "value" .
-            "options" "2x integers in an array/slice"
-            "ctx" $params
-          ) }}
-        {{ end }}
-      {{ end }}
-    {{ else }}
-      {{ partial "hri/private/options-error" (dict 
-        "var" "width array"
-        "value" .
-        "options" "2x integers in an array/slice"
-        "ctx" $params
-      ) }}
-    {{ end }}
-  {{ end }}
+  ** produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
+  */}}
   {{ $widths = sort $widths }}
-
   {{/* SANTIZE WIDTHS WITH UTIL */}}
   {{ $new_widths := partial "hri/private/utils/sanitize-widths" (dict 
     "ctx" $.page
@@ -171,86 +178,11 @@
   {{ $params = merge $params (dict "widths" $widths) }}
 {{ end }}
 
-{{ $formats := .formats | default $imgParams.formats | default (.page.Param "image.formats") }}
-{{ with $formats }}
-  {{ $formatOpts := (slice "original" "bmp" "gif" "jpeg" "jpg" "png" "tif" "tiff" "webp") }}
-  {{ if reflect.IsSlice . }}
-    {{ range . }}
-      {{ if not (in $formatOpts .) }}
-        {{ partial "hri/private/options-error" (dict 
-          "var" "formats array item"
-          "value" .
-          "options" (delimit $formatOpts ", " " and ")
-          "ctx" $params
-        ) }}
-        {{ end }}
-    {{ end }}
-  {{ else }}
-    {{ partial "hri/private/options-error" (dict 
-        "var" "formats array"
-        "value" .
-        "options" "array of image formats"
-        "ctx" $params
-      ) }}
-  {{ end }}
-  {{ $params = merge $params (dict "formats" $formats) }}
-{{ end }}
-
-{{/* external image processing provider /*}}
-{{/* for now just netlify */}}
-{{ $provider := false }}
-{{ $providerParam := .provider | default $imgParams.provider | default (.page.Param "image.provider") }}
-{{ with $providerParam }}
-  {{ $providerOpts := (slice "netlify") }}
-  {{ if in $providerOpts . }}
-    {{ $provider = $providerParam }}
-  {{ else }}
-    {{ partial "hri/private/options-error" (dict 
-      "var" "provider"
-      "value" .
-      "options" (delimit $providerOpts ", " " and ")
-      "ctx" $params
-    ) }}
-  {{ end }}
-  {{ $params = merge $params (dict "provider" $provider) }}
-{{ end }}
-
-{{ $loading := .loading | default $imgParams.loading | default (.page.Param "image.loading") }}
-{{ with $loading }}
-  {{ $loadingOpts := false }}
-  {{ if $provider }}
-    {{/* disable lazy loading for external image processing */}}
-    {{ $loadingOpts = (slice "auto" "lazy") }}
-  {{ else }}
-    {{ $loadingOpts = (slice "auto" "lazy" "lazysizes") }}
-  {{ end }}
-  {{ if not (in $loadingOpts .) }}
-    {{ partial "hri/private/options-error" (dict 
-      "var" "loading"
-      "value" .
-      "options" (delimit $loadingOpts ", " " and ")
-      "ctx" $params
-    ) }}
-  {{ end }}
-  {{ $params = merge $params (dict "loading" $loading) }}
-{{ end }}
-
 {{ $sizes := false }}
-{{ $sizesParam := .sizes | default $imgParams.sizes | default (.page.Param "image.sizes") }}
-{{ with $sizesParam }}
-  {{ if not (eq (printf "%T" .) "string") }}
-    {{ partial "hri/private/options-error" (dict 
-      "var" "sizes"
-      "value" .
-      "options" "strings"
-      "ctx" $params
-    ) }}
-  {{ end }}
-{{ end }}
 {{ if and $sizesParam (not $width) }}
   {{ if eq $sizesParam "lazysizes" }}
     {{ $sizes = `data-sizes="auto"` }}
-  {{ else if eq $sizesParam "user" }}
+  {{ else if (eq $sizesParam "user") }}
     {{ $sizes = false }}
   {{ else }}
     {{ $sizes = printf `sizes="%s"` $sizesParam }}
@@ -258,117 +190,34 @@
 {{ end }}
 {{ $params = merge $params (dict "sizes" $sizes) }}
 
+
+{{/* depreciate this (but keep for legacy), just modify .class inside figure params and pass via context to here */}}
+{{ $figure_image_class := default .figureImageClass | default $imgParams.figureImageClass | default (.page.Param "image.figureImageClass") }}
+
 {{/* for figures $class uses figureImageClass, else uses .class */}}
-{{ $class := false }}
 {{ if eq .figure true }}
-  {{ $class = .figureImageClass | default $imgParams.figureImageClass | default (.page.Param "image.figureImageClass") }}
-{{ else }}
-  {{ $class = .class | default $imgParams.class | default (.page.Param "image.class") }}
+  {{ $class = $figure_image_class }}
 {{ end }}
 {{ if eq $loading "lazysizes" }} 
   {{ $class = print $class " lazyload" }}
 {{ end }}
+{{ $params = merge $params (dict "class" $class )}}
 
-{{/* alt defaults to caption. If not caption or alt set, error. If suppressed, defaults to "image of [title]" */}}
-{{/* .caption has already been processed */}}
-{{ $alt :=  .alt | default $imgParams.alt | default (.caption | markdownify | plainify) }}
+{{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
+
 {{ if not $alt }}
-  {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s" $img.RelPermalink .page.RelPermalink }}
-  {{ $alt = printf "Image of %s" $title }}
+  {{ if .caption }}
+    {{ $alt = .caption | markdownify | plainify }}
+  {{ else if $title }}
+    {{ $alt = printf "Image of %s" $title }}
+  {{ else }}
+    {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $img.RelPermalink .page.RelPermalink }}
+  {{ end }}
 {{ end }}
 {{ $params = merge $params (dict 
   "alt" $alt
-  "class" $class
   ) }}
 
-{{/* ******************************
-  ** placeholder variables       **
-  *********************************/}}
 
-{{ $placeholder := .placeholder | default $imgParams.placeholder | default (.page.Param "image.placeholder") }}
-{{ $lqipDivFactor := .lqipDivFactor | default $imgParams.lqipDivFactor | default (.page.Param "image.lqipDivFactor") }}
-{{ $lqipBlurAmount := .lqipBlurAmount | default $imgParams.lqipBlurAmount | default (.page.Param "image.lqipBlurAmount") }}
-{{ $gifDivFactor := .gifDivFactor | default $imgParams.gifDivFactor |default (.page.Param "image.gifDivFactor") }}
-{{ $params = merge $params (dict
-  "placeholder" $placeholder
-  "lqipDivFactor" $lqipDivFactor
-  "lqipBlurAmount" $lqipBlurAmount
-  "gifDivFactor" $gifDivFactor) }}
-
-{{/* ******************************
-  ** set options                 **
-  *********************************/}}
-{{/* set image processing options from image, page or site config */}}
-{{/* if they arent set, hugos iamge processing defaults (which can be changed) are used */}}
-{{ $options := slice }}
-{{ $quality := .quality | default $imgParams.quality | default (.page.Param "image.quality") }}
-{{ with $quality }}
-  {{ if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 100)) }}
-    {{ $options = $options | append (printf "q%d" .) }}
-  {{ else }}
-    {{ partial "hri/private/options-error" (dict 
-      "var" "quality"
-      "value" .
-      "options" "integers between 1-100 inclusive"
-      "ctx" $params
-    ) }}
-  {{ end }}
-{{ end }}
-{{ $rotate := .rotate | default $imgParams.rotate | default (.page.Param "image.rotate") }}
-{{ with $rotate }}
-  {{ if and (eq (printf "%T" .) "int") (and (ge . 1) (le . 360)) }}
-    {{ $options = $options | append (printf "r%d" .) }}
-  {{ else }}
-    {{ partial "hri/private/options-error" (dict 
-      "var" "rotate"
-      "value" .
-      "options" "integers between 1-360 inclusive"
-      "ctx" $params
-    ) }}
-  {{ end }}
-{{ end }}
-{{ $resampleFilter := .resampleFilter | default $imgParams.resampleFilter | default (.page.Param "image.resampleFilter") }}
-{{ with $resampleFilter }}
-  {{ $filterOpts := (slice "Box" "NearestNeighbor" "Linear" "Gaussian") }}
-  {{ if in $filterOpts . }}
-    {{ $options = $options | append . }}
-  {{ else }}
-    {{ partial "hri/private/options-error" (dict 
-      "var" "resampleFilter"
-      "value" .
-      "options" (delimit $filterOpts ", ")
-      "ctx" $params
-    ) }}
-  {{ end }}
-{{ end }}
-{{ $hint := .hint | default $imgParams.hint | default (.page.Param "image.hint") }}
-{{ with $hint }}
-  {{ $hintOpts := (slice "picture" "photo" "drawing" "icon" "text") }}
-  {{ if in $hintOpts . }}
-    {{ $options = $options | append . }}
-  {{ else }}
-    {{ partial "hri/private/options-error" (dict 
-      "var" "hint"
-      "value" .
-      "options" (delimit $hintOpts ", ")
-      "ctx" $params
-    ) }}
-  {{ end }}
-{{ end }}
-{{ $anchor := .anchor | default $imgParams.anchor | default (.page.Param "image.anchor") }}
-{{with $anchor }}
-  {{ $anchorOpts := (slice "Smart" "Center" "TopLeft" "Top" "TopRight" "Left" "Right" "BottomLeft" "Bottom" "BottomRight") }}
-  {{ if in $anchorOpts . }}
-    {{ $options = $options | append  . }}
-  {{ else }}
-    {{ partial "hri/private/options-error" (dict 
-      "var" "anchor"
-      "value" .
-      "options" (delimit $anchorOpts ", ")
-      "ctx" $params
-    ) }}
-  {{ end }}
-{{ end }}
-{{ $params = merge $params (dict "options" $options) }}
 
 {{ return $params }}

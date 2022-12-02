@@ -1,0 +1,52 @@
+{{/*
+  bg-images/private/utils/options-error.html 
+    Formats error message for consistency
+    See logic for different conditions and error messages
+
+  @author @sean-au
+
+  @version 1.0.0
+  Also used in github.com/future-wd/hugo-responsive-images
+
+  @context (dict)
+    "val" (string) - variable value (user input)
+    "opts" (string)  correct options
+    "var" (string) - variable name in error (required)
+    "ctx" (map)
+      .page - page context (required)
+      .img - image page resource object
+      .element - element name e.g bg-image/image (required)
+      .module - module name (required)
+
+  @access private
+
+  @example - Go Template
+    {{ partial "bg-images/private/utils/options-error" (dict 
+    "var" "fillRatio array item"
+    "val" .
+    "opts" "2x integers in an array/slice"
+    "ctx" $params
+    ) }}
+
+    Input missing:
+    {{ partial "bg-images/private/utils/options-error" (dict 
+    "var" "fillRatio array item"
+    "ctx" $params
+    ) }}
+
+*/}}
+
+{{ $message := "" }}
+{{ if not .val }}
+  {{ if not .ctx.img }}
+    {{ $message = printf "Configuration item \"%s\" on page %s has not been provided." .var .ctx.page.RelPermalink }}
+  {{ else }}
+    {{ $message = printf "Configuration item \"%s\" for %s %s on page %s has not been provided." .var .ctx.element .ctx.img.RelPermalink .ctx.page.RelPermalink }}
+  {{ end }}
+{{ else }}
+  {{ $message = printf "Invalid \"%s\" value of \"%v\" for %s %s on page %s. Must be %s." .var .val .ctx.element .ctx.img.RelPermalink .ctx.page.RelPermalink .opts }}
+{{ end }}
+
+
+{{ $error := partial "hri/private/utils/errorf" (dict "message" $message "module" .ctx.module) }}
+
