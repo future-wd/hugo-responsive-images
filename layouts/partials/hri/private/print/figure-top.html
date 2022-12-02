@@ -12,7 +12,7 @@
   {{ partial "hri/private/figure-tag-top" . }}
   
 */}}
-<figure class="{{ .figureClass }}">
+<figure class="{{ .figure_class }}">
   {{- with .link -}}
       <a href="{{ . }}"{{ with $.target }} target="{{ . }}"{{ end }}{{ with $.rel }} rel="{{ . }}"{{ end }}>
   {{- end -}}

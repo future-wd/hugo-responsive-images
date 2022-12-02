@@ -1,0 +1,32 @@
+{{- /*
+  figure.html
+  Takes inputs and page context.
+  - Passes inputs to figure-params partial for processing
+  - sends params to 2x partials for figure tag generation
+  - inbetween these to partials is the image partial ()
+
+  @author @sean-au
+
+  @context . Context from a page template, figure/image partial, or render hook partial.
+
+  @access public
+
+  @example - Go Template
+  {{ partial "figure" (dict "src" "image.jpg" "alt" "alt text") }}
+
+*/ -}}
+{{- /* use .page or .ctx as ctx */ -}}
+{{- $ctx := .ctx -}}
+{{- if .page -}}
+  {{- $ctx = .page -}}
+{{- end -}}
+{{- /* process figure params */ -}}
+{{- $figure_params := partial "hri/private/params/figure" (merge . (dict "ctx" $ctx)) -}}
+{{- $image_params := merge . (dict 
+      "input" "figure"
+      "caption" $figure_params.caption
+      "class" $figure_params.class ) -}}
+{{- /* call 3 partials for each part of figure */ -}}
+{{- partial "hri/private/print/figure-top" $figure_params }}
+{{- partial "hri/image" $image_params -}}
+{{- partial "hri/private/print/figure-bottom" $figure_params }}

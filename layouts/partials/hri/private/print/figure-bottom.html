@@ -13,18 +13,18 @@
   
 */}}
 {{- if .link }}</a>{{ end -}}
-  {{ if or (or .figureTitle .caption) .attr }}
-  <figcaption class="{{ .figCaptionClass }}">
-  {{ with .figureTitle -}}
-    <h{{ $.figureTitleH | safeHTMLAttr }}>{{ . }}</h{{ $.figureTitleH | safeHTMLAttr }}>
+  {{ if or (or .figure_title .caption) .attr }}
+  <figcaption class="{{ .figcaption_class }}">
+  {{ with .figure_title -}}
+    <h{{ $.figure_title_h | safeHTMLAttr }}>{{ . }}</h{{ $.figure_title_h | safeHTMLAttr }}>
   {{- end -}}
   {{- if or .caption .attr -}}<p>
     {{- .caption | markdownify -}}{{- if .attr -}}, {{ end }}
-    {{- with .attrLink }}
+    {{- with .attr_link }}
         <a href="{{ . }}"{{ with $.target }} target="{{ . }}"{{ end }}{{ with $.rel }} rel="{{ . }}"{{ end }}>
     {{- end -}}
     {{- .attr | markdownify -}}
-    {{- if .attrLink }}</a>{{ end }}</p>
+    {{- if .attr_link }}</a>{{ end }}</p>
   {{- end }}
   </figcaption>
   {{- end }}
