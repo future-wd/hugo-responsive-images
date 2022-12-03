@@ -49,8 +49,8 @@
 
   {{ range $index, $width := $.widths }}
     {{ $imgResized := "" }}
-    {{/* output images with altered aspect ratio, if .fillRatio is provided */}}
-    {{ with $.fillRatio }}
+    {{/* output images with altered aspect ratio, if .fill_ratio is provided */}}
+    {{ with $.fill_ratio }}
       {{/* resulting fillHeight must be converted to integer for use with image resize */}}
       {{ $fillHeight := mul $width.width . | int }}
       {{/* resize image */}}

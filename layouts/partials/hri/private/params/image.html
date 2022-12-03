@@ -47,13 +47,13 @@
 {{/* camelCase params have been kept to avoid breaking changes, will be depreciated in future versions */}}
 
 {{/* general params */}}
-{{ $suppressWidthWarning := .suppress_width_warning | default (.ctx.Param "image.suppress_width_warning") | default .suppressWidthWarning | default (.ctx.Param "image.suppressWidthWarning") }}
+{{ $suppress_width_warning := .suppress_width_warning | default .suppressWidthWarning | default (.ctx.Param "image.suppress_width_warning")  | default (.ctx.Param "image.suppressWidthWarning") }}
 {{ $resource_title := "" }}
   {{ if ne $img.Title ($img | string) }}
   {{ $resource_title = $img.Title }}
 {{ end }}
 {{ $title := .title | default $meta.title | default $resource_title }}
-{{ $fillRatio :=  .fill_ratio | default $meta.fill_ratio | default (.ctx.Param "image.fill_ratio") | default .fillRatio | default $meta.fillRatio | default (.ctx.Param "image.fillRatio") }}
+{{ $fill_ratio :=  .fill_ratio | default .fillRatio | default $meta.fill_ratio | default $meta.fillRatio | default (.ctx.Param "image.fill_ratio") | default (.ctx.Param "image.fillRatio") }}
 {{ $width := .width | default $meta.width | default .ctx.Params.image.width }}
 
 {{/* TO TEST and check if they are being sanitized */}}
@@ -79,9 +79,9 @@
   {{ $widths = .widths | default $meta.widths | default (.ctx.Param "image.widths") }}
 {{ end }}
 {{ $general_params := dict 
-  "suppressWidthWarning" $suppressWidthWarning
+  "suppress_width_warning" $suppress_width_warning
   "title" $title
-  "fillRatio" $fillRatio
+  "fill_ratio" $fill_ratio
   "widths" $widths
   "width" $width
   "densities" $densities
@@ -95,19 +95,19 @@
 
 {{/* placeholder params */}}
 {{ $placeholder := .placeholder | default $meta.placeholder | default (.ctx.Param "image.placeholder") }}
-{{ $lqipDivFactor := .lqip_div_factor | default $meta.lqip_div_factor | default (.ctx.Param "image.lqip_div_factor") | default .lqipDivFactor | default $meta.lqipDivFactor | default (.ctx.Param "image.lqipDivFactor") }}
-{{ $lqipBlurAmount := .lqip_blur_amount | default $meta.lqip_blur_amount | default (.ctx.Param "image.lqip_blur_amount") | default .lqipBlurAmount | default $meta.lqipBlurAmount | default (.ctx.Param "image.lqipBlurAmount") }}
-{{ $gifDivFactor := .gif_div_factor | default $meta.gif_div_factor |default (.ctx.Param "image.gif_div_factor") | default .gifDivFactor | default $meta.gifDivFactor |default (.ctx.Param "image.gifDivFactor") }}
+{{ $lqip_div_factor := .lqip_div_factor | default .lqipDivFactor | default $meta.lqip_div_factor | default $meta.lqipDivFactor | default (.ctx.Param "image.lqip_div_factor")  | default (.ctx.Param "image.lqip_div_factor") }}
+{{ $lqip_blur_amount := .lqip_blur_amount | default .lqipBlurAmount | default $meta.lqip_blur_amount | default $meta.lqipBlurAmount | default (.ctx.Param "image.lqip_blur_amount")  | default (.ctx.Param "image.lqipBlurAmount") }}
+{{ $gif_div_factor := .gif_div_factor | default .gifDivFactor | default $meta.gif_div_factor | default $meta.gifDivFactor | default (.ctx.Param "image.gif_div_factor") | default (.ctx.Param "image.gifDivFactor") }}
 {{ $placeholder_params := dict 
   "placeholder" $placeholder
-  "lqipDivFactor" $lqipDivFactor
-  "lqipBlurAmount" $lqipBlurAmount
-  "gifDivFactor" $gifDivFactor }}
+  "lqip_div_factor" $lqip_div_factor
+  "lqip_blur_amount" $lqip_blur_amount
+  "gif_div_factor" $gif_div_factor }}
 
 {{/* image processing params - dont export these params */}}
 {{ $quality := .quality | default $meta.quality | default (.ctx.Param "image.quality") }}
 {{ $rotate := .rotate | default $meta.rotate | default (.ctx.Param "image.rotate") }}
-{{ $resample_filter := .resample_filter | default $meta.resample_filter | default (.ctx.Param "image.resample_filter") | default .resampleFilter | default $meta.resampleFilter | default (.ctx.Param "image.resampleFilter") }}
+{{ $resample_filter := .resample_filter | default .resampleFilter | default $meta.resample_filter | default $meta.resampleFilter | default (.ctx.Param "image.resample_filter") | default (.ctx.Param "image.resampleFilter") }}
 {{ $hint := .hint | default $meta.hint | default (.ctx.Param "image.hint") }}
 {{ $anchor := .anchor | default $meta.anchor | default (.ctx.Param "image.anchor") }}
 {{ $processing_params := dict 
@@ -127,11 +127,11 @@
 
 {{/* POST SANITIZATION MODIFICATIONS TO PARAMS */}}
 
-{{ with $fillRatio }}
-  {{/* height to width ratio of .fillRatio */}}
+{{ with $fill_ratio }}
+  {{/* height to width ratio of .fill_ratio */}}
   {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
-  {{ $fillRatio = div (index . 1 | float) (index . 0 | float) }}
-  {{ $params = merge $params (dict "fillRatio" $fillRatio) }}
+  {{ $fill_ratio = div (index . 1 | float) (index . 0 | float) }}
+  {{ $params = merge $params (dict "fill_ratio" $fill_ratio) }}
 {{ end }}
 
 {{/*********************************************************************
@@ -163,9 +163,9 @@
     "ctx" $.page
     "img" $img
     "widths" $widths
-    "fill_ratio" $fillRatio
+    "fill_ratio" $fill_ratio
     "difference" (site.Params.minWidthDifference | int)
-    "suppress" $suppressWidthWarning )}}
+    "suppress" $suppress_width_warning )}}
 
   {{/* create and export variable */}}
   {{ $widthsArray := slice }}

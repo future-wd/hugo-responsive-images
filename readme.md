@@ -43,7 +43,7 @@ imaging:
   bgColor: '#ffffff' # when converting transparent images to formats which dont support transparency
   hint: photo # for conversin to webp
   quality: 75 # compression quality
-  resampleFilter: Box # compression filter
+  resample_filter: Box # compression filter
 ignoreErrors: ["alt-error"] # suppress error message if no alt text (or title) has been provided.
 ```
 
@@ -357,11 +357,11 @@ The following colours (based on bootstrap) have been provided:
 
 To create a custom color, make a 10px x 10px gif image with only 1 color and save it in the directory and then call it by its file name, without the .gif extension.
 
-Lqip gaussian blur amount can be adjusted with the `lqipBlurAmount` configuration item in site/page configuration, or per image.
+Lqip gaussian blur amount can be adjusted with the `lqip_blur_amount` configuration item in site/page configuration, or per image.
 
-Lqip image size division factor can be adjusted with the `lqipDivFactor` configuration item in site/page configuration, or per image. It is based off the smallest image in the srcset.
+Lqip image size division factor can be adjusted with the `lqip_div_factor` configuration item in site/page configuration, or per image. It is based off the smallest image in the srcset.
 
-Dominant/single color gif image size division factor can be adjusted with the `gifDivFactor` configuration item in site/page configuration, or per image. It is based off the smallest image in the srcset.
+Dominant/single color gif image size division factor can be adjusted with the `gif_div_factor` configuration item in site/page configuration, or per image. It is based off the smallest image in the srcset.
 
 example config:
 

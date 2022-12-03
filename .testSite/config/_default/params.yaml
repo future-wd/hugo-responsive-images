@@ -15,13 +15,12 @@ image:
   renderHook: true # set to false to disable included markdown image render hook
   renderHookWrapperClass: img-wrapper
   shortcodeWrapperClass: img-wrapper
-  # suppressWidthWarning: true
+  suppress_width_warning: false
   placeholder: lqip # /dominant/file_name 
-
-  lqipBlurAmount: 5 # apply gaussian blur amount of 5 to lqip
+  lqip_blur_amount: 5 # apply gaussian blur amount of 5 to lqip
                     # may need to be increased at a page level for larger images
-  lqipDivFactor: 5 # lqip is 5x smaller than the smallest image in srcset
-  gifDivFactor: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
+  lqip_div_factor: 5 # lqip is 5x smaller than the smallest image in srcset
+  gif_div_factor: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
 
 
   # provider: netlify

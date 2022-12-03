@@ -39,10 +39,10 @@
   {{ $placeholder := false }}
   {{ range $index, $width := $.widths }}
     {{ $img_resized := "" }}
-    {{/* output images with altered aspect ratio, if .fillRatio is provided */}}
-    {{ if $.fillRatio }}
+    {{/* output images with altered aspect ratio, if .fill_ratio is provided */}}
+    {{ if $.fill_ratio }}
       {{/* resulting fillHeight must be converted to integer for use with image resize */}}
-      {{ $fillHeight := mul ($width.width | float) $.fillRatio | int }}
+      {{ $fillHeight := mul ($width.width | float) $.fill_ratio | int }}
       {{/* resize image with fill option */}}
       {{ $img_resized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) }}
     {{ else }}

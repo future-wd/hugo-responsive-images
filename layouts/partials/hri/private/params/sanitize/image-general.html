@@ -23,8 +23,8 @@
   "element" "image"
   "module" "Hugo Responsive Images" }}
 
-{{ if or .params.suppress_width_warning .params.suppressWidthWarning }}
-{{ $suppress_width_warning := .params.suppress_width_warning | default .params.suppressWidthWarning }}
+{{ if or .params.suppress_width_warning .params.suppress_width_warning }}
+{{ $suppress_width_warning := .params.suppress_width_warning | default .params.suppress_width_warning }}
 {{ with $suppress_width_warning }}
   {{ if ne (printf "%T" .) "bool" }}
     {{ partial "hri/private/utils/options-error" (dict 
@@ -112,13 +112,13 @@
   {{ end }}
 {{ end }}
 
-{{ $fill_ratio := .params.fill_ratio | default .params.fillRatio }}
+{{ $fill_ratio := .params.fill_ratio | default .params.fill_ratio }}
 {{ with $fill_ratio }}
   {{ if reflect.IsSlice . }}
     {{ range . }}
       {{ if ne (printf "%T" .) "int" }}
         {{ partial "hri/private/utils/options-error" (dict 
-        "var" "fillRatio slice item"
+        "var" "fill_ratio slice item"
         "val" .
         "opts" "2x integers in a slice"
         "ctx" $error_ctx
