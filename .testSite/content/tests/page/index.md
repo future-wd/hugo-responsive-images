@@ -91,11 +91,11 @@ testImages:
   partial: figure
   params:
     alt: figure
-    figureTitle: Figure Title
-    figureTitleH: 3
+    figcaption_title: Figure Title
+    figcaption_title_h: 3
     caption: Figure Caption
     attr: Attribution Text
-    attrLink: http://www.author.com
+    attr_link: http://www.author.com
     link: /
   tests:
     img:

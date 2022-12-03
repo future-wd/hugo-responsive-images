@@ -7,19 +7,18 @@ image:
   class: img-fluid
   figure_class: figure
   figcaption_class: figure-caption
+  figcaption_title_class: 4
+  figcaption_title_h: 4
   figure_image_class: "figure-img img-fluid"
-  figure_title_class: 4
   render_hook_wrapper_class: img-wrapper
   shortcode_wrapper_class: img-wrapper
   render_hook: false
   loading: lazy
-  sizes: 100vw #use only as override on inline/meta/page # remove if loading=lazysizes, data-sizes=auto unless .sizes
-  # placeholder: lqip/dominant/file_name 
   lqip_blur_amount: 5
   lqip_div_factor: 5
   gif_div_factor: 10
   # provider: netlify
-  # suppress_width_warning: true
+  suppress_width_warning: false
   type: page # or global
   min_width_difference: 40
 

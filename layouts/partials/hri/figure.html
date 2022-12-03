@@ -15,6 +15,7 @@
   {{ partial "figure" (dict "src" "image.jpg" "alt" "alt text") }}
 
 */ -}}
+{{ warnf "figure.html context: %v" . }}
 {{- /* use .page or .ctx as ctx */ -}}
 {{- $ctx := .ctx -}}
 {{- if .page -}}
@@ -22,6 +23,7 @@
 {{- end -}}
 {{- /* process figure params */ -}}
 {{- $figure_params := partial "hri/private/params/figure" (merge . (dict "ctx" $ctx)) -}}
+{{ warnf "Figure params: %v " $figure_params }}
 {{- $image_params := merge . (dict 
       "input" "figure"
       "caption" $figure_params.caption

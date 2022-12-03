@@ -12,19 +12,19 @@
 
 {{/* inline & meta */}}
 {{ $attr := .attr | default $meta.attr }}
-{{ $attr_link := .attr_link | default $meta.attr_link | default .attrLink | default $meta.attrLink }}
+{{ $attr_link := .attr_link | default .attrLink | default $meta.attr_link  | default $meta.attrLink }}
 {{ $caption := .caption | default $meta.caption }}
 {{ $link := .link | default $meta.link }}
-{{ $figure_title := .figure_title | default $meta.figure_title | default .figureTitle | default $meta.figureTitle }}
+{{ $figcaption_title := .figcaption_title | default .figureTitle | default $meta.figcaption_title | default $meta.figureTitle }}
 
 {{/* inline, meta, page & site */}}
-{{ $figure_class := .figure_class | default $meta.figure_class | default (.ctx.Param "image.figure_class") | default .figureClass | default $meta.figureClass | default (.ctx.Param "image.figureClass") }}
-{{ $figcaption_class := .figcaption_class | default $meta.figcaption_class | default (.ctx.Param "image.figcaption_class")| default .figCaptionClass | default $meta.figureCaptionClass | default (.ctx.Param "image.figCaptionClass") }}
-{{ $figure_title_h := .figure_title_h | default $meta.figure_title_h | default (.ctx.Param "image.figure_title_h") | default .figureTitleH | default $meta.figureTitleH | default (.ctx.Param "image.figureTitleH") }}
+{{ $figure_class := .figure_class | default .figureClass | default $meta.figure_class | default $meta.figureClass | default (.ctx.Param "image.figure_class") | default (.ctx.Param "image.figureClass") }}
+{{ $figcaption_class := .figcaption_class | default .figCaptionClass | default $meta.figcaption_class | default $meta.figureCaptionClass | default (.ctx.Param "image.figcaption_class") | default (.ctx.Param "image.figCaptionClass") }}
+{{ $figcaption_title_h := .figcaption_title_h | default .figureTitleH |  default $meta.figcaption_title_h | default $meta.figureTitleH | default (.ctx.Param "image.figcaption_title_h") | default (.ctx.Param "image.figureTitleH") }}
 {{ $rel := .rel | default $meta.rel | default (.ctx.Param "image.rel") }}
 {{ $target := .target | default $meta.target | default (.ctx.Param "image.target") }}
 {{/* processed here and exported for use in image partial */}}
-{{ $class := .class | default .figure_image_class | default .figureImageClass | default $meta.class | default $meta.figure_image_class | default $meta.figureImageClass | default (.ctx.Param "image.figure_image_class") | default (.ctx.Param "image.figureImageClass") }}
+{{ $class := .class | default .figureImageClass | default $meta.class | default $meta.figureImageClass | default (.ctx.Param "image.figure_image_class") | default (.ctx.Param "image.figureImageClass") }}
 
 
 {{/* SANITIZE HERE */}}
@@ -44,18 +44,18 @@
 
 {{/* merge params */}}
 
-{{/* $params = merge $params (dict
+{{ $params = merge $params (dict
   "attr" $attr
   "attr_link" $attr_link
   "caption" $caption
   "link" $link
-  "figure_title" $figure_title
   "figure_class" $figure_class
+  "figcaption_title" $figcaption_title
   "figcaption_class" $figcaption_class
-  "figure_title_h" $figure_title_h
+  "figcaption_title_h" $figcaption_title_h
   "target" $target
   "rel" $rel
   "class" $class
-  ) */}}
+  ) }}
 
 {{ return $params  }}

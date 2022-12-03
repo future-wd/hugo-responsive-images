@@ -15,8 +15,8 @@
 {{- if .link }}</a>{{ end -}}
   {{ if or (or .figure_title .caption) .attr }}
   <figcaption class="{{ .figcaption_class }}">
-  {{ with .figure_title -}}
-    <h{{ $.figure_title_h | safeHTMLAttr }}>{{ . }}</h{{ $.figure_title_h | safeHTMLAttr }}>
+  {{ with .figcaption_title -}}
+    <h{{ $.figcaption_title_h | safeHTMLAttr }}>{{ . }}</h{{ $.figcaption_title_h | safeHTMLAttr }}>
   {{- end -}}
   {{- if or .caption .attr -}}<p>
     {{- .caption | markdownify -}}{{- if .attr -}}, {{ end }}
