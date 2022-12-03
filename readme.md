@@ -56,7 +56,7 @@ params:
     bgColor: "#ffffff"
     hint: photo
     quality: 75
-    resampleFilter: Box
+    resample_filter: Box
 ```
 
 ## Configuration - Site or page params (Defaults shown)
@@ -74,16 +74,16 @@ params:
     figure_image_class: "figure-img img-fluid" # default figure image class (appended to image class) ## USE .class to override outside of config
     figcaption_class: figure-caption # default figcaption class
     figcaption_title_h: 4 # heading level for figure title
-    renderHookWrapperClass: img-wrapper # image wrapper class for render hook
-    shortcodeWrapperClass: img-wrapper # image wrapper class for shortcode
+    render_hook_wrapper_class: img-wrapper # image wrapper class for render hook
+    shortcode_wrapper_class: img-wrapper # image wrapper class for shortcode
     loading: lazy # or auto/lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js
-    renderHook: false # set to false to disable included markdown image render hook
+    render_hook: false # set to false to disable included markdown image render hook
                       # override by setting imageRenderHook: true/false in front matter
     # placeholder: lqip # or dominant/file_name  (see colours set up in assets/images/placeholder-colors) use filename without .gif
-    lqipBlurAmount: 5 # apply gaussian blur amount of 5 to lqip
+    lqip_blur_amount: 5 # apply gaussian blur amount of 5 to lqip
                       # may need to be increased at a page level for larger images
-    lqipDivAmount: 5 # lqip is 5x smaller than the smallest image in srcset
-    gifDivAmount: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
+    lqip_div_amount: 5 # lqip is 5x smaller than the smallest image in srcset
+    gif_div_amount: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
     # provider: netlify # currently only supports netlify image processing.
     suppress_width_warning: false # turn of warning that image cannot be resized to the widths specified
     type: page # or global # useful for setting all images on a page to global resources, or set default
@@ -119,17 +119,17 @@ The following options are only available at a partial or shortcode level:
 ```go
 # image and figure
 "src" "image_path.jpg" # relative to page, or assets folder (for global resource)
-"title" "Image Title" # defaults to figureTitle, and then the page's title
+"title" "Image Title" # defaults to figureTitle, and then the pages title
 "class" "img-fluid" # class for image (not a figure image)
 "alt" "Image Alt Text"
-"fillRatio" (slice 4 3) # width by height, image will be cropped. 
+"fill_ratio" (slice 4 3) # width by height, image will be cropped. 
 "width" 300 # for fixed with image
 "widths" (slice 500 900 1500) # for responsive images
 # figure only
-"figureTitle" "Title for figure caption" # can be left blank
+"figure_title" "Title for figure caption" # can be left blank
 "caption" "Figure Caption Text"
 "attr" "Author Attribution"
-"attrLink" "Attribution link"
+"attr_link" "Attribution link"
 ```
 
 The following options can be configured at a partial/shortcode & page/site config level
@@ -163,7 +163,9 @@ See above for explanations
 "lqip_blur_amount" 5 # amount of gaussian blur to apply to LQIP
 "gif_div_factor" 10 # dominant/gif file is resized to this division factor (of smallest image in srcset)
 
-# hugo image processing options - its recommended to use [hugo\'s native image config](https://gohugo.io/content-management/image-processing/#imaging-configuration) unless you want to only set for this module.
+# hugo image processing options
+
+its recommended to use [hugos native image config](https://gohugo.io/content-management/image-processing/#imaging-configuration) unless you want to only set for this module.
 
 "quality" 75
 "rotate" 0
@@ -267,15 +269,22 @@ By default a markdown render hook template has been included. To turn it on set 
 
 The render hook will only render page resource images - the image path will be relative to the page's markdown file.
 
-You can set configuration at a page or site level e.g. 
+The render hook template will take title and alt from the markdown image tag e.g.
+
+```md
+[Image ALT text](img1.jpg "Image TITLE text")
+```
+
+You can set configuration at a resource meta data, page or site level e.g.
 
 - make all images on the page global (image.type: global)
 - turn on the render hook just for one page (image.imageRenderHook: true)
 - set the widths for the page (image.widths: [400, 900])
+- set the image width through page image resource meta data
 
 Render hook only responsive widths default to shortcode responsive widths, and then standard widths. See above for site/page configuration. (image.RenderHookWidths > image.ShortcodeWidths > image.widths)
 
-A div wrapper around the image has been provided see above for configuration (image.renderHookWrapperClass)
+A div wrapper around the image has been provided see above for configuration (image.render_hook_wrapper_class)
 
 You can also set configuration via image resources meta data using the following example:
 

@@ -121,9 +121,9 @@
 {{ $params = merge $params (dict "options" $processing_params) }}
 {{ $params = merge $params $placeholder_params }}
 
-{{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" . ) }}
-{{ partial "hri/private/params/sanitize/image-processing" $processing_params }}
-{{ partial "hri/private/params/sanitize/image-placeholder" $placeholder_params }}
+{{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" $general_params) }}
+{{ partial "hri/private/params/sanitize/image-processing" (dict "ctx" .ctx "img" $img "params" $processing_params) }}
+{{ partial "hri/private/params/sanitize/image-placeholder" (dict "ctx" .ctx "img" $img "params" $placeholder_params) }}
 
 {{/* POST SANITIZATION MODIFICATIONS TO PARAMS */}}
 

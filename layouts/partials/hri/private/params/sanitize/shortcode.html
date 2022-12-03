@@ -1,0 +1,26 @@
+{{/*
+  bg-images/private/sanitize/shortcode.html 
+  Sanitizes params
+
+  @author @sean-au
+
+  @context (dict)
+    "params" dict of params
+    "type" site/page/meta/inline
+    "ctx" page context
+    "img" image resource
+    )
+
+  @access private
+
+  @example - Go Template
+    {{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" $general_params) }}
+  */}}
+{{ $error_ctx := dict 
+  "ctx" .page
+  "img" .img
+  "type" .type
+  "element" "image"
+  "module" "Hugo Responsive Images" }}
+
+  {{ return true }}

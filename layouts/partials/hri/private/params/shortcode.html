@@ -64,6 +64,8 @@
   "shortcode_wrapper_class" $shortcode_wrapper_class
   "name" .Name }}
 
+{{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" $shortcode_params) }}
+
 {{ $widths_site := $site.shortcode_widths | default $site.shortcodeWidths | default $site.widths }}
 {{ $withs_page  := $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
 {{ $widths_meta := $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths | default $withs_page  }}

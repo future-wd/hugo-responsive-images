@@ -41,9 +41,8 @@
   "input" "render_hook"
   "widths" $widths }}
 
-{{ $render_hook_params := dict
-  "render_hook_wrapper_class" $render_hook_wrapper_class 
-  }}
+{{ $render_hook_params := dict "render_hook_wrapper_class" $render_hook_wrapper_class }}
+{{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" $render_hook_params) }}
 
 {{ return dict 
   "image_params" $image_params

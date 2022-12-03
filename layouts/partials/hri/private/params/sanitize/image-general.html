@@ -1,6 +1,6 @@
 {{/*
-  bg-images/private/sanitize.html 
-  Sanitizes params based on type (site/page/meta/inline)
+  bg-images/private/sanitize/image-general.html 
+  Sanitizes params
 
   @author @sean-au
 
@@ -14,23 +14,14 @@
   @access private
 
   @example - Go Template
- 
-
+    {{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" $general_params) }}
   */}}
-{{ $s := newScratch }}
-
-
 {{ $error_ctx := dict 
   "ctx" .page
   "img" .img
   "type" .type
   "element" "image"
   "module" "Hugo Responsive Images" }}
-
-
-{{/***************************************
-  ** all param types site/page/meta/inline
-  **************************************/}}
 
 {{ if or .params.suppress_width_warning .params.suppressWidthWarning }}
 {{ $suppress_width_warning := .params.suppress_width_warning | default .params.suppressWidthWarning }}
@@ -107,9 +98,9 @@
   {{ $loadingOpts := false }}
   {{ if $.provider }}
     {{/* disable lazy loading for external image processing */}}
-    {{ $loadingOpts = (slice "auto" "lazy") }}
+    {{ $loadingOpts = (slice "auto" "eager" "lazy") }}
   {{ else }}
-    {{ $loadingOpts = (slice "auto" "lazy" "lazysizes") }}
+    {{ $loadingOpts = (slice "auto" "lazy" "eager" "lazysizes") }}
   {{ end }}
   {{ if not (in $loadingOpts .) }}
     {{ partial "hri/private/utils/options-error" (dict 
@@ -120,69 +111,6 @@
     ) }}
   {{ end }}
 {{ end }}
-
-{{/***********************************
-  ** image processing opts - all types 
-  *********************************/}}
-{{ with .params.quality }}
-  {{ if not (and (eq (printf "%T" .) "int") (and (ge . 1) (le . 100))) }}
-    {{ partial "hri/private/utils/options-error" (dict 
-      "var" "quality"
-      "val" .
-      "opts" "integers between 1-100 inclusive"
-      "ctx" $error_ctx
-    ) }}
-  {{ end }}
-{{ end }}
-
-{{ with .params.rotate }}
-  {{ if not (and (eq (printf "%T" .) "int") (and (ge . 1) (le . 360))) }}
-    {{ partial "hri/private/utils/options-error" (dict 
-      "var" "rotate"
-      "val" .
-      "opts" "integers between 1-360 inclusive"
-      "ctx" $error_ctx
-    ) }}
-  {{ end }}
-{{ end }}
-
-{{ with .params.resample_filter }}
-  {{ $filter_opts := (slice "Box" "NearestNeighbor" "Linear" "Gaussian") }}
-  {{ if not (in $filter_opts .) }}
-    {{ partial "hri/private/utils/options-error" (dict 
-      "var" "resample_filter"
-      "val" .
-      "opts" (delimit $filter_opts ", ")
-      "ctx" $error_ctx
-    ) }}
-  {{ end }}
-{{ end }}
-
-{{ with .params.hint }}
-  {{ $hint_opts := (slice "picture" "photo" "drawing" "icon" "text") }}
-  {{ if not (in $hint_opts . ) }}
-    {{ partial "hri/private/utils/options-error" (dict 
-      "var" "hint"
-      "val" .
-      "opts" (delimit $hint_opts ", ")
-      "ctx" $error_ctx
-    ) }}
-  {{ end }}
-{{ end }}
-
-{{with .params.anchor }}
-  {{ $anchor_opts := (slice "Smart" "Center" "TopLeft" "Top" "TopRight" "Left" "Right" "BottomLeft" "Bottom" "BottomRight") }}
-  {{ if not (in $anchor_opts .) }}
-    {{ partial "hri/private/utils/options-error" (dict 
-      "var" "anchor"
-      "val" .
-      "opts" (delimit $anchor_opts ", ")
-      "ctx" $error_ctx
-    ) }}
-  {{ end }}
-{{ end }}
-
-
 
 {{ $fill_ratio := .params.fill_ratio | default .params.fillRatio }}
 {{ with $fill_ratio }}
@@ -241,14 +169,4 @@
   {{ end }}
 {{ end }}
 
-
-
-
-
-
 {{ return true}}
-
-
-
-
-
