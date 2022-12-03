@@ -4,9 +4,14 @@ date: 2022-08-28T15:35:39-07:00
 draft: false
 resources: # for test 8 (metadata)
 - src: test1.jpg
-  title: Title set via metadata
-  params: 
-    alt: Alt set via metadata
+  
+  params:
+    images:
+      alt: Alt set via metadata
+      title: Title set via metadata
+      
+      
+    
 image:
   renderHook: false
 testImages:
@@ -75,15 +80,15 @@ testImages:
       sizes: 60vw
       class: [img-fluid]
 - id: js-test6
-  title: 6. loading lazysizes, sizes lazysizes
+  title: 6. loading lazysizes, sizes 50vw
   subtitle: lazysizes enabled
   params:
     alt: lazysizes enabled
     loading: lazysizes
-    sizes: lazysizes
+    sizes: 50vw
   tests:
     img:
-      dataSizes: 'auto'
+      sizes: 50vw
       class: ['img-fluid', 'lazyloaded']
 - id: js-test7
   title: 7. figure
@@ -110,6 +115,7 @@ testImages:
   subtitle: title and alt set in markup metadata
   params:
     src: test1.jpg
+    figcaption_title: figcaption title
   tests:
     img:
       title: Title set via metadata

@@ -24,8 +24,8 @@ module:
 
 ## Prerequisites
 
-- You must install the latest GoLang (minimum 1.12). See <https://golang.org/dl/>.
-- You must have a VCS client e.g. git. See <https://git-scm.com/downloads/>.
+- The latest GoLang (minimum 1.12). See <https://golang.org/dl/>.
+- The lates git for downloading the module. See <https://git-scm.com/downloads/>.
 - Install the latest hugo (at least 0.83.0)
 - You hugo project must be initialized for hugo modules e.g. `hugo mod init github.com/username/project` in the root of your project.
 - Update your modules with `hugo mod get -u`
@@ -34,9 +34,7 @@ module:
 
 The first set of configuration items are from [Hugo's image processing configuration. See the docs for more info.](https://gohugo.io/content-management/image-processing/#processing-options).
 
-All the hugo image options can be set at a partial/shortcode level. See below
-
-You can suppress the no alt text error with the `ignoreErrors` config. If you suppress the error, the ALT text will default to "image of [title]` (title defaults to the page's title)
+You can suppress the no alt text error with the `ignoreErrors` config. 
 
 ```yaml
 
@@ -46,7 +44,7 @@ imaging:
   hint: photo # for conversin to webp
   quality: 75 # compression quality
   resampleFilter: Box # compression filter
-ignoreErrors: ["alt-error"] # suppress error message if no alt text has been provided.
+ignoreErrors: ["alt-error"] # suppress error message if no alt text (or title) has been provided.
 ```
 
 > If setting imaging options at a site level, this is the best method. You can also use image parameters if you wish to set image options just for this module, although this would probably be best used at a page level.
@@ -87,11 +85,11 @@ params:
     lqipDivAmount: 5 # lqip is 5x smaller than the smallest image in srcset
     gifDivAmount: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
     # provider: netlify # currently only supports netlify image processing.
-    # suppressWidthWarning: true # turn off image too narrow warning
-    # type: page # or global # useful for setting all images on a page to global resources, or set default
+    suppress_width_warning: false # turn of warning that image cannot be resized to the widths specified
+    type: page # or global # useful for setting all images on a page to global resources, or set default
 ```
 
-> All of image parameter configuration items can also be configured on a per page basis by adding the config to the page's front matter.
+All of image parameter configuration items can also be configured on a per page basis by adding the config to the page's front matter.
 
 For example:
 
@@ -102,6 +100,17 @@ image:
   widths: [400, 750, 1300]
 ---
 ```
+
+You can also use [resource meta data](https://gohugo.io/content-management/page-resources/#page-resources-metadata) in the page's markdown - you have to target the resource(s) with glob matching e.g.
+
+```
+resources:
+- src: images/sunset.jpg # you can also glob match e.g. "product*.jpg"
+  params:
+    images:
+      placeholder: lqip # use any of the settings here
+```
+
 
 ## Partial or shortcode configuration
 
@@ -426,7 +435,7 @@ Test site resides in /.testSite
 | --------- | --- | --- | --- | --- | ----------- | ------- |
 | src       | YES | NO  | NO  | NO  | Provide resource path | `undefined` |
 | type      | YES | YES | YES | YES | page/global - Type of image resource | `"page"` |
-| title     | YES | YES | NO  | NO  | Image title | `figureTitle` then the page's `.Title`
+| title     | YES | YES | NO  | NO  | Image title | `figcaption_title` |
 | fill_ratio | YES | YES | YES | YES | Fill ratio for image | `null` |
 | widths    | YES | YES | YES | YES | Widths for responsive width image generation | [600, 900, 1300] |
 | width     | YES | YES | YES | NO  | Set widths for fixed with image. Disables widths | 'null' |
@@ -436,7 +445,7 @@ Test site resides in /.testSite
 | loading   | YES | YES | YES | YES | auto/lazy/lazysizes - Type of image loading | `"auto"` |
 | sizes     | YES | YES | YES | NO  | [string] - Image sizes for responsive widths images | `"100vw"` |
 | class     | YES | YES | YES | YES | Image class | `"img-fluid"` |
-| alt       | YES | YES | NO  | NO  | Image alt text | `caption` (see figure parameters) |
+| alt       | YES | YES | NO  | NO  | Image alt text | `caption` (figure) then `title` then generates error. |
 
 ## Placeholder variables
 

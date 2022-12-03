@@ -37,27 +37,24 @@
   {{/* page resource */}}
   {{ $img = .ctx.Resources.GetMatch (print .src)   }}
   {{/* add page resource image params to variable */}}
-  {{ $meta = $img.Params }}
+  {{ $meta = $img.Params.images }}
 {{ end }}
 
 {{ $params = merge $params (dict 
   "img" $img
   "type" $type) }}
 
-
-
-
-{{/* everything above this line must stay above this line for error messages to work as they use these variables */}}
-
 {{/* camelCase params have been kept to avoid breaking changes, will be depreciated in future versions */}}
 
-{{/* GET PARAMS FROM VARIOUS PLACES */}}
+{{/* general params */}}
 {{ $suppressWidthWarning := .suppress_width_warning | default (.ctx.Param "image.suppress_width_warning") | default .suppressWidthWarning | default (.ctx.Param "image.suppressWidthWarning") }}
-{{ $title := .title | default $img.Title | default $meta.title | default .figure_title | default .figureTitle | default $meta.figure_title | default $meta.figureTitle }}
+{{ $resource_title := "" }}
+  {{ if ne $img.Title ($img | string) }}
+  {{ $resource_title = $img.Title }}
+{{ end }}
+{{ $title := .title | default $meta.title | default $resource_title }}
 {{ $fillRatio :=  .fill_ratio | default $meta.fill_ratio | default (.ctx.Param "image.fill_ratio") | default .fillRatio | default $meta.fillRatio | default (.ctx.Param "image.fillRatio") }}
 {{ $width := .width | default $meta.width | default .ctx.Params.image.width }}
-
-
 
 {{/* TO TEST and check if they are being sanitized */}}
 {{ $densities := .densities | default $meta.densities | default (.ctx.Param "image.densities") }}
@@ -67,7 +64,6 @@
 {{ $loading := .loading | default $meta.loading | default (.ctx.Param "image.loading") }}
 {{ $sizes := .sizes | default $meta.sizes | default $page.sizes }}
 {{ $alt :=  .alt | default $meta.alt }}
-
 {{ $class := "" }}
 {{ $caption := "" }}
 {{ if eq .input "figure" }}
@@ -82,11 +78,7 @@
 {{ else }}
   {{ $widths = .widths | default $meta.widths | default (.ctx.Param "image.widths") }}
 {{ end }}
-
-
-
-{{/* MERGE NEW PARAMS */}}
-{{ $params = merge $params (dict 
+{{ $general_params := dict 
   "suppressWidthWarning" $suppressWidthWarning
   "title" $title
   "fillRatio" $fillRatio
@@ -99,19 +91,18 @@
   "sizes" $sizes
   "class" $class
   "caption" $caption
-  "alt" $alt ) }}
+  "alt" $alt }}
 
 {{/* placeholder params */}}
 {{ $placeholder := .placeholder | default $meta.placeholder | default (.ctx.Param "image.placeholder") }}
 {{ $lqipDivFactor := .lqip_div_factor | default $meta.lqip_div_factor | default (.ctx.Param "image.lqip_div_factor") | default .lqipDivFactor | default $meta.lqipDivFactor | default (.ctx.Param "image.lqipDivFactor") }}
 {{ $lqipBlurAmount := .lqip_blur_amount | default $meta.lqip_blur_amount | default (.ctx.Param "image.lqip_blur_amount") | default .lqipBlurAmount | default $meta.lqipBlurAmount | default (.ctx.Param "image.lqipBlurAmount") }}
 {{ $gifDivFactor := .gif_div_factor | default $meta.gif_div_factor |default (.ctx.Param "image.gif_div_factor") | default .gifDivFactor | default $meta.gifDivFactor |default (.ctx.Param "image.gifDivFactor") }}
-
-{{ $params := merge $params (dict 
+{{ $placeholder_params := dict 
   "placeholder" $placeholder
   "lqipDivFactor" $lqipDivFactor
   "lqipBlurAmount" $lqipBlurAmount
-  "gifDivFactor" $gifDivFactor)}}
+  "gifDivFactor" $gifDivFactor }}
 
 {{/* image processing params - dont export these params */}}
 {{ $quality := .quality | default $meta.quality | default (.ctx.Param "image.quality") }}
@@ -119,17 +110,20 @@
 {{ $resample_filter := .resample_filter | default $meta.resample_filter | default (.ctx.Param "image.resample_filter") | default .resampleFilter | default $meta.resampleFilter | default (.ctx.Param "image.resampleFilter") }}
 {{ $hint := .hint | default $meta.hint | default (.ctx.Param "image.hint") }}
 {{ $anchor := .anchor | default $meta.anchor | default (.ctx.Param "image.anchor") }}
-
-
-{{ partial "hri/private/params/sanitize/image" (dict "ctx" .ctx "img" $img "params" . ) }}
-
-{{ $options := dict 
+{{ $processing_params := dict 
   "quality" $quality 
   "rotate" $rotate 
   "resample_filter" $resample_filter
   "hint" $hint
   "anchor" $anchor }}
-{{ $params := merge $params (dict "options" $options) }}
+
+{{ $params = merge $params $general_params }}
+{{ $params = merge $params (dict "options" $processing_params) }}
+{{ $params = merge $params $placeholder_params }}
+
+{{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" . ) }}
+{{ partial "hri/private/params/sanitize/image-processing" $processing_params }}
+{{ partial "hri/private/params/sanitize/image-placeholder" $placeholder_params }}
 
 {{/* POST SANITIZATION MODIFICATIONS TO PARAMS */}}
 
@@ -202,15 +196,10 @@
   {{ end }}
 {{ end }}
 
-
-{{/* depreciate this (but keep for legacy), just modify .class inside figure params and pass via context to here */}}
-{{ $figure_image_class := default .figureImageClass | default $meta.figureImageClass | default (.ctx.Param "image.figureImageClass") }}
-
-
 {{ if eq $loading "lazysizes" }} 
   {{ $class = print $class " lazyload" }}
 {{ end }}
-{{ $params = merge $params (dict "class" $class )}}
+{{ $params = merge $params (dict "class" $class ) }}
 
 {{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
 
@@ -223,10 +212,12 @@
     {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $img.RelPermalink .ctx.RelPermalink }}
   {{ end }}
 {{ end }}
-{{ $params = merge $params (dict 
-  "alt" $alt
-  ) }}
+{{ $params = merge $params (dict "alt" $alt) }}
 
-
+{{ if not $title }}
+  {{ with .figcaption_title }}
+    {{ $title = . }}
+  {{ end }}
+{{ end }}
 
 {{ return $params }}
