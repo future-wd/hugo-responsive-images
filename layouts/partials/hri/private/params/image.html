@@ -26,6 +26,7 @@
 
 
 {{ $meta := dict }}
+{{ $page := .ctx.Params.images }}
 {{ $params :=  . }}
 {{ $img := false }}
 {{ $type := .type | default (.ctx.Param "image.type") }}
@@ -64,7 +65,7 @@
 {{ $formats := .formats | default $meta.formats | default (.ctx.Param "image.formats") }}
 {{ $provider := .provider | default $meta.provider | default (.ctx.Param "image.provider") }}
 {{ $loading := .loading | default $meta.loading | default (.ctx.Param "image.loading") }}
-{{ $sizes := .sizes | default $meta.sizes | default (.ctx.Param "image.sizes") }}
+{{ $sizes := .sizes | default $meta.sizes | default $page.sizes }}
 {{ $alt :=  .alt | default $meta.alt }}
 
 {{ $class := "" }}
@@ -186,18 +187,20 @@
 {{ end }}
 
 
-{{ if and $sizes (not $width) }}
+
+{{/* if no width set, no sizes set & loading=lazysizes: sizes property defaults to data-sizes=auto 
+  ** otherwise if no width set and sizes is set, sizes property set */}}
+{{ if not $width }}
   {{ $sizes_prop := false }}
-  {{ if eq $sizes "lazysizes" }}
-    {{ $sizes_prop = `data-sizes="auto"` }}
-  {{ else if (eq $sizes "user") }}
-    {{ $sizes_prop = false }}
-  {{ else }}
+  {{ if and (eq $loading "lazysizes") (not $sizes) }}
+      {{ $sizes_prop = `data-sizes="auto"` }}
+  {{ else if $sizes }}
     {{ $sizes_prop = printf `sizes="%s"` $sizes }}
   {{ end }}
-  {{ $params = merge $params (dict "sizes_prop" $sizes_prop) }}
+  {{ with $sizes_prop }}
+    {{ $params = merge $params (dict "sizes_prop" . ) }}
+  {{ end }}
 {{ end }}
-
 
 
 {{/* depreciate this (but keep for legacy), just modify .class inside figure params and pass via context to here */}}

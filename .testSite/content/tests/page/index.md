@@ -16,6 +16,7 @@ testImages:
   params:
     alt: Test Image Alt
     title: Test Image Title
+    loading: lazysizes
   tests:
     img:
       dataSizes: 'auto'
