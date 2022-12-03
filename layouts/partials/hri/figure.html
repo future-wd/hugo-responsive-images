@@ -15,7 +15,6 @@
   {{ partial "figure" (dict "src" "image.jpg" "alt" "alt text") }}
 
 */ -}}
-{{ warnf "figure.html context: %v" . }}
 {{- /* use .page or .ctx as ctx */ -}}
 {{- $ctx := .ctx -}}
 {{- if .page -}}
@@ -23,10 +22,11 @@
 {{- end -}}
 {{- /* process figure params */ -}}
 {{- $figure_params := partial "hri/private/params/figure" (merge . (dict "ctx" $ctx)) -}}
-{{ warnf "Figure params: %v " $figure_params }}
+{{/* merge select figure params into image params */}}
 {{- $image_params := merge . (dict 
       "input" "figure"
       "caption" $figure_params.caption
+      "figcaption_title" $figure_params.figcaption_title
       "class" $figure_params.class ) -}}
 {{- /* call 3 partials for each part of figure */ -}}
 {{- partial "hri/private/print/figure-top" $figure_params }}
