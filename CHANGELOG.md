@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.12](/github.com/future-wd/hugo-responsive-image/compare/v1.1.11...v1.1.12) (2022-12-04)
+
+
+### Bug Fixes
+
+* add comments ([1fee9b3](/github.com/future-wd/hugo-responsive-image/commit/1fee9b31ff4ffa49277316641a83a17061f1f99c))
+* move rrorf.html to utils ([3be225a](/github.com/future-wd/hugo-responsive-image/commit/3be225a5edb0cf085c8b5c3d2070975216d0b4a3))
+* moved width santize to util file ([b57effd](/github.com/future-wd/hugo-responsive-image/commit/b57effd4df72c63e26732238282aaed86aaa59f8))
+* remove redundant warnings as moved to params ([1503f71](/github.com/future-wd/hugo-responsive-image/commit/1503f7122c0ad51c715af0e31eaf76fe635ba17e))
+* shorteend code ([e381a54](/github.com/future-wd/hugo-responsive-image/commit/e381a54e1169b106465fe92ddc92c80fd73e1424))
+
 ### [1.1.11](/github.com/future-wd/hugo-responsive-image/compare/v1.1.10...v1.1.11) (2022-10-02)
 
 
