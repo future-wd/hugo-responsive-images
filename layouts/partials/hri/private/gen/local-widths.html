@@ -4,7 +4,7 @@
 
   @author @sean-au
 
-  @context . Context from generate widths partial
+  @context sanitized params
 
   @return Map including . .picture added
 
@@ -56,8 +56,8 @@
       {{ if eq $index 0}}
         {{/* smallest image width for placeholder generation */}}
         {{ $params = merge $params (dict "src" $img_resized) }}
-        {{ with partial "hri/private/gen/placeholder" $params }}
-          {{ $placeholder = . }}
+        {{ if eq $.loading "lazysizes" }}
+          {{ $placeholder = partial "hri/private/gen/placeholder" $params }}
         {{ end }}
       {{ end }}
       {{/* add smallest image to src for screen density srcset */}}
