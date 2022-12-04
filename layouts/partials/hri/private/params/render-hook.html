@@ -41,10 +41,8 @@
   "input" "render_hook"
   "widths" $widths }}
 
-{{/* this may throw a resource not found error... */}}
-{{ $img := .Page.Resources.GetMatch .Destination}}
+
 {{ $render_hook_params := dict "render_hook_wrapper_class" $render_hook_wrapper_class }}
-{{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .Page "img" $img "params" $render_hook_params) }}
 
 {{ return dict 
   "image_params" $image_params
