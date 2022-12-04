@@ -62,7 +62,7 @@
 {{ $formats := .formats | default $meta.formats | default (.ctx.Param "image.formats") }}
 {{ $provider := .provider | default $meta.provider | default (.ctx.Param "image.provider") }}
 {{ $loading := .loading | default $meta.loading | default (.ctx.Param "image.loading") }}
-{{ $sizes := .sizes | default $meta.sizes | default $page.sizes | default "100vw" }}
+{{ $sizes := .sizes | default $meta.sizes | default $page.sizes }}
 {{ $alt :=  .alt | default $meta.alt }}
 {{ $class := "" }}
 {{ $caption := "" }}
