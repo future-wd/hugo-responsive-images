@@ -26,7 +26,7 @@
 
 
 {{ $meta := dict }}
-{{ $page := .ctx.Params.images }}
+{{ $page := .ctx.Params.image }}
 {{ $params :=  . }}
 {{ $img := false }}
 {{ $type := .type | default (.ctx.Param "image.type") }}
@@ -62,7 +62,7 @@
 {{ $formats := .formats | default $meta.formats | default (.ctx.Param "image.formats") }}
 {{ $provider := .provider | default $meta.provider | default (.ctx.Param "image.provider") }}
 {{ $loading := .loading | default $meta.loading | default (.ctx.Param "image.loading") }}
-{{ $sizes := .sizes | default $meta.sizes | default $page.sizes }}
+{{ $sizes := .sizes | default $meta.sizes | default $page.sizes | default "100vw" }}
 {{ $alt :=  .alt | default $meta.alt }}
 {{ $class := "" }}
 {{ $caption := "" }}
