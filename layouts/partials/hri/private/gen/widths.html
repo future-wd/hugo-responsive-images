@@ -5,8 +5,8 @@
 
   @author @sean-au
 
-  @context . context of $params from image partial
-
+  @context sanitized params
+  
   @return Map of select variables
 
   @access private
@@ -17,12 +17,8 @@
 
 {{ $params := false }}
 {{ if .params.provider }}
-  {{ with partial "hri/private/gen/external-widths" . }}
-    {{ $params = . }}
-  {{ end }}
+  {{ $params = partial "hri/private/gen/external-widths" . }}
 {{ else }}
-  {{ with partial "hri/private/gen/local-widths" . }}
-    {{ $params = . }}
-  {{ end }}
+  {{ $params = partial "hri/private/gen/local-widths" . }}
 {{ end }}
 {{ return $params }}
