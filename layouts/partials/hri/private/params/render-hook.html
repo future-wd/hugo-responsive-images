@@ -33,7 +33,7 @@
 {{ $widths := $widths_meta }}
 
 {{/* add neccessary render-hook params to image params */}}
-{{ $image_params := dict 
+{{ $params := dict 
   "page" .Page 
   "src" .Destination 
   "alt" .PlainText 
@@ -45,5 +45,5 @@
 {{ $render_hook_params := dict "render_hook_wrapper_class" $render_hook_wrapper_class }}
 
 {{ return dict 
-  "image_params" $image_params
+  "params" $params
   "render_hook_params" $render_hook_params }}

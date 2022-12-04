@@ -5,7 +5,9 @@
 
   @author @sean-au
 
-  @context . Context of $params from _render-image template
+  @context dict 
+    .params - image/figure params
+    .render_hook_params   - shortcode specific 
 
   @access private
 
@@ -14,5 +16,5 @@
 
 */ -}}
 <div class="{{ .render_hook_params.renderHookWrapperClass }}">
-  {{ partial "image" .image_params }}
+  {{ partial "image" .params }}
 </div>
