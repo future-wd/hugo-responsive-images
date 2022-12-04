@@ -13,10 +13,7 @@
   {{< figure src=[string] alt=[] etc. >}}
   
 */ -}}
-{{- $params := false }}
-{{- with partial "hri/private/params/shortcode" . -}}
-  {{- $params = . -}}
-{{- end -}}
+{{- $params :=  partial "hri/private/params/shortcode" . -}}
 {{- partial "hri/private/print/shortcode" $params -}}
 
 
