@@ -46,7 +46,7 @@
 {{ end }}
 
 {{ with .params.resample_filter }}
-  {{ $filter_opts := (slice "Box" "NearestNeighbor" "Linear" "Gaussian") }}
+  {{ $filter_opts := (slice "Box" "Lanczos" "CatmullRom" "MitchellNetravali" "Linear" "NearestNeighbor") }}
   {{ if not (in $filter_opts .) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "resample_filter"
