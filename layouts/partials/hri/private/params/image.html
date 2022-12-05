@@ -112,6 +112,7 @@
 {{ $resample_filter := .resample_filter | default .resampleFilter | default $meta.resample_filter | default $meta.resampleFilter | default (.ctx.Param "image.resample_filter") | default (.ctx.Param "image.resampleFilter") }}
 {{ $hint := .hint | default $meta.hint | default (.ctx.Param "image.hint") }}
 {{ $anchor := .anchor | default $meta.anchor | default (.ctx.Param "image.anchor") }}
+{{ $background_color := .background_color | default $meta.background_color | default (.ctx.Param "image.background_color") }}
 {{ $processing_params := dict 
   "quality" $quality 
   "rotate" $rotate 
