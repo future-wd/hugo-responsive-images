@@ -11,6 +11,7 @@
     </div>
   </div>
   <div class="row">
+    {{ if ne .Params.disable_range true }}
     {{ range .Params.testImages }}
     <div class="col-md-6" id="{{ .id }}">
       <h2>{{ .title }}</h2>
@@ -23,6 +24,7 @@
       {{ end }}
       <div id="{{ .id }}-results"></div>
     </div>
+    {{ end }}
     {{ end }}
   </div>
 </div>

@@ -2,7 +2,7 @@
 title: "Render Hook and page resource metadata"
 date: 2022-08-28T15:35:39-07:00
 draft: false
-disableRange: true
+disable_range: true
 resources:
 - src: test.jpg
 - src: test1.jpg
