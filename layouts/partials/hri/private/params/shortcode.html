@@ -27,7 +27,7 @@
 {{ if .IsNamedParams }}
 
   {{/* santize params (convert string-arrays and string-integers) */}}
-  {{ $shortcode_params := partial "hri/private/utils/sanitize-shortcode-params" .Params }}
+  {{ $shortcode_params := partial "hri/private/utils/process-shortcode-params" .Params }}
 
   {{/* merge shortcode .Params map with $params map */}}
   {{ $params = merge $params $shortcode_params }}

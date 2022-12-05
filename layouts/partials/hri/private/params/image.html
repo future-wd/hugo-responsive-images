@@ -161,7 +161,7 @@
   */}}
   {{ $widths = sort $widths }}
   {{/* SANTIZE WIDTHS WITH UTIL */}}
-  {{ $new_widths := partial "hri/private/utils/sanitize-widths" (dict 
+  {{ $new_widths := partial "hri/private/utils/restrict-widths" (dict 
     "ctx" $.page
     "img" $img
     "widths" $widths
