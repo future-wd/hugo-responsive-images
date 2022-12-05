@@ -308,24 +308,39 @@ Then..
 
 (I have opted to set alt and title via frontmatter to make the example more informative..)
 
-<!-- 
+
 ### Noscript required HTML, JS and CSS
 
 The following elements are required for the `<noscript>` module to work. The script must come first.
 
+```yaml
+#config.yaml
+params:
+  image:
+    noscript: true # or enable at page/meta data/inline level
+```
+
 ```HTML
 
-1<html class="no-js">
+<html>
   <head>
     <script>
-      document.documentElement.className = document.documentElement.className.replace("no-js", "js");
+      const noJs = document.documentElement.classList.contains('no-js');
+      if (noJs) document.documentElement.classList.remove('no-js');
+      document.documentElement.classList.add('js');
     </script>
     <title>Title</title>
     <style>
       /* can also be included in a css file */
-      .no-js img.lazyload {
-          display: none;
-        }
+    img.lazyload {
+      display: none;
+    }
+    noscript img.lazyload {
+      display: block;
+    }
+    .js img.lazyload  {
+      display: block;
+    } 
     </style>
   </head>
   <body>
@@ -333,7 +348,6 @@ The following elements are required for the `<noscript>` module to work. The scr
   </body>
 </html>
 
-``` -->
 
 ## Placeholder
 
@@ -372,9 +386,9 @@ params:
     loading: lazysizes # must be set as lazysizes will swap out the placeholder on load
     placeholder: lqip   # or dominant or file_name e.g. gray-300 
     # config below this line is not required if not changing the defaults
-    lqip_blur_amount: 5 # apply gaussian blur amount of 5 to lqip
-                      # may need to be increased at a page level for larger images
-    lqip_div_factor: 5 # lqip is 5x smaller than the smallest image in srcset
+    lqip_blur_amount: 6 # apply gaussian blur amount of 6 to lqip
+                      # may need to be increased at inline level for larger images
+    lqip_div_factor: 2 # lqip is 2x smaller than the smallest image in srcset
     gif_div_factor: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
 ```
 
@@ -454,7 +468,7 @@ Test site resides in /.testSite
 | loading   | YES | YES | YES | YES | auto/lazy/lazysizes - Type of image loading | `"auto"` |
 | sizes     | YES | YES | YES | NO  | [string] - Image sizes for responsive widths images | `"100vw"` |
 | class     | YES | YES | YES | YES | Image class | `"img-fluid"` |
-| alt       | YES | YES | NO  | NO  | Image alt text | `caption` (figure) then `title` then generates error. |
+| alt       | YES | YES | NO  | NO  | Image alt text | `caption` (figure) then `Image of [title]` then generates error. |
 
 ## Placeholder variables
 

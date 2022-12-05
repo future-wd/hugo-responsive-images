@@ -1,0 +1,34 @@
+{{/*
+  utils/image-resize.html
+    Resize images with all of hugo's image processing options + image Fill
+
+  @author @sean-au
+
+  @context dict
+    .options - slice of image processing options. For original format image, not format is specified.
+    .fill_ratio - decimal for resize image, used to calculate height relative to .width (only for .Fill)
+    .width - width to resize to
+    .img - image resource object
+
+  @return Map including . .picture added
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/local-widths" . }}
+*/}}
+
+{{ $options_string := delimit .options " " }}
+{{ $img_resized := false }}
+
+{{ if.fill_ratio }}
+  {{/* resulting fillHeight must be converted to integer for use with image resize */}}
+  {{ $fill_height := mul ($.width | float) $.fill_ratio | int }}
+  {{/* resize image with fill option */}}
+  {{ $img_resized = .img.Fill (printf "%dx%d %s %s %s" .width $fill_height $options_string) }}
+{{ else }}
+  {{/* do standard image resize */}}
+  {{ $img_resized = .img.Resize (printf "%dx %s" $.width $options_string) }}
+{{ end }}
+
+{{ return $img_resized }}

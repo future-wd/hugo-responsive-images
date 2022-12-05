@@ -19,18 +19,14 @@
 {{/**********************************
   **** loop over each image format ****
   *************************************/}}
-{{ $params := . }}
 {{ $picture := dict }}
-{{ $options := .options }}
 
 {{ range $index, $format:= .formats }}
   {{/* add format to options array (for format transformation) if not original */}}
+  {{ $options := $.options }}
   {{ if ne $format "original" }}
     {{ $options = merge $options (dict "format" $format) }}
   {{ end }}
-  {{/* change options array into space delimited string. 
-        new options string, srcset and src variables created so they are unique to this iteration */}}
-  {{ $optionsString := delimit $options " " }}
   {{/*********************************
     ** loop over each width         **
     **********************************/}}
@@ -38,26 +34,20 @@
   {{ $src := false }}
   {{ $placeholder := false }}
   {{ range $index, $width := $.widths }}
-    {{ $img_resized := "" }}
-    {{/* output images with altered aspect ratio, if .fill_ratio is provided */}}
-    {{ if $.fill_ratio }}
-      {{/* resulting fillHeight must be converted to integer for use with image resize */}}
-      {{ $fillHeight := mul ($width.width | float) $.fill_ratio | int }}
-      {{/* resize image with fill option */}}
-      {{ $img_resized = $.img.Fill (printf "%dx%d %s %s %s" $width.width $fillHeight $optionsString) }}
-    {{ else }}
-      {{/* do standard image resize */}}
-      {{ $img_resized = $.img.Resize (printf "%dx %s" $width.width $optionsString) }}
-    {{ end }}
+    {{ $img_resized := partial "hri/private/utils/image-resize" (dict 
+      "img" $.img
+      "width" $width.width
+      "fill_ratio" $.fill_ratio
+      "options" $options) }}
     {{/* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */}}
     {{ $srcset = $srcset | append (printf "%s %s" $img_resized.RelPermalink $width.desc) }}
     {{/* if .width and 1x density (First iteration), add image to src variable for use as fallback */}}
     {{ if eq $format "original" }}
       {{ if eq $index 0}}
         {{/* smallest image width for placeholder generation */}}
-        {{ $params = merge $params (dict "src" $img_resized) }}
+        {{ $placeholder_params := merge $ (dict "src" $img_resized) }}
         {{ if eq $.loading "lazysizes" }}
-          {{ $placeholder = partial "hri/private/gen/placeholder" $params }}
+          {{ $placeholder = partial "hri/private/gen/placeholder" $placeholder_params }}
         {{ end }}
       {{ end }}
       {{/* add smallest image to src for screen density srcset */}}
@@ -72,12 +62,11 @@
     {{ end }}
   {{ end }}
   {{/* convert srcset array into a string, delimit with , between each image */}}
-  {{ $srcset := delimit $srcset ", " }}
+  {{ $srcset_str := delimit $srcset ", " }}
   {{/* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */}}
-  {{ $picture = merge $picture (dict $format (dict "weight" $index "format" $format "srcset" $srcset "src" $src "placeholder" $placeholder)) }}
+  {{ $picture = merge $picture (dict $format (dict "weight" $index "format" $format "srcset" $srcset_str "src" $src "placeholder" $placeholder)) }}
 {{ end }}
 
 {{/* merge and return params */}}
 
-{{ $params = merge $params (dict "picture" $picture) }}
-{{ return $params }}
+{{ return (merge . (dict "picture" $picture)) }}

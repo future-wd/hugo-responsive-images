@@ -63,3 +63,23 @@
   />
 {{ end  -}}
 </picture>
+{{ if and .noscript (eq .loading "lazysizes") }}
+{{- with .picture.original.src }}
+<noscript>
+  <img 
+  src="{{ .RelPermalink }}"
+  height="{{ .Height }}"
+  width="{{ .Width }}" 
+  {{- with $.class }}
+    class="{{ . }} noscript"
+  {{- end -}}
+  {{- with $.alt }}
+    alt="{{ . }}"
+  {{- end }}
+  {{- with $.title }}
+    title="{{ . }}"
+  {{- end }} >
+</noscript>
+{{ end }}
+{{ end }}
+

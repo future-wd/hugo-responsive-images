@@ -64,6 +64,7 @@
 {{ $loading := .loading | default $meta.loading | default (.ctx.Param "image.loading") }}
 {{ $sizes := .sizes | default $meta.sizes | default $page.sizes }}
 {{ $alt :=  .alt | default $meta.alt }}
+{{ $noscript := .noscript | default $meta.noscript | default (.ctx.Param "image.noscript") }}
 {{ $class := "" }}
 {{ $caption := "" }}
 {{ if eq .input "figure" }}
@@ -91,7 +92,8 @@
   "sizes" $sizes
   "class" $class
   "caption" $caption
-  "alt" $alt }}
+  "alt" $alt
+  "noscript" $noscript }}
 
 {{/* placeholder params */}}
 {{ $placeholder := .placeholder | default $meta.placeholder | default (.ctx.Param "image.placeholder") }}

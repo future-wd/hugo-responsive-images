@@ -14,13 +14,14 @@ image:
   shortcode_wrapper_class: img-wrapper
   render_hook: false
   loading: lazy
-  lqip_blur_amount: 5
-  lqip_div_factor: 5
+  lqip_blur_amount: 6
+  lqip_div_factor: 2
   gif_div_factor: 10
   # provider: netlify
   suppress_width_warning: false
   type: page # or global
   min_width_difference: 40
+  noscript: false
 
 
 # developer notes
