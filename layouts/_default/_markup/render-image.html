@@ -15,8 +15,8 @@
   ![Image Alt](img_path.jpeg "Image title")
   
 */ -}}
-{{- if eq (.Page.Param "image.renderhook") true -}}
-  {{- $params := partial "hri/private/params/render-hook" . }}
+{{- $params := partial "hri/private/params/render-hook" . }}
+{{- if eq $params.render_hook_params.render_hook true -}}
   {{- partial "hri/private/print/render-hook" $params -}}
 {{- else -}}
   {{- /* default markdown behavior */ -}}
