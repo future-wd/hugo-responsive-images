@@ -18,8 +18,7 @@
       <p>{{ .subtitle }}</p>
       {{ $partial := .partial | default "image" }}
       {{ with .params }}
-        {{ $params := (dict "page" $ "src" "test.jpg") }}
-        {{ $params = merge $params . }}
+        {{ $params := merge (dict "page" $) . }}
         {{ partial $partial $params }}
       {{ end }}
       <div id="{{ .id }}-results"></div>
