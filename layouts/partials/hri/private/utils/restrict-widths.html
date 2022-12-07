@@ -65,7 +65,6 @@
   {{ $min := sub $.img.Width $difference }}
   {{ $max_resize_width := $.img.Width }}
   {{ if and $.ratio $vertical }}
-
     {{ $inverse := div 1 $.ratio }}
     {{ $max_resize_width = mul $.img.Height $inverse }}
   {{ end }}

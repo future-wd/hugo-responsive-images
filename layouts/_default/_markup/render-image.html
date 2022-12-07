@@ -18,8 +18,6 @@
 {{- $params := partial "hri/private/params/render-hook" . }}
 {{- if eq $params.render_hook_params.render_hook true -}}
   {{- partial "hri/private/print/render-hook" $params -}}
-  {{ warnf "render-hook image params %v" $params}}
-  {{ warnf "render-hook page %v" $params.ctx.RelPermalink }}
 {{- else -}}
   {{- /* default markdown behavior */ -}}
   {{- partial "hri/private/print/render-hook-default" . -}}
