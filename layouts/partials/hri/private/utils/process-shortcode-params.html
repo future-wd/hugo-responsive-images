@@ -23,7 +23,7 @@
 {{/* convert any comma delimited string-arrays to arrays */}}
 {{ $arrays := dict}}
 {{ range $key, $elem := . }}
-  {{ /* work on the elem and reassign */}}
+  {{/* work on the elem and reassign */}}
   {{ $elem = partial "hri/private/utils/string-to-array" $elem }}
   {{/* create a new, identical dict as the original context */}}
   {{ $arrays = merge $arrays (dict $key $elem) }}
