@@ -6,11 +6,12 @@
         <header>
           <h1>{{ .Title }}</h1>
         </header>
-        {{ .Content }}
+       
       </article>
     </div>
   </div>
   <div class="row">
+    {{ .Content }}
     {{ if ne .Params.disable_range true }}
     {{ range .Params.testImages }}
     <div class="col-md-6" id="{{ .id }}">
