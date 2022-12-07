@@ -11,19 +11,21 @@
   @access private
 
   @example - Go Template
-  {{ partial "hri/private/utils/sanitize-shortcode-params" .Params }}
+  {{ partial "hri/private/utils/process-shortcode-params" .Params }}
   
 */}}
 
 {{/* the verbose form below doesnt work */}}
-{{/* $params = apply $params "partial" "hri/private/string-to-array" "." */}}
+{{/* $params = apply $params "partial" "hri/private/utils/string-to-array" "." */}}
 {{/* $params := apply . "partial" "hri/private/utils/string-to-int" "." */}}
 
 
 {{/* convert any comma delimited string-arrays to arrays */}}
 {{ $arrays := dict}}
 {{ range $key, $elem := . }}
+  {{ /* work on the elem and reassign */}}
   {{ $elem = partial "hri/private/utils/string-to-array" $elem }}
+  {{/* create a new, identical dict as the original context */}}
   {{ $arrays = merge $arrays (dict $key $elem) }}
 {{ end }}
 

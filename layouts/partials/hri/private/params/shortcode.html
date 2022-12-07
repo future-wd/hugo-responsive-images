@@ -58,21 +58,21 @@
   {{ $meta = .Params }}
 {{ end }}
 
-{{ $shortcode_wrapper_class := $params.shortcode_wrapper_class | default $params.shortcodeWrapperClass | default $meta.shortcode_wrapper_class | default $meta.shortcodeWrapperClass  | default (.Page.Param "shortcode_wrapper_class") | default (.Page.Param "shortcodeWrapperClass") }}
+{{ $shortcode_wrapper_class := $params.shortcode_wrapper_class | default $params.shortcodeWrapperClass | default $meta.shortcode_wrapper_class | default $meta.shortcodeWrapperClass | default (.Page.Param "shortcodeWrapperClass") | default (.Page.Param "shortcode_wrapper_class") }}
 
 {{ $shortcode_params := dict
   "shortcode_wrapper_class" $shortcode_wrapper_class
   "name" .Name }}
 
-{{ $widths_site := $site.shortcode_widths | default $site.shortcodeWidths | default $site.widths }}
+{{ $widths_site := default $site.shortcodeWidths | $site.shortcode_widths | default $site.widths }}
 {{ $withs_page  := $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
 {{ $widths_meta := $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths | default $withs_page  }}
 {{ $widths := $params.widths | default $widths_meta }}
 
-{{ $params = merge $params dict
+{{ $params = merge $params (dict
   "widths" $widths
   "input" "shortcode" 
-  "ctx" .Page }}
+  "ctx" .Page) }}
 
 {{ return dict
   "params" $params

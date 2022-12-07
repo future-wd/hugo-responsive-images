@@ -27,11 +27,9 @@
   {{/* if only numbers FIX */}}
   
   {{/* doesnt work as letters are also being let through */}}
-  {{ $onlyInts := findRE `0-9?` $param }}
-  {{ if $onlyInts }}
+  {{ if eq (printf "%T" $param) "int" }}
     {{ $param = int $param }}
   {{ end }}
-  
 {{ end }}
 
 {{ return $param }}
