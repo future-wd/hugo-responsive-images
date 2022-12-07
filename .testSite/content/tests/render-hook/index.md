@@ -21,7 +21,7 @@ testImages:
   <h2>1. Basic - render hook</h2>
   <p>test.jpg</p>
 {{< /shortcode1a.inline >}}
-![Alt Text](test.jpg "Test Title")
+![Alt Text](test1.jpg "Test Title")
 {{< shortcode1b.inline >}}
 <div id="js-test1-results"></div>
 </div>
@@ -31,7 +31,7 @@ testImages:
   <h2>2. Basic - shortcode</h2>
   <p>test.jpg</p>
 {{< /shortcode2a.inline >}}
-{{< image src=test1.jpg alt="Alt text" title="Title text" widths=200,400 >}}
+{{< image src=test2.jpg alt="Alt text" title="Title text" widths=200,400 >}}
 {{< shortcode2b.inline >}}
 <div id="js-test1-results"></div>
 </div>

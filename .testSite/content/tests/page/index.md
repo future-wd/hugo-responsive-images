@@ -3,22 +3,17 @@ title: "Page Resources"
 date: 2022-08-28T15:35:39-07:00
 draft: false
 resources: # for test 8 (metadata)
-- src: test1.jpg
-  
+- src: test8.jpg
   params:
     images:
       alt: Alt set via metadata
       title: Title set via metadata
-      
-      
-    
-image:
-  renderHook: false
 testImages:
 - id: js-test1
   title: 1. Basic
   subtitle: Alt and title set
   params:
+    src: test1.jpg
     alt: Test Image Alt
     title: Test Image Title
     loading: lazysizes
@@ -36,6 +31,7 @@ testImages:
   title: 2. Formats
   subtitle: original (jpeg), png, webp
   params:
+    src: test2.jpg
     alt: Formats
     formats: [original, png, webp]
   tests: 
@@ -46,6 +42,7 @@ testImages:
   title: 3
   subtitle: widths 400, densities 1,2,3
   params:
+    src: test3.jpg
     alt: Width, densities
     width: 400
     densities: [1,2,3]
@@ -58,6 +55,7 @@ testImages:
   title: 4. Loading auto, sizes 50vw
   subtitle: no lazysizes
   params:
+    src: test4.jpg
     alt: loading, sizes
     loading: auto
     sizes: 50vw
@@ -71,6 +69,7 @@ testImages:
   title: 5. loading lazy, sizes 60vw
   subtitle: no lazysizes
   params:
+    src: test5.jpg
     alt: no lazysizes
     loading: lazy
     sizes: 60vw
@@ -83,6 +82,7 @@ testImages:
   title: 6. loading lazysizes, sizes 50vw
   subtitle: lazysizes enabled
   params:
+    src: test6.jpg
     alt: lazysizes enabled
     loading: lazysizes
     sizes: 50vw
@@ -95,6 +95,7 @@ testImages:
   subtitle: 
   partial: figure
   params:
+    src: test7.jpg
     alt: figure
     figcaption_title: Figure Title
     figcaption_title_h: 3
@@ -114,7 +115,7 @@ testImages:
   title: 8. Image metadata
   subtitle: title and alt set in markup metadata
   params:
-    src: test1.jpg
+    src: test8.jpg
     figcaption_title: figcaption title
   tests:
     img:
@@ -124,6 +125,7 @@ testImages:
   title: 9. Standard resize, larger than original width. orig width 1920px
   subtitle: Width 900, 1200, 2000 down to 1920
   params:
+    src: test9.jpg
     alt: Test Image Alt
     title: Test Image Title
     widths: [900, 1200, 2000]
@@ -134,6 +136,7 @@ testImages:
   title: 10. Fill ratio 9:16, larger than original width/height. orig width 1920px
   subtitle: Width 200, 400, 900 down to  607
   params:
+    src: test10.jpg
     alt: Test Image Alt
     title: Test Image Title
     widths: [200, 400, 900]
@@ -141,6 +144,28 @@ testImages:
   tests:
     source: 
       dataWidths: ['200w', '400w', '607w']
+- id: js-test11
+  title: 11. Crop ratio
+  subtitle: Width 900, 1200, 2000 down to 1920
+  params:
+    src: test11.jpg
+    alt: Test Image Alt
+    title: Test Image Title
+    widths: [900, 1200, 2000]
+    crop_ratio: [4, 3]
+  tests:
+    source: 
+      dataWidths: ['900w', '1200w', '1920w']
+- id: js-test12
+  title: 12. Crop ratio 9:16, larger than original width/height. orig width 1920px
+  subtitle: Width 200, 400, 900 down to  607
+  params:
+    src: test12.jpg
+    alt: Test Image Alt
+    title: Test Image Title
+    widths: [200, 400, 900]
+    crop_ratio: [9, 16]
+  tests:
+    source: 
+      dataWidths: ['200w', '400w', '607w']
 --- 
-
-<!-- ![Alt Text](test1.jpg "Test Title") -->
