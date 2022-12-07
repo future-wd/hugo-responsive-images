@@ -47,13 +47,13 @@
 {{/* camelCase params have been kept to avoid breaking changes, will be depreciated in future versions */}}
 
 {{/* general params */}}
-{{ $suppress_width_warning := .suppress_width_warning | default .suppressWidthWarning | default (.ctx.Param "image.suppress_width_warning")  | default (.ctx.Param "image.suppressWidthWarning") }}
+{{ $suppress_width_warning := .suppress_width_warning | default .suppressWidthWarning | default (.ctx.Param "image.suppressWidthWarning") | default (.ctx.Param "image.suppress_width_warning") }}
 {{ $resource_title := "" }}
   {{ if ne $img.Title ($img | string) }}
   {{ $resource_title = $img.Title }}
 {{ end }}
 {{ $title := .title | default $meta.title | default $resource_title }}
-{{ $fill_ratio :=  .fill_ratio | default .fillRatio | default $meta.fill_ratio | default $meta.fillRatio | default (.ctx.Param "image.fill_ratio") | default (.ctx.Param "image.fillRatio") }}
+{{ $fill_ratio :=  .fill_ratio | default .fillRatio | default $meta.fill_ratio | default $meta.fillRatio | default (.ctx.Param "image.fillRatio") | default (.ctx.Param "image.fill_ratio") }}
 {{ $width := .width | default $meta.width | default .ctx.Params.image.width }}
 
 {{/* TO TEST and check if they are being sanitized */}}
@@ -97,9 +97,9 @@
 
 {{/* placeholder params */}}
 {{ $placeholder := .placeholder | default $meta.placeholder | default (.ctx.Param "image.placeholder") }}
-{{ $lqip_div_factor := .lqip_div_factor | default .lqipDivFactor | default $meta.lqip_div_factor | default $meta.lqipDivFactor | default (.ctx.Param "image.lqip_div_factor")  | default (.ctx.Param "image.lqip_div_factor") }}
-{{ $lqip_blur_amount := .lqip_blur_amount | default .lqipBlurAmount | default $meta.lqip_blur_amount | default $meta.lqipBlurAmount | default (.ctx.Param "image.lqip_blur_amount")  | default (.ctx.Param "image.lqipBlurAmount") }}
-{{ $gif_div_factor := .gif_div_factor | default .gifDivFactor | default $meta.gif_div_factor | default $meta.gifDivFactor | default (.ctx.Param "image.gif_div_factor") | default (.ctx.Param "image.gifDivFactor") }}
+{{ $lqip_div_factor := .lqip_div_factor | default .lqipDivFactor | default $meta.lqip_div_factor | default $meta.lqipDivFactor | default (.ctx.Param "image.lqip_div_factor") | default (.ctx.Param "image.lqip_div_factor") }}
+{{ $lqip_blur_amount := .lqip_blur_amount | default .lqipBlurAmount | default $meta.lqip_blur_amount | default $meta.lqipBlurAmount | default (.ctx.Param "image.lqipBlurAmount") | default (.ctx.Param "image.lqip_blur_amount") }}
+{{ $gif_div_factor := .gif_div_factor | default .gifDivFactor | default $meta.gif_div_factor | default $meta.gifDivFactor | default (.ctx.Param "image.gifDivFactor") | default (.ctx.Param "image.gif_div_factor") }}
 {{ $placeholder_params := dict 
   "placeholder" $placeholder
   "lqip_div_factor" $lqip_div_factor
@@ -109,7 +109,7 @@
 {{/* image processing params - dont export these params */}}
 {{ $quality := .quality | default $meta.quality | default (.ctx.Param "image.quality") }}
 {{ $rotate := .rotate | default $meta.rotate | default (.ctx.Param "image.rotate") }}
-{{ $resample_filter := .resample_filter | default .resampleFilter | default $meta.resample_filter | default $meta.resampleFilter | default (.ctx.Param "image.resample_filter") | default (.ctx.Param "image.resampleFilter") }}
+{{ $resample_filter := .resample_filter | default .resampleFilter | default $meta.resample_filter | default $meta.resampleFilter | default (.ctx.Param "image.resampleFilter") | default (.ctx.Param "image.resample_filter") }}
 {{ $hint := .hint | default $meta.hint | default (.ctx.Param "image.hint") }}
 {{ $anchor := .anchor | default $meta.anchor | default (.ctx.Param "image.anchor") }}
 {{ $background_color := .background_color | default $meta.background_color | default (.ctx.Param "image.background_color") }}
