@@ -459,7 +459,8 @@ Test site resides in /.testSite
 | src       | YES | NO  | NO  | NO  | Provide resource path | `undefined` |
 | type      | YES | YES | YES | YES | page/global - Type of image resource | `"page"` |
 | title     | YES | YES | NO  | NO  | Image title | `figcaption_title` |
-| fill_ratio | YES | YES | YES | YES | Fill ratio for image | `null` |
+| fill_ratio | YES | YES | YES | NO | Fill ratio for image | `null` |
+| crop_ratio | YES | YES | YES | NO | Crop ratio for image | `null` |
 | widths    | YES | YES | YES | YES | Widths for responsive width image generation | [600, 900, 1300] |
 | width     | YES | YES | YES | NO  | Set widths for fixed with image. Disables widths | 'null' |
 | densities | YES | YES | YES | YES | Densities for fixed with image generation | [1,2] |

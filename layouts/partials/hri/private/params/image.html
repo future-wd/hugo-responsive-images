@@ -24,7 +24,6 @@
   
 */}}
 
-
 {{ $meta := dict }}
 {{ $page := .ctx.Params.image }}
 {{ $params :=  . }}
@@ -53,12 +52,19 @@
   {{ $resource_title = $img.Title }}
 {{ end }}
 {{ $title := .title | default $meta.title | default $resource_title }}
-{{ $fill_ratio :=  .fill_ratio | default .fillRatio | default $meta.fill_ratio | default $meta.fillRatio | default (.ctx.Param "image.fillRatio") | default (.ctx.Param "image.fill_ratio") }}
-{{ $width := .width | default $meta.width | default .ctx.Params.image.width }}
 
-{{/* TO TEST and check if they are being sanitized */}}
+{{ $fill_ratio :=  .fill_ratio | default .fillRatio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fillRatio  }}
+{{ $crop_ratio :=  .crop_ratio | default $meta.crop_ratio | default $page.crop_ratio }}
+{{ $width := .width | default $meta.width | default .ctx.Params.image.width }}
 {{ $densities := .densities | default $meta.densities | default (.ctx.Param "image.densities") }}
 {{ $densities = sort $densities }}
+{{ $widths := "" }}
+{{ if or (eq .input "render_hook") (eq .input "shortcode") }}
+  {{ $widths = .widths }}
+{{ else }}
+  {{ $widths = .widths | default $meta.widths | default (.ctx.Param "image.widths") }}
+{{ end }}
+
 {{ $formats := .formats | default $meta.formats | default (.ctx.Param "image.formats") }}
 {{ $provider := .provider | default $meta.provider | default (.ctx.Param "image.provider") }}
 {{ $loading := .loading | default $meta.loading | default (.ctx.Param "image.loading") }}
@@ -73,16 +79,12 @@
 {{ else }}
   {{ $class = .class | default $meta.class | default (.ctx.Param "image.class") }}
 {{ end }}
-{{ $widths := "" }}
-{{ if or (eq .input "render_hook") (eq .input "shortcode") }}
-  {{ $widths = .widths }}
-{{ else }}
-  {{ $widths = .widths | default $meta.widths | default (.ctx.Param "image.widths") }}
-{{ end }}
+
 {{ $general_params := dict 
   "suppress_width_warning" $suppress_width_warning
   "title" $title
   "fill_ratio" $fill_ratio
+  "crop_ratio" $crop_ratio
   "widths" $widths
   "width" $width
   "densities" $densities
@@ -135,6 +137,13 @@
   {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
   {{ $fill_ratio = div (index . 1 | float) (index . 0 | float) }}
   {{ $params = merge $params (dict "fill_ratio" $fill_ratio) }}
+{{ end }}
+
+{{ with $crop_ratio }}
+  {{/* height to width ratio of .crop_ratio */}}
+  {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
+  {{ $crop_ratio = div (index . 1 | float) (index . 0 | float) }}
+  {{ $params = merge $params (dict "crop_ratio" $crop_ratio) }}
 {{ end }}
 
 {{/*********************************************************************
