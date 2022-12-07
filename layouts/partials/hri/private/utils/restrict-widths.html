@@ -60,26 +60,26 @@
 
 
 {{ if $removed }}
-  {{ $vertical := gt $.ratio 1  }}
+  {{ $vertical := gt .ratio 1  }}
   {{ $largest := index $new_widths (sub (len $new_widths) 1) | int }}
   {{ $min := sub $.img.Width $difference }}
   {{ $max_resize_width := $.img.Width }}
   {{ if and $.ratio $vertical }}
-    {{ $inverse := div 1 $.ratio }}
-    {{ $max_resize_width = mul $.img.Height $inverse }}
+    {{ $inverse := div 1 .ratio }}
+    {{ $max_resize_width = mul .img.Height $inverse }}
   {{ end }}
   {{ if gt $min $largest }}
     {{ $new_widths = $new_widths | append ($max_resize_width | int) }}  
   {{ end }}
-  {{ if not $.suppress }}
-    {{ $old_width := index $.widths (sub (len $new_widths) 1) | int }}
+  {{ if not .suppress }}
+    {{ $old_width := index .widths (sub (len $new_widths) 1) | int }}
     {{ $new_width := index $new_widths (sub (len $new_widths) 1) | int }}
-    {{ if $.ratio }}
-      {{ $old_height := mul $old_width $.ratio | int }}
-      {{ $new_height := mul $new_width $.ratio | int }}
-      {{ $message = printf "Source image %s (%dx%dpx) on page %s cannot be resized to %dx%dpx wide. Resized to %dx%dpx" $.img.RelPermalink $.img.Width $.img.Height $.ctx.RelPermalink $old_width $old_height $new_width $new_height }}
+    {{ if .ratio }}
+      {{ $old_height := mul $old_width .ratio | int }}
+      {{ $new_height := mul $new_width .ratio | int }}
+      {{ $message = printf "Source image %s (%dx%dpx) on page %s cannot be resized to %dx%dpx wide. Resized to %dx%dpx" .img.RelPermalink .img.Width .img.Height .ctx.RelPermalink $old_width $old_height $new_width $new_height }}
     {{ else }}
-    {{ $message = printf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide. Resized to %dpx wide" $.img.RelPermalink $.img.Width $.img.Height $.ctx.RelPermalink $old_width $new_width }}
+    {{ $message = printf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide. Resized to %dpx wide" .img.RelPermalink .img.Width .img.Height .ctx.RelPermalink $old_width $new_width }}
     {{ end }}
   {{ end }}
 {{ end }}
