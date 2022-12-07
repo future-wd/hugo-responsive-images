@@ -5,18 +5,19 @@
 
   @author @sean-au
 
-  @version 1.0.1
+  @version 1.0.2
     Also used in github.com/future-wd/hugo-responsive-background-images
 
   @change-log
     1.0.1 - remove colon line 64 $max_resize_width was being re defined
           - use warning partial to utilise warning header
+    1.0.2 - changed .fill_ratio to .ratio for universal input (crop/fill)
 
   @context dict
     .ctx - page context
     .img - image resource
     .widths - user provided widths
-    .fill_ratio - ratio for fill transform
+    .ratio - ratio for .Fill or .Crop transform
     .difference - min_width_difference for new width
     .suppress - suppress width warning if true
 
@@ -29,7 +30,7 @@
     "ctx" $.ctx
     "img" $img
     "widths" $widths
-    "fill_ratio" $fill_ratio
+    "ratio" $ratio
     "difference" (site.Params.min_width_difference | int)
     "suppress" $suppress_width_warning )}}
   
@@ -42,8 +43,8 @@
 {{ $message := false }}
 
 {{ range .widths }}
-  {{ if $.fill_ratio }}
-    {{ if and (gt $.img.Width .) (gt $.img.Height (mul . $.fill_ratio)) }}
+  {{ if $.ratio }}
+    {{ if and (gt $.img.Width .) (gt $.img.Height (mul . $.ratio)) }}
       {{ $new_widths = $new_widths | append . }}
     {{ else }}
       {{ $removed = true }}
@@ -59,12 +60,13 @@
 
 
 {{ if $removed }}
-  {{ $vertical := gt $.fill_ratio 1  }}
+  {{ $vertical := gt $.ratio 1  }}
   {{ $largest := index $new_widths (sub (len $new_widths) 1) | int }}
   {{ $min := sub $.img.Width $difference }}
   {{ $max_resize_width := $.img.Width }}
-  {{ if and $.fill_ratio $vertical }}
-    {{ $inverse := div 1 $.fill_ratio }}
+  {{ if and $.ratio $vertical }}
+
+    {{ $inverse := div 1 $.ratio }}
     {{ $max_resize_width = mul $.img.Height $inverse }}
   {{ end }}
   {{ if gt $min $largest }}
@@ -73,9 +75,9 @@
   {{ if not $.suppress }}
     {{ $old_width := index $.widths (sub (len $new_widths) 1) | int }}
     {{ $new_width := index $new_widths (sub (len $new_widths) 1) | int }}
-    {{ if $.fill_Ratio }}
-      {{ $old_height := mul $old_width $.fill_ratio | int }}
-      {{ $new_height := mul $new_width $.fill_ratio | int }}
+    {{ if $.ratio }}
+      {{ $old_height := mul $old_width $.ratio | int }}
+      {{ $new_height := mul $new_width $.ratio | int }}
       {{ $message = printf "Source image %s (%dx%dpx) on page %s cannot be resized to %dx%dpx wide. Resized to %dx%dpx" $.img.RelPermalink $.img.Width $.img.Height $.ctx.RelPermalink $old_width $old_height $new_width $new_height }}
     {{ else }}
     {{ $message = printf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide. Resized to %dpx wide" $.img.RelPermalink $.img.Width $.img.Height $.ctx.RelPermalink $old_width $new_width }}

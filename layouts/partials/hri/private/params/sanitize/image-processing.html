@@ -81,4 +81,16 @@
   {{ end }}
 {{ end }}
 
+{{/* with .params.background-color }}
+  {{ $hex := findRE `^#([A-Fa-f0-9]{6}[A-Fa-f0-9]{3})|$` $param }}
+  {{ if not $hex }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "background_color"
+      "val" .
+      "opts" "3 or 6 digit hex color code"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end */}}
+
 {{ return true }}

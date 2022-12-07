@@ -29,10 +29,8 @@
   {{/* allows integers, and float. does not allow .xxx numbers (must have leading 0) */}}
   {{ $onlyInts := findRE `^(0|[1-9]\d*)?(\.\d+)?$` $param }}
   {{ if $onlyInts }}
-    {{ warnf "int is: %v" $param}}
     {{ $param = int $param }}
   {{ else }}
-    {{ warnf "%v is not int" $param}}
   {{ end }}
   
 {{ end }}

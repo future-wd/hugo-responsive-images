@@ -170,12 +170,18 @@
   ** produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
   */}}
   {{ $widths = sort $widths }}
+  {{ $ratio := false }}
+  {{ if $fill_ratio }}
+    {{ $ratio = $fill_ratio }}
+  {{ else if $crop_ratio }}
+    {{ $ratio = $crop_ratio }}
+  {{ end }}
   {{/* SANTIZE WIDTHS WITH UTIL */}}
   {{ $new_widths := partial "hri/private/utils/restrict-widths" (dict 
     "ctx" $.page
     "img" $img
     "widths" $widths
-    "fill_ratio" $fill_ratio
+    "ratio" $ratio
     "difference" (site.Params.minWidthDifference | int)
     "suppress" $suppress_width_warning )}}
 

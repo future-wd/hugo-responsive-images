@@ -72,7 +72,9 @@
 {{ $params = merge $params (dict
   "widths" $widths
   "input" "shortcode" 
-  "ctx" .Page) }}
+  "ctx" $.Page) }}
+
+  {{ warnf "shortcode params: %v shortcode page: %v" $params $params.ctx.RelPermalink }}
 
 {{ return dict
   "params" $params
