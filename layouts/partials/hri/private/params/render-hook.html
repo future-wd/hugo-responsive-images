@@ -31,7 +31,7 @@
   "render_hook_wrapper_class" $render_hook_wrapper_class
   "render_hook" $render_hook }}
 
-{{ $widths_site := $site.renderHookWidths | $site.render_hook_widths | default $site.shortcodeWidths | default $site.shortcode_widths  | default $site.widths }}
+{{ $widths_site := $site.renderHookWidths | default $site.render_hook_widths | default $site.shortcodeWidths | default $site.shortcode_widths  | default $site.widths }}
 {{ $withs_page  := $page.render_hook_widths | default $page.renderHookWidths | default $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
 {{ $widths_meta := $meta.render_hook_widths | default $meta.renderHookWidths | default $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths |default $meta.widths | default $withs_page}}
 {{ $widths := $widths_meta }}
