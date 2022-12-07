@@ -7,7 +7,7 @@
     "message" (string) // error message 
     "options" (string) // correct options
     "var" (string) // variable name in error
-    "ctx" (map) // ctx including .page and .img
+    "ctx" (map) // ctx including .ctx and .img
     )
 
   @access private
@@ -22,7 +22,7 @@
 
 */}}
 
-{{ $message := printf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value .ctx.img.RelPermalink .ctx.page.RelPermalink .options }}
+{{ $message := printf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value .ctx.img.RelPermalink .ctx.ctx.RelPermalink .options }}
 {{ $error := partial "hri/private/utils/errorf" $message }}
 
 {{ return true }}

@@ -39,7 +39,7 @@
   {{ $target = $target | default "_blank" }}
   {{ $rel = $rel | default "noopener noreferrer" }}
 {{ else }}
-  {{ $link = relref .page $link }}
+  {{ $link = relref .ctx $link }}
 {{ end }}
 
 {{/* merge params */}}

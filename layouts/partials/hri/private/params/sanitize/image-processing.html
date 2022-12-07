@@ -17,7 +17,7 @@
     {{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" $general_params) }}
   */}}
 {{ $error_ctx := dict 
-  "ctx" .page
+  "ctx" .ctx
   "img" .img
   "type" .type
   "element" "image"

@@ -178,7 +178,7 @@
   {{ end }}
   {{/* SANTIZE WIDTHS WITH UTIL */}}
   {{ $new_widths := partial "hri/private/utils/restrict-widths" (dict 
-    "ctx" $.page
+    "ctx" $.ctx
     "img" $img
     "widths" $widths
     "ratio" $ratio
