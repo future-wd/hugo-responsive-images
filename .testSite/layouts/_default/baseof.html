@@ -7,6 +7,6 @@
     <main>
       {{- block "main" . }}{{- end }}
     </main>
-    {{- partial "script-footer.html" . -}}
+    {{- partialCached "script-footer.html" . .Type -}}
   </body>
 </html>
