@@ -23,7 +23,7 @@
 */}}
 
 {{ $message := printf "Invalid %s value of \"%v\" for image %s on page %s. Valid options are %s." .var .value .ctx.img.RelPermalink .ctx.ctx.RelPermalink .options }}
-{{ $error := partial "hri/private/utils/errorf" $message }}
+{{ $error := partial "imaging-common/private/utils/errorf" $message }}
 
 {{ return true }}
 
