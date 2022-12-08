@@ -32,6 +32,8 @@
 {{ if eq $type "global" }}
   {{/* global resource */}}
   {{ $img = resources.Get .src }}
+{{ else if (eq $type "remote") }}
+  {{ $img = resources.GetRemote .src }}
 {{ else }}
   {{/* page resource */}}
   {{ $img = .ctx.Resources.GetMatch (print .src)   }}
