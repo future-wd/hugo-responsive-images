@@ -389,7 +389,7 @@ params:
     lqip_blur_amount: 6 # apply gaussian blur amount of 6 to lqip
                       # may need to be increased at inline level for larger images
     lqip_div_factor: 2 # lqip is 2x smaller than the smallest image in srcset
-    gif_div_factor: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
+    gif_div_factor: 10 # single color gif placeholder will be 10x smaller than smallest image in srcset
 ```
 
 ## Setting up Lazysizes.js
