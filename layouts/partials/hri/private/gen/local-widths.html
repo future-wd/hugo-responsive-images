@@ -46,7 +46,7 @@
     {{ if eq $format "original" }}
       {{ if eq $index 0}}
         {{/* smallest image width for placeholder generation */}}
-        {{ $placeholder_params := merge $ (dict "src" $img_resized) }}
+        {{ $placeholder_params := merge $ (dict "placeholder_img" $img_resized) }}
         {{ if eq $.loading "lazysizes" }}
           {{ $placeholder = partial "hri/private/gen/placeholder" $placeholder_params }}
         {{ end }}

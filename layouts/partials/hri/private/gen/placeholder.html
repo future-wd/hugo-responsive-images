@@ -22,11 +22,11 @@
 {{ $placeholder := false}}
 {{ with .placeholder }}
   {{ if eq . "lqip" }}
-    {{ $placeholder = $.src.Resize (printf "%vx gif" (div $.src.Width $.lqip_div_factor | int)) }}
+    {{ $placeholder = $.placeholder_img.Resize (printf "%vx gif" (div $.placeholder_img.Width $.lqip_div_factor | int)) }}
     {{ $placeholder = $placeholder.Filter (images.GaussianBlur $.lqip_blur_amount) }}
   {{ else }}
     {{ if eq . "dominant" }}
-      {{ $placeholder = $.src.Resize "1x1 gif" }}
+      {{ $placeholder = $.placeholder_img.Resize "1x1 gif" }}
     {{ else }}
       {{ with resources.Get (printf "images/placeholder-colors/%s.gif" . ) }}
         {{ $placeholder = . }}
@@ -36,7 +36,7 @@
       {{ end }}
       {{ $placeholder = $placeholder.Resize "1x1 gif" }}
     {{ end }}
-    {{ $placeholder = $placeholder.Resize (printf "%vx%v gif" ( div $.src.Width $.gif_div_factor | int) (div $.src.Height $.gif_div_factor | int)) }}
+    {{ $placeholder = $placeholder.Resize (printf "%vx%v gif" ( div $.placeholder_img.Width $.gif_div_factor | int) (div $.placeholder_img.Height $.gif_div_factor | int)) }}
   {{ end }}
   {{ $placeholder = printf "data:image/gif;base64,%s" ($placeholder.Content | base64Encode) -}}
 {{ end }}
