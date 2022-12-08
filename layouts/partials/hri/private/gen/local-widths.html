@@ -1,5 +1,5 @@
 {{/*
-  local-widths.html
+  img-common/private/utils/local-widths.html
   Generates a .picture map of the image resized to different widths
 
   @author @sean-au
@@ -34,7 +34,7 @@
   {{ $src := false }}
   {{ $placeholder := false }}
   {{ range $index, $width := $.widths }}
-    {{ $img_resized := partial "imaging-common/private/utils/image-resize" (dict 
+    {{ $img_resized := partial "img-common/private/utils/image-resize" (dict 
       "img" $.img
       "width" $width.width
       "fill_ratio" $.fill_ratio
