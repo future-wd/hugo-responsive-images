@@ -85,6 +85,6 @@
 {{ end }}
 
 {{ if $message }}
-  {{ partial "hri/private/utils/warnf" (dict "message" $message "module" "Hugo Responsive Images") }}
+  {{ partial "img-common/private/utils/warnf" (dict "message" $message "module" "Hugo Responsive Images") }}
 {{ end }}
 {{ return $new_widths }}
