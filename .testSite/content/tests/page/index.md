@@ -169,7 +169,7 @@ testImages:
     source: 
       dataWidths: ['200w', '400w', '607w']
 - id: js-test13
-  title: 14. Image processing options
+  title: 13. Image processing options
   subtitle: 
   params:
     src: test13.jpg
@@ -184,4 +184,13 @@ testImages:
   tests:
     source: 
       dataWidths: ['200w', '400w', '607w']
+- id: js-test14
+  title: 14. Placeholder dominant
+  subtitle: 
+  params:
+    src: test14.jpg
+    alt: Test Image Alt
+    title: Test Image Title
+    placeholder: dominant
+  tests:
 --- 
