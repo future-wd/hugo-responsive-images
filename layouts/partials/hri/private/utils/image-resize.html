@@ -11,6 +11,11 @@
     .width - width to resize to
     .img - image resource object
 
+  @version 1.1.0
+
+  @change-log
+    - 1.1.0 added support for crop transform, refactored code to make more terse
+
   @return Map including . .picture added
 
   @access private
@@ -33,7 +38,6 @@
 {{ else }}
   {{ $params := (printf "%dx %s" $.width $options_string)}}
   {{ $img_resized = .img.Resize $params }}
-  {{ warnf "string: %v" $params }}
 {{ end }}
 
 {{ return $img_resized }}
