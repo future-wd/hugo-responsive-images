@@ -183,7 +183,7 @@
     {{ $ratio = $crop_ratio }}
   {{ end }}
   {{/* SANTIZE WIDTHS WITH UTIL */}}
-  {{ $new_widths := partial "hri/private/utils/restrict-widths" (dict 
+  {{ $new_widths := partial "img-common/private/utils/restrict-widths" (dict 
     "ctx" $.ctx
     "img" $img
     "widths" $widths
