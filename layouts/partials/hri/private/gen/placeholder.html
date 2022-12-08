@@ -32,7 +32,7 @@
         {{ $placeholder = . }}
       {{ else }}
         {{ $message := printf "Placeholder assets/images/placeholder-colors/%s.gif for image %s on page %s cannot be found." $.placeholderType $.img.RelPermalink $.ctx.RelPermalink }}
-        {{ partial "imaging-common/private/utils/errorf" $message}}
+        {{ partial "img-common/private/utils/errorf" $message}}
       {{ end }}
       {{ $placeholder = $placeholder.Resize "1x1 gif" }}
     {{ end }}
