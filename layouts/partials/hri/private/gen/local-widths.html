@@ -34,7 +34,7 @@
   {{ $src := false }}
   {{ $placeholder := false }}
   {{ range $index, $width := $.widths }}
-    {{ $img_resized := partial "hri/private/utils/image-resize" (dict 
+    {{ $img_resized := partial "imaging-common/private/utils/image-resize" (dict 
       "img" $.img
       "width" $width.width
       "fill_ratio" $.fill_ratio
