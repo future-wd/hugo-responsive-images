@@ -168,4 +168,20 @@ testImages:
   tests:
     source: 
       dataWidths: ['200w', '400w', '607w']
+- id: js-test13
+  title: 14. Image processing options
+  subtitle: 
+  params:
+    src: test13.jpg
+    alt: Test Image Alt
+    title: Test Image Title
+    quality: 90
+    rotate: 180
+    resample_filter: Box
+    hint: photo
+    anchor: TopLeft
+    background_color: "#fff"
+  tests:
+    source: 
+      dataWidths: ['200w', '400w', '607w']
 --- 

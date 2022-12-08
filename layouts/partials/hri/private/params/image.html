@@ -109,22 +109,28 @@
   "gif_div_factor" $gif_div_factor }}
 
 {{/* image processing params - dont export these params */}}
-{{ $quality := .quality | default $meta.quality | default (.ctx.Param "image.quality") }}
-{{ $rotate := .rotate | default $meta.rotate | default (.ctx.Param "image.rotate") }}
-{{ $resample_filter := .resample_filter | default .resampleFilter | default $meta.resample_filter | default $meta.resampleFilter | default (.ctx.Param "image.resampleFilter") | default (.ctx.Param "image.resample_filter") }}
-{{ $hint := .hint | default $meta.hint | default (.ctx.Param "image.hint") }}
-{{ $anchor := .anchor | default $meta.anchor | default (.ctx.Param "image.anchor") }}
-{{ $background_color := .background_color | default $meta.background_color | default (.ctx.Param "image.background_color") }}
-{{ $processing_params := dict 
-  "quality" $quality 
-  "rotate" $rotate 
-  "resample_filter" $resample_filter
-  "hint" $hint
-  "anchor" $anchor }}
+{{ $processing_params := dict }}
+{{ if not $provider }}
+  {{ $quality := .quality | default $meta.quality | default (.ctx.Param "image.quality") }}
+  {{ $rotate := .rotate | default $meta.rotate | default (.ctx.Param "image.rotate") }}
+  {{ $resample_filter := .resample_filter | default .resampleFilter | default $meta.resample_filter | default $meta.resampleFilter | default (.ctx.Param "image.resampleFilter") | default (.ctx.Param "image.resample_filter") }}
+  {{ $hint := .hint | default $meta.hint | default (.ctx.Param "image.hint") }}
+  {{ $anchor := .anchor | default $meta.anchor | default (.ctx.Param "image.anchor") }}
+  {{ $background_color := .background_color | default $meta.background_color | default (.ctx.Param "image.background_color") }}
+  {{ $processing_params = dict 
+    "quality" $quality 
+    "rotate" $rotate 
+    "resample_filter" $resample_filter
+    "hint" $hint
+    "anchor" $anchor
+    "background_color" $background_color }}
+  {{/* add processing params as dict for delimiting */}}
+  {{ $params = merge $params (dict "options" $processing_params) }}
+{{ end }}
 
 {{ $params = merge $params $general_params }}
-{{ $params = merge $params (dict "options" $processing_params) }}
 {{ $params = merge $params $placeholder_params }}
+
 
 {{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" $general_params) }}
 {{ partial "hri/private/params/sanitize/image-processing" (dict "ctx" .ctx "img" $img "params" $processing_params) }}
