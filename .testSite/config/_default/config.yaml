@@ -19,3 +19,6 @@ outputs:
 
 enableInlineShortcodes: true
 
+#temp use only!
+# ignoreErrors: ["alt-error"]
+
