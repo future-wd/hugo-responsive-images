@@ -1,0 +1,18 @@
+{{/*
+  figure-tag-top
+  Generates the top half of the figure tag
+
+  @author @sean-au
+
+  @context . Context of $params from figure partial
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/figure-tag-top" . }}
+  
+*/}}
+<figure class="{{ .figure_class }}">
+  {{- with .link -}}
+      <a href="{{ . }}"{{ with $.target }} target="{{ . }}"{{ end }}{{ with $.rel }} rel="{{ . }}"{{ end }}>
+  {{- end -}}

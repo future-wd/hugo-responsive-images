@@ -1,0 +1,15 @@
+@import 'bootstrap/scss/bootstrap.scss';
+
+img[data-sizes="auto"], { display: block; width: 100%; }
+
+.figure {display: block}
+
+// img.lazyload {
+//   display: none;
+// }
+// noscript img.lazyload {
+//   display: block;
+// }
+// .js img.lazyload  {
+//   display: block;
+// } 

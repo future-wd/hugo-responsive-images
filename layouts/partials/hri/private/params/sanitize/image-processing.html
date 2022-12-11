@@ -1,0 +1,101 @@
+{{/*
+  bg-images/private/sanitize/image-processing.html 
+  Sanitizes image processing params
+    - quality
+    - rotate
+    - resample_filter
+    - hint
+    - anchor
+    - background_color
+
+  @author @sean-au
+
+  @context (dict)
+    "params" dict of params
+    "type" site/page/meta/inline
+    "ctx" page context
+    "img" image resource
+    )
+
+  @access private
+
+  @example - Go Template
+    {{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" $general_params) }}
+  */}}
+{{ $error_ctx := dict 
+  "ctx" .ctx
+  "img" .img
+  "element" "image"
+  "module" "Hugo Responsive Images" }}
+
+{{ with .params.quality }}
+  {{ if not (and (eq (printf "%T" .) "int") (and (ge . 1) (le . 100))) }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+      "var" "quality"
+      "val" .
+      "opts" "integers between 1-100 inclusive"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .params.rotate }}
+  {{ if not (and (eq (printf "%T" .) "int") (and (ge . 1) (le . 360))) }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+      "var" "rotate"
+      "val" .
+      "opts" "integers between 1-360 inclusive"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .params.resample_filter }}
+  {{ $filter_opts := (slice "Box" "Lanczos" "CatmullRom" "MitchellNetravali" "Linear" "NearestNeighbor") }}
+  {{ if not (in $filter_opts .) }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+      "var" "resample_filter"
+      "val" .
+      "opts" (delimit $filter_opts ", ")
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .params.hint }}
+  {{ $hint_opts := (slice "picture" "photo" "drawing" "icon" "text") }}
+  {{ if not (in $hint_opts . ) }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+      "var" "hint"
+      "val" .
+      "opts" (delimit $hint_opts ", ")
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{with .params.anchor }}
+  {{ $anchor_opts := (slice "Smart" "Center" "TopLeft" "Top" "TopRight" "Left" "Right" "BottomLeft" "Bottom" "BottomRight") }}
+  {{ if not (in $anchor_opts .) }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+      "var" "anchor"
+      "val" .
+      "opts" (delimit $anchor_opts ", ")
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .params.background_color }}
+  {{ $hex := findRE `^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$` . }}
+  {{ if not $hex }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+      "var" "background_color"
+      "val" .
+      "opts" "3 or 6 digit hex color code"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ return true }}

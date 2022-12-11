@@ -1,0 +1,249 @@
+{{/*
+  params.html
+  Takes inputs and page context.
+  - Processes some inputs
+  - Some inputs default to page/site params
+  - Some inputs passed through
+  - page context passed through
+  Creates a new context for other partials to use
+
+  @author @sean-au
+
+  @context . Context from image partial
+
+  @return Map including .img, .page and various inputs
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/params" . }}
+
+  UPGRADE:
+
+  santize siteParams > pageParams > pageMeta > inlineParams
+  
+*/}}
+
+{{ $meta := dict }}
+{{ $page := .ctx.Params.image }}
+{{ $params :=  . }}
+{{ $img := false }}
+{{ $type := .type | default (.ctx.Param "image.type") }}
+{{ if eq $type "global" }}
+  {{/* global resource */}}
+  {{ $img = resources.Get .src }}
+{{ else if (eq $type "remote") }}
+  {{ $img = resources.GetRemote .src }}
+{{ else }}
+  {{/* page resource */}}
+  {{ $img = .ctx.Resources.GetMatch (print .src)   }}
+  {{/* add page resource image params to variable */}}
+  {{ $meta = $img.Params.images }}
+{{ end }}
+
+{{ $params = merge $params (dict 
+  "img" $img
+  "type" $type) }}
+
+{{/* camelCase params have been kept to avoid breaking changes, will be depreciated in future versions */}}
+
+{{/* general params */}}
+{{ $suppress_width_warning := .suppress_width_warning | default .suppressWidthWarning | default (.ctx.Param "image.suppressWidthWarning") | default (.ctx.Param "image.suppress_width_warning") }}
+{{ $resource_title := "" }}
+  {{ if ne $img.Title ($img | string) }}
+  {{ $resource_title = $img.Title }}
+{{ end }}
+{{ $title := .title | default $meta.title | default $resource_title }}
+
+{{ $fill_ratio :=  .fill_ratio | default .fillRatio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fillRatio  }}
+{{ $crop_ratio :=  .crop_ratio | default $meta.crop_ratio | default $page.crop_ratio }}
+{{ $width := .width | default $meta.width | default .ctx.Params.image.width }}
+{{ $densities := .densities | default $meta.densities | default (.ctx.Param "image.densities") }}
+{{ $densities = sort $densities }}
+{{ $widths := "" }}
+{{ if or (eq .input "render_hook") (eq .input "shortcode") }}
+  {{ $widths = .widths }}
+{{ else }}
+  {{ $widths = .widths | default $meta.widths | default (.ctx.Param "image.widths") }}
+{{ end }}
+
+{{ $formats := .formats | default $meta.formats | default (.ctx.Param "image.formats") }}
+{{ $provider := .provider | default $meta.provider | default (.ctx.Param "image.provider") }}
+{{ $loading := .loading | default $meta.loading | default (.ctx.Param "image.loading") }}
+{{ $sizes := .sizes | default $meta.sizes | default $page.sizes }}
+{{ $alt :=  .alt | default $meta.alt }}
+{{ $noscript := .noscript | default $meta.noscript | default (.ctx.Param "image.noscript") }}
+{{ $class := "" }}
+{{ $caption := "" }}
+{{ if eq .input "figure" }}
+  {{ $class = .class }}
+  {{ $caption = .caption }}
+{{ else }}
+  {{ $class = .class | default $meta.class | default (.ctx.Param "image.class") }}
+{{ end }}
+
+{{ $general_params := dict 
+  "suppress_width_warning" $suppress_width_warning
+  "title" $title
+  "fill_ratio" $fill_ratio
+  "crop_ratio" $crop_ratio
+  "widths" $widths
+  "width" $width
+  "densities" $densities
+  "formats" $formats
+  "provider" $provider
+  "loading" $loading
+  "sizes" $sizes
+  "class" $class
+  "caption" $caption
+  "alt" $alt
+  "noscript" $noscript }}
+
+{{/* placeholder params */}}
+{{ $placeholder := .placeholder | default $meta.placeholder | default (.ctx.Param "image.placeholder") }}
+{{ $lqip_div_factor := .lqip_div_factor | default .lqipDivFactor | default $meta.lqip_div_factor | default $meta.lqipDivFactor | default (.ctx.Param "image.lqip_div_factor") | default (.ctx.Param "image.lqip_div_factor") }}
+{{ $lqip_blur_amount := .lqip_blur_amount | default .lqipBlurAmount | default $meta.lqip_blur_amount | default $meta.lqipBlurAmount | default (.ctx.Param "image.lqipBlurAmount") | default (.ctx.Param "image.lqip_blur_amount") }}
+{{ $gif_div_factor := .gif_div_factor | default .gifDivFactor | default $meta.gif_div_factor | default $meta.gifDivFactor | default (.ctx.Param "image.gifDivFactor") | default (.ctx.Param "image.gif_div_factor") }}
+{{ $placeholder_params := dict 
+  "placeholder" $placeholder
+  "lqip_div_factor" $lqip_div_factor
+  "lqip_blur_amount" $lqip_blur_amount
+  "gif_div_factor" $gif_div_factor }}
+
+{{/* image processing params - dont export these params */}}
+{{ $processing_params := dict }}
+{{ if not $provider }}
+  {{ $quality := .quality | default $meta.quality | default (.ctx.Param "image.quality") }}
+  {{ $rotate := .rotate | default $meta.rotate | default (.ctx.Param "image.rotate") }}
+  {{ $resample_filter := .resample_filter | default .resampleFilter | default $meta.resample_filter | default $meta.resampleFilter | default (.ctx.Param "image.resampleFilter") | default (.ctx.Param "image.resample_filter") }}
+  {{ $hint := .hint | default $meta.hint | default (.ctx.Param "image.hint") }}
+  {{ $anchor := .anchor | default $meta.anchor | default (.ctx.Param "image.anchor") }}
+  {{ $background_color := .background_color | default $meta.background_color | default (.ctx.Param "image.background_color") }}
+  {{ $processing_params = dict 
+    "quality" $quality 
+    "rotate" $rotate 
+    "resample_filter" $resample_filter
+    "hint" $hint
+    "anchor" $anchor
+    "background_color" $background_color }}
+  {{/* add processing params as dict for delimiting */}}
+  {{ $params = merge $params (dict "options" $processing_params) }}
+{{ end }}
+
+{{ $params = merge $params $general_params }}
+{{ $params = merge $params $placeholder_params }}
+
+
+{{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" $general_params) }}
+{{ partial "hri/private/params/sanitize/image-processing" (dict "ctx" .ctx "img" $img "params" $processing_params) }}
+{{ partial "hri/private/params/sanitize/image-placeholder" (dict "ctx" .ctx "img" $img "params" $placeholder_params) }}
+
+{{/* POST SANITIZATION MODIFICATIONS TO PARAMS */}}
+
+{{ with $fill_ratio }}
+  {{/* height to width ratio of .fill_ratio */}}
+  {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
+  {{ $fill_ratio = div (index . 1 | float) (index . 0 | float) }}
+  {{ $params = merge $params (dict "fill_ratio" $fill_ratio) }}
+{{ end }}
+
+{{ with $crop_ratio }}
+  {{/* height to width ratio of .crop_ratio */}}
+  {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
+  {{ $crop_ratio = div (index . 1 | float) (index . 0 | float) }}
+  {{ $params = merge $params (dict "crop_ratio" $crop_ratio) }}
+{{ end }}
+
+{{/*********************************************************************
+  **** if .width present for pixel density srcset                        *
+  **** produce array [{desc: "1x", width: 300},{desc: "2x", width: 600}] *
+  ************************************************************************/}}
+
+{{ if $width }}
+  {{/* clear $widths as were only working with one width */}}
+  {{ $widths = slice }}
+  {{ range $density := $densities }}
+    {{ $widths = $widths | append (slice
+      (dict
+      "desc" (printf "%dx" $density)
+      "width" (mul $width $density)
+      )) }}
+  {{ end }}
+  {{ $params = merge $params (dict 
+    "widths" $widths
+    "width" $width
+    ) }}
+{{ else if $widths }}
+{{/* else produce responsive srcset
+  ** produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
+  */}}
+  {{ $widths = sort $widths }}
+  {{ $ratio := false }}
+  {{ if $fill_ratio }}
+    {{ $ratio = $fill_ratio }}
+  {{ else if $crop_ratio }}
+    {{ $ratio = $crop_ratio }}
+  {{ end }}
+  {{/* SANTIZE WIDTHS WITH UTIL */}}
+  {{ $new_widths := partial "img-common/private/utils/restrict-widths" (dict 
+    "ctx" $.ctx
+    "img" $img
+    "widths" $widths
+    "ratio" $ratio
+    "difference" (site.Params.minWidthDifference | int)
+    "suppress" $suppress_width_warning )}}
+
+  {{/* create and export variable */}}
+  {{ $widthsArray := slice }}
+  {{ range $width := $new_widths }}
+    {{ $widthsArray = $widthsArray | append (slice
+      (dict
+      "desc" (printf "%dw" $width)
+      "width" $width
+      )) }}
+  {{ end }}
+  {{ $widths = $widthsArray }}
+  {{ $params = merge $params (dict "widths" $widths) }}
+{{ end }}
+
+
+
+{{/* if no width set, no sizes set & loading=lazysizes: sizes property defaults to data-sizes=auto 
+  ** otherwise if no width set and sizes is set, sizes property set */}}
+{{ if not $width }}
+  {{ $sizes_prop := false }}
+  {{ if and (eq $loading "lazysizes") (not $sizes) }}
+      {{ $sizes_prop = `data-sizes="auto"` }}
+  {{ else if $sizes }}
+    {{ $sizes_prop = printf `sizes="%s"` $sizes }}
+  {{ end }}
+  {{ with $sizes_prop }}
+    {{ $params = merge $params (dict "sizes_prop" . ) }}
+  {{ end }}
+{{ end }}
+
+{{ if eq $loading "lazysizes" }} 
+  {{ $class = print $class " lazyload" }}
+{{ end }}
+{{ $params = merge $params (dict "class" $class ) }}
+
+{{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
+
+{{ if not $alt }}
+  {{ if .caption }}
+    {{ $alt = .caption | markdownify | plainify }}
+  {{ else if $title }}
+    {{ $alt = printf "Image of %s" $title }}
+  {{ else }}
+    {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $img.RelPermalink .ctx.RelPermalink }}
+  {{ end }}
+{{ end }}
+{{ $params = merge $params (dict "alt" $alt) }}
+
+{{ if not $title }}
+  {{ with .figcaption_title }}
+    {{ $title = . }}
+  {{ end }}
+{{ end }}
+
+{{ return $params }}

@@ -1,24 +1,27 @@
 image:
   widths: [600, 900, 1300]
-  # shortcodeWidths: [600, 900, 1300]
-  # renderHookWidths: [600, 900, 1300]
+  # shortcode_widths: [600, 900, 1300]
+  # render_hook_widths: [600, 900, 1300]
   densities: [1, 2]
   formats: [original, webp]
   class: img-fluid
-  figureClass: figure
-  figcaptionClass: figure-caption
-  figureImageClass: "figure-img img-fluid"
-  figureTitleH: 4
-  renderHookWrapperClass: img-wrapper
-  shortcodeWrapperClass: img-wrapper
-  renderHook: false
+  figure_class: figure
+  figcaption_class: figure-caption
+  figcaption_title_class: 4
+  figcaption_title_h: 4
+  figure_image_class: "figure-img img-fluid"
+  render_hook_wrapper_class: img-wrapper
+  shortcode_wrapper_class: img-wrapper
+  render_hook: false
   loading: lazy
-  sizes: user
-  # placeholder: lqip/dominant/file_name 
-  lqipBlurAmount: 5
-  lqipDivFactor: 5
-  gifDivFactor: 10
+  lqip_blur_amount: 6
+  lqip_div_factor: 2
+  gif_div_factor: 10
   # provider: netlify
-  # suppressWidthWarning: true
+  suppress_width_warning: false
   type: page # or global
-  minWidthDifference: 40
+  min_width_difference: 40
+  noscript: false
+
+
+# developer notes

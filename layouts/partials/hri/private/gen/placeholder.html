@@ -1,0 +1,43 @@
+
+{{/*
+  generate-placeholder
+  Generates gif image placeholders 
+  - lqip 
+  - dominant color
+  - set color via image in /assets/images/placeholder-colors/[color].gif
+
+  @author @sean-au
+
+  @context sanitized params
+    This partial is only run if loading=lazysizes
+
+  @returns placeholder base64 encoded image string
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/generate-placeholder" . }}
+  
+*/}}
+{{ $placeholder := false}}
+{{ with .placeholder }}
+  {{ if eq . "lqip" }}
+    {{ $placeholder = $.placeholder_img.Resize (printf "%vx gif" (div $.placeholder_img.Width $.lqip_div_factor | int)) }}
+    {{ $placeholder = $placeholder.Filter (images.GaussianBlur $.lqip_blur_amount) }}
+  {{ else }}
+    {{ if eq . "dominant" }}
+      {{ $placeholder = $.placeholder_img.Resize "1x1 gif" }}
+    {{ else }}
+      {{ with resources.Get (printf "images/placeholder-colors/%s.gif" . ) }}
+        {{ $placeholder = . }}
+      {{ else }}
+        {{ $message := printf "Placeholder assets/images/placeholder-colors/%s.gif for image %s on page %s cannot be found." $.placeholderType $.img.RelPermalink $.ctx.RelPermalink }}
+        {{ partial "img-common/private/utils/errorf" $message}}
+      {{ end }}
+      {{ $placeholder = $placeholder.Resize "1x1 gif" }}
+    {{ end }}
+    {{ $placeholder = $placeholder.Resize (printf "%vx%v gif" ( div $.placeholder_img.Width $.gif_div_factor | int) (div $.placeholder_img.Height $.gif_div_factor | int)) }}
+  {{ end }}
+  {{ $placeholder = printf "data:image/gif;base64,%s" ($placeholder.Content | base64Encode) -}}
+{{ end }}
+{{ return $placeholder }}

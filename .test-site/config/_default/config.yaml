@@ -1,0 +1,24 @@
+baseURL: https://hugo-responsive-images.netlify.app/
+languageCode: en
+title: Hugo Responsive Images Test Site
+
+# disable all extra outputs
+disableKinds:
+- sitemap
+- taxonomy
+- term
+- RSS
+
+outputs:
+  # home:
+  # - HTML
+  # - JSON
+  page:
+  - HTML
+  - JSON
+
+enableInlineShortcodes: true
+
+#temp use only!
+# ignoreErrors: ["alt-error"]
+

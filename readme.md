@@ -24,8 +24,8 @@ module:
 
 ## Prerequisites
 
-- You must install the latest GoLang (minimum 1.12). See <https://golang.org/dl/>.
-- You must have a VCS client e.g. git. See <https://git-scm.com/downloads/>.
+- The latest GoLang (minimum 1.12). See <https://golang.org/dl/>.
+- The lates git for downloading the module. See <https://git-scm.com/downloads/>.
 - Install the latest hugo (at least 0.83.0)
 - You hugo project must be initialized for hugo modules e.g. `hugo mod init github.com/username/project` in the root of your project.
 - Update your modules with `hugo mod get -u`
@@ -34,9 +34,7 @@ module:
 
 The first set of configuration items are from [Hugo's image processing configuration. See the docs for more info.](https://gohugo.io/content-management/image-processing/#processing-options).
 
-All the hugo image options can be set at a partial/shortcode level. See below
-
-You can suppress the no alt text error with the `ignoreErrors` config. If you suppress the error, the ALT text will default to "image of [title]` (title defaults to the page's title)
+You can suppress the no alt text error with the `ignoreErrors` config. 
 
 ```yaml
 
@@ -45,8 +43,8 @@ imaging:
   bgColor: '#ffffff' # when converting transparent images to formats which dont support transparency
   hint: photo # for conversin to webp
   quality: 75 # compression quality
-  resampleFilter: Box # compression filter
-ignoreErrors: ["alt-error"] # suppress error message if no alt text has been provided.
+  resample_filter: Box # compression filter
+ignoreErrors: ["alt-error"] # suppress error message if no alt text (or title) has been provided.
 ```
 
 > If setting imaging options at a site level, this is the best method. You can also use image parameters if you wish to set image options just for this module, although this would probably be best used at a page level.
@@ -58,7 +56,7 @@ params:
     bgColor: "#ffffff"
     hint: photo
     quality: 75
-    resampleFilter: Box
+    resample_filter: Box
 ```
 
 ## Configuration - Site or page params (Defaults shown)
@@ -67,32 +65,31 @@ params:
 params:
   image:
     widths: [600, 900, 1300] # widths to generate if widths not specified
-    # shortcodeWidths: [600, 900, 1300] # custom widths for shortcode use in markdown files. If unset defaults to widths
-    # renderHookWidths: [600, 900, 1300] # custom widths for render hook use in markdown files. If unset defaults to shortcode widths
+    # shortcode_widths: [600, 900, 1300] # custom widths for shortcode use in markdown files. If unset defaults to widths
+    # render_hook_widths: [600, 900, 1300] # custom widths for render hook use in markdown files. If unset defaults to shortcode widths
     densities: [1,2] # densities which are output when an image width is specified
     formats: [webp, original] # set output formats. options are `original`, `bmp`, `gif`, `jpeg`, `jpg`, `png`, `tif`, `tiff`, and `webp`. In order of least supported to most supported.
     class: img-fluid # default image class if no class is specified
-    figureClass: "figure img-fluid" # default figure class
-    figcaptionClass: figure-caption # default figcaption class
-    figureImageClass: "figure-img img-fluid" # default figure image class (appended to image class) ## USE .class inline
-    figureTitleH: 4 # heading level for figure title
-    renderHookWrapperClass: img-wrapper # image wrapper class for render hook
-    shortcodeWrapperClass: img-wrapper # image wrapper class for shortcode
-    loading: lazy # or auto/lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js 
-    sizes: user # or lazysizes # uses lazysizes to automatically generate the sizes property
-    renderHook: false # set to false to disable included markdown image render hook
+    figure_class: "figure img-fluid" # default figure class
+    figure_image_class: "figure-img img-fluid" # default figure image class (appended to image class) ## USE .class to override outside of config
+    figcaption_class: figure-caption # default figcaption class
+    figcaption_title_h: 4 # heading level for figure title
+    render_hook_wrapper_class: img-wrapper # image wrapper class for render hook
+    shortcode_wrapper_class: img-wrapper # image wrapper class for shortcode
+    loading: lazy # or auto/lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js
+    render_hook: false # set to false to disable included markdown image render hook
                       # override by setting imageRenderHook: true/false in front matter
     # placeholder: lqip # or dominant/file_name  (see colours set up in assets/images/placeholder-colors) use filename without .gif
-    lqipBlurAmount: 5 # apply gaussian blur amount of 5 to lqip
+    lqip_blur_amount: 5 # apply gaussian blur amount of 5 to lqip
                       # may need to be increased at a page level for larger images
-    lqipDivAmount: 5 # lqip is 5x smaller than the smallest image in srcset
-    gifDivAmount: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
+    lqip_div_amount: 5 # lqip is 5x smaller than the smallest image in srcset
+    gif_div_amount: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
     # provider: netlify # currently only supports netlify image processing.
-    # suppressWidthWarning: true # turn off image too narrow warning
-    # type: page # or global # useful for setting all images on a page to global resources, or set default
+    suppress_width_warning: false # turn of warning that image cannot be resized to the widths specified
+    type: page # or global # useful for setting all images on a page to global resources, or set default
 ```
 
-> All of image parameter configuration items can also be configured on a per page basis by adding the config to the page's front matter.
+All of image parameter configuration items can also be configured on a per page basis by adding the config to the page's front matter.
 
 For example:
 
@@ -104,6 +101,17 @@ image:
 ---
 ```
 
+You can also use [resource meta data](https://gohugo.io/content-management/page-resources/#page-resources-metadata) in the page's markdown - you have to target the resource(s) with glob matching e.g.
+
+```
+resources:
+- src: images/sunset.jpg # you can also glob match e.g. "product*.jpg"
+  params:
+    images:
+      placeholder: lqip # use any of the settings here
+```
+
+
 ## Partial or shortcode configuration
 
 The following options are only available at a partial or shortcode level:
@@ -111,17 +119,17 @@ The following options are only available at a partial or shortcode level:
 ```go
 # image and figure
 "src" "image_path.jpg" # relative to page, or assets folder (for global resource)
-"title" "Image Title" # defaults to figureTitle, and then the page's title
+"title" "Image Title" # defaults to figureTitle, and then the pages title
 "class" "img-fluid" # class for image (not a figure image)
 "alt" "Image Alt Text"
-"fillRatio" (slice 4 3) # width by height, image will be cropped. 
+"fill_ratio" (slice 4 3) # width by height, image will be cropped. 
 "width" 300 # for fixed with image
 "widths" (slice 500 900 1500) # for responsive images
 # figure only
-"figureTitle" "Title for figure caption" # can be left blank
+"figure_title" "Title for figure caption" # can be left blank
 "caption" "Figure Caption Text"
 "attr" "Author Attribution"
-"attrLink" "Attribution link"
+"attr_link" "Attribution link"
 ```
 
 The following options can be configured at a partial/shortcode & page/site config level
@@ -144,22 +152,24 @@ See above for explanations
 "target" "_blank"
 "rel" "noopener noreferrer"
 "link" "https://gohugo.io"
-"figureClass" "figure-img img-fluid"
-"figureCaptionClass" "figure-caption"
-"figureTitleH" 4
+"figure_class" "figure-img img-fluid"
+"figcaption_class" "figure-caption"
+"figcaption_title_h" 4
 
 # placeholder options
 
 "placeholder" "lqip" # set to lqip, dominant, [file_name] or false
-"lqipDivFactor" 5 # smallest image in srcset is divided by this number for LQIP size
-"lqipBlurAmount" 5 # amount of gaussian blur to apply to LQIP
-"gifDivFactor" 10 # dominant/gif file is resized to this division factor (of smallest image in srcset)
+"lqip_div_factor" 5 # smallest image in srcset is divided by this number for LQIP size
+"lqip_blur_amount" 5 # amount of gaussian blur to apply to LQIP
+"gif_div_factor" 10 # dominant/gif file is resized to this division factor (of smallest image in srcset)
 
-# hugo image processing options - if setting at a site level, its recommended to use hugos native image config
+# hugo image processing options
+
+its recommended to use [hugos native image config](https://gohugo.io/content-management/image-processing/#imaging-configuration) unless you want to only set for this module.
 
 "quality" 75
 "rotate" 0
-"resampleFilter" "box"
+"resample_filter" "box"
 "hint" "photo"
 "anchor" "smart"
 ``
@@ -202,7 +212,7 @@ See above for explanations
 {{ partial "image" (dict
   "src" "images/image.jpg"
   "page" .
-  // if in config sizes=user (not needed for sizes=lazysizes) 
+  // sizes not needed if loading=lazysizes) 
   "sizes" [string] // set the sizes property for the image tag, defaults to "100vw"
   // optional 
   "widths" (slice 400 800 1200) // override default responsive widths.
@@ -217,7 +227,7 @@ See above for explanations
 {{ partial "image"  (dict
   "page" .
   "src" "image.jpg"
-  "fillRatio" (slice 4 3)
+  "fill_ratio" (slice 4 3)
   ) }}
 ```
 
@@ -239,7 +249,7 @@ See above for explanations
 {{< image image.jpg >}}
 ```
 
-> The alt text will default to "image of [page title]" You will need to suppress the alt error (see above)
+> The image will have no alt text, you will need to suppress the error.
 
 ## Partial - Figure
 
@@ -247,7 +257,7 @@ See above for explanations
 {{ partial "figure"  (dict
   "page" .
   "src" "image.jpg" 
-  "figureTitle" "Boat x54"
+  "figure_title" "Boat x54"
   "caption" "My favourite boat"
   "link" "https://www.google.com"
   ) }}
@@ -259,15 +269,22 @@ By default a markdown render hook template has been included. To turn it on set 
 
 The render hook will only render page resource images - the image path will be relative to the page's markdown file.
 
-You can set configuration at a page or site level e.g. 
+The render hook template will take title and alt from the markdown image tag e.g.
+
+```md
+[Image ALT text](img1.jpg "Image TITLE text")
+```
+
+You can set configuration at a resource meta data, page or site level e.g.
 
 - make all images on the page global (image.type: global)
 - turn on the render hook just for one page (image.imageRenderHook: true)
 - set the widths for the page (image.widths: [400, 900])
+- set the image width through page image resource meta data
 
 Render hook only responsive widths default to shortcode responsive widths, and then standard widths. See above for site/page configuration. (image.RenderHookWidths > image.ShortcodeWidths > image.widths)
 
-A div wrapper around the image has been provided see above for configuration (image.renderHookWrapperClass)
+A div wrapper around the image has been provided see above for configuration (image.render_hook_wrapper_class)
 
 You can also set configuration via image resources meta data using the following example:
 
@@ -291,24 +308,39 @@ Then..
 
 (I have opted to set alt and title via frontmatter to make the example more informative..)
 
-<!-- 
+
 ### Noscript required HTML, JS and CSS
 
 The following elements are required for the `<noscript>` module to work. The script must come first.
 
+```yaml
+#config.yaml
+params:
+  image:
+    noscript: true # or enable at page/meta data/inline level
+```
+
 ```HTML
 
-1<html class="no-js">
+<html>
   <head>
     <script>
-      document.documentElement.className = document.documentElement.className.replace("no-js", "js");
+      const noJs = document.documentElement.classList.contains('no-js');
+      if (noJs) document.documentElement.classList.remove('no-js');
+      document.documentElement.classList.add('js');
     </script>
     <title>Title</title>
     <style>
       /* can also be included in a css file */
-      .no-js img.lazyload {
-          display: none;
-        }
+    img.lazyload {
+      display: none;
+    }
+    noscript img.lazyload {
+      display: block;
+    }
+    .js img.lazyload  {
+      display: block;
+    } 
     </style>
   </head>
   <body>
@@ -316,7 +348,6 @@ The following elements are required for the `<noscript>` module to work. The scr
   </body>
 </html>
 
-``` -->
 
 ## Placeholder
 
@@ -340,11 +371,11 @@ The following colours (based on bootstrap) have been provided:
 
 To create a custom color, make a 10px x 10px gif image with only 1 color and save it in the directory and then call it by its file name, without the .gif extension.
 
-Lqip gaussian blur amount can be adjusted with the `lqipBlurAmount` configuration item in site/page configuration, or per image.
+Lqip gaussian blur amount can be adjusted with the `lqip_blur_amount` configuration item in site/page configuration, or per image.
 
-Lqip image size division factor can be adjusted with the `lqipDivFactor` configuration item in site/page configuration, or per image. It is based off the smallest image in the srcset.
+Lqip image size division factor can be adjusted with the `lqip_div_factor` configuration item in site/page configuration, or per image. It is based off the smallest image in the srcset.
 
-Dominant/single color gif image size division factor can be adjusted with the `gifDivFactor` configuration item in site/page configuration, or per image. It is based off the smallest image in the srcset.
+Dominant/single color gif image size division factor can be adjusted with the `gif_div_factor` configuration item in site/page configuration, or per image. It is based off the smallest image in the srcset.
 
 example config:
 
@@ -355,10 +386,10 @@ params:
     loading: lazysizes # must be set as lazysizes will swap out the placeholder on load
     placeholder: lqip   # or dominant or file_name e.g. gray-300 
     # config below this line is not required if not changing the defaults
-    lqipBlurAmount: 5 # apply gaussian blur amount of 5 to lqip
-                      # may need to be increased at a page level for larger images
-    lqipDivFactor: 5 # lqip is 5x smaller than the smallest image in srcset
-    gifDivFactor: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
+    lqip_blur_amount: 6 # apply gaussian blur amount of 6 to lqip
+                      # may need to be increased at inline level for larger images
+    lqip_div_factor: 2 # lqip is 2x smaller than the smallest image in srcset
+    gif_div_factor: 10 # single color gif placeholder will be 10x smaller than smallest image in srcset
 ```
 
 ## Setting up Lazysizes.js
@@ -411,7 +442,6 @@ lazySizes.cfg.nativeLoading = {
 params:
   image:
     loading: lazysizes
-    sizes: lazysizes
 ```
 
 ## Contribution
@@ -428,51 +458,52 @@ Test site resides in /.testSite
 | --------- | --- | --- | --- | --- | ----------- | ------- |
 | src       | YES | NO  | NO  | NO  | Provide resource path | `undefined` |
 | type      | YES | YES | YES | YES | page/global - Type of image resource | `"page"` |
-| title     | YES | YES | NO  | NO  | Image title | `figureTitle` then the page's `.Title`
-| fillRatio | YES | YES | YES | YES | Fill ratio for image | `null` |
+| title     | YES | YES | NO  | NO  | Image title | `figcaption_title` |
+| fill_ratio | YES | YES | YES | NO | Fill ratio for image | `null` |
+| crop_ratio | YES | YES | YES | NO | Crop ratio for image | `null` |
 | widths    | YES | YES | YES | YES | Widths for responsive width image generation | [600, 900, 1300] |
 | width     | YES | YES | YES | NO  | Set widths for fixed with image. Disables widths | 'null' |
 | densities | YES | YES | YES | YES | Densities for fixed with image generation | [1,2] |
 | formats   | YES | YES | YES | YES | Image formats to generate. One must be original. In order of browser support. | ["original", "webp" ] |
 | provider  | YES | YES | YES | YES | External image processing provider. Only netlify supported for now | `null` |
 | loading   | YES | YES | YES | YES | auto/lazy/lazysizes - Type of image loading | `"auto"` |
-| sizes     | YES | YES | YES | YES | [string]/lazysuzes - Image sizes for responsive widths images | `"100vw"` |
+| sizes     | YES | YES | YES | NO  | [string] - Image sizes for responsive widths images | `"100vw"` |
 | class     | YES | YES | YES | YES | Image class | `"img-fluid"` |
-| alt       | YES | YES | NO  | NO  | Image alt text | `caption` (see figure parameters) |
+| alt       | YES | YES | NO  | NO  | Image alt text | `caption` (figure) then `Image of [title]` then generates error. |
 
 ## Placeholder variables
 
 | Name | Inline | Meta | Page Param | Site Param | Description | Default |
-| -------------- | --- | --- | --- | --- | ----------- | ------- |
-| placeholder    | YES | YES | YES | YES | lqip/dominant/[gif file name] - Set the placeholder type | `null` |
-| lqipDivFactor  | YES | YES | YES | YES | Division factor for lqip gif size | 5 |
-| lqipBlurAmount | YES | YES | YES | YES | Amount of gaussian blur for lqip | 5 |
-| gifDivFactor   | YES | YES | YES | YES | Division factor for solid gif placeholder | 10 |
+| ---------------- | --- | --- | --- | --- | ----------- | ------- |
+| placeholder      | YES | YES | YES | YES | lqip/dominant/[gif file name] - Set the placeholder type | `null` |
+| lqip_div_factor  | YES | YES | YES | YES | Division factor for lqip gif size | 5 |
+| lqip_blur_amount | YES | YES | YES | YES | Amount of gaussian blur for lqip | 5 |
+| gif_div_factor   | YES | YES | YES | YES | Division factor for solid gif placeholder | 10 |
 
 ## Image processing parameters (overrides hugo image processing defaults if set at any level)
 
-See <link> for settings
+See <https://gohugo.io/content-management/image-processing/#imaging-configuration> for settings
 
 | Name           | Inline | Meta | Page Param | Site Param | Description |
-| -------------- | --- | --- | --- | --- | ----------- | 
+| -------------- | --- | --- | --- | --- | ----------- |
 | quality        | YES | YES | YES | YES | Override hugo image processing default |
 | rotate         | YES | YES | YES | YES | Override hugo image processing default |
-| resampleFilter | YES | YES | YES | YES | Override hugo image processing default |
+| resample_filter| YES | YES | YES | YES | Override hugo image processing default |
 | hint           | YES | YES | YES | YES | Override hugo image processing default |
 | anchor         | YES | YES | YES | YES | Override hugo image processing default |
 
 ## Figure Specific Parameters
 
-| Name              | Inline | Meta | Page Param | Site Param | Description | Default |
-| ------------------ | --- | --- | --- | --- | ----------- | ------- |
-| link               | YES | YES | NO  | NO  | Figure image link | `null` |
-| target             | YES | YES | YES | YES | Figure link or attrLink target | `"_blank"` for http links |
-| rel                | YES | YES | YES | YES | Figure link or attrLink rel| `"noopender, noreferrer"` for http links |
-| figureClass        | YES | YES | YES | YES | Figure class | `"figure"` |
-| figureImageClass   | YES | YES | YES | YES | Figure image class | `"figure-img img-fluid"` |
-| figureCaptionClass | YES | YES | YES | YES | Figcaption class | `"figure-caption"` |
-| figureTitleH       | YES | YES | YES | YES | Figcaption title level | 4 |
-| figureTitle        | YES | YES | NO  | NO  | Figcaption Title | `null` |
-| attr               | YES | YES | NO  | NO  | Figcaption atttribute | `null` |
-| attrLink           | YES | YES | NO  | NO  | Figcaption attribute link | `null` |
-| caption            | YES | YES | NO  | NO  | Figcaption caption | `null` |
+| Name              | Inline | Meta | Page Param | Site Param | Description | Default | Notes |
+| ------------------ | --- | --- | --- | --- | ----------- | ------- | --- |
+| link               | YES | YES | NO  | NO  | Figure image link | `null` | |
+| target             | YES | YES | YES | YES | Figure link or attrLink target | `"_blank"` for http links | |
+| rel                | YES | YES | YES | YES | Figure link or attrLink rel| `"noopender, noreferrer"` for http links | |
+| figure_class       | YES | YES | YES | YES | Figure class | `"figure"` | |
+| figure_image_class | YES | YES | YES | YES | Figure image class | `"figure-img img-fluid"` | Outside of config file, .class is used to override default. |
+| figcaption_class   | YES | YES | YES | YES | Figcaption class | `"figure-caption"` | |
+| figcaption_title_h | YES | YES | YES | YES | Figcaption title level | 4 | |
+| figcaption_title   | YES | YES | NO  | NO  | Figcaption Title | `null` | |
+| attr               | YES | YES | NO  | NO  | Figcaption atttribute | `null` | |
+| attr_link          | YES | YES | NO  | NO  | Figcaption attribute link | `null` | |
+| caption            | YES | YES | NO  | NO  | Figcaption caption | `null` | |

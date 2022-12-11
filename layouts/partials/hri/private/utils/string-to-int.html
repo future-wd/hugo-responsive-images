@@ -21,14 +21,15 @@
 {{/* check for array and recurse, else process */}}
 {{ if reflect.IsSlice $param }}
   {{/* run this partial for each element in array */}}
-    {{ $param = apply $param "partial" "hri/private/string-to-int" "." }}
+    {{ $param = apply $param "partial" "hri/private/utils/string-to-int" "." }}
 {{ else }}
-  {{/* check for integer */}}
-  {{/* if only numbers FIX */}}
-  {{/* doesnt work as letters are also being let through */}}
-  {{ if eq (printf "%T" $param) "int" }}
+  {{/* allows integers, and float. does not allow .xxx numbers (must have leading 0) */}}
+  {{ $onlyNumbers := findRE `^(0|[1-9]\d*)?(\.\d+)?$` $param }}
+  {{ if $onlyNumbers }}
     {{ $param = int $param }}
+  {{ else }}
   {{ end }}
+  
 {{ end }}
 
 {{ return $param }}

@@ -1,0 +1,20 @@
+{{- /*
+  render-hook-template
+  generates params from render hook input.
+  standard params are passed through
+
+  @author @sean-au
+
+  @context dict 
+    .params - image/figure params
+    .render_hook_params   - shortcode specific 
+
+  @access private
+
+  @example - Go Template
+  {{ partial "render-hook-template" . }}
+
+*/ -}}
+<div class="{{ .render_hook_params.render_hook_wrapper_class }}">
+  {{ partial "image" .params }}
+</div>

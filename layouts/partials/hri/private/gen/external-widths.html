@@ -1,0 +1,84 @@
+{{/* 
+
+  providers: 
+  
+  netlify image processing:
+  width:    ?nfresize=fit&w=300 /
+  fitRatio: ?nfresize=smartcrop&w=300&h=300 
+
+  imgix:
+  width: ?w
+  height: ?h
+  fit=crop&w=300&h=300
+  quality: ?q=75 (default)
+  output format: ?fm=webp
+  rotate: 0-359 ?rot=
+
+  vercel?
+
+  other providers to follow..
+  /* }}
+  {{/*
+    exteral-widths
+    Generates images via external api
+    currently only supports provider: netlify
+  
+    @author @sean-au
+  
+    @context . Context from generate-widths partial
+  
+    @return Map of image widths
+  
+    @access private
+  
+    @example - Go Template
+    {{ partial "hri/private/external-widths" . }}
+    
+  */}}
+
+
+
+{{/***********************************
+  **** loop over each width         ****
+  **************************************/}}
+
+{{ $picture := dict }}
+{{ $srcset := slice }}
+{{ $src := "" }}
+{{ range $format := (slice "original") }}
+
+  {{ range $index, $width := $.widths }}
+    {{ $imgResized := "" }}
+    {{/* output images with altered aspect ratio, if .fill_ratio is provided */}}
+    {{ with $.fill_ratio }}
+      {{/* resulting fillHeight must be converted to integer for use with image resize */}}
+      {{ $fillHeight := mul $width.width . | int }}
+      {{/* resize image */}}
+      {{ $imgResized = printf "%s?nfresize=smartcrop?w=%dh=%d" $.img.RelPermalink $width.width $fillHeight }}
+    {{ else }}
+      {{/* do standard image resize */}}
+      {{/* create resize path */}}
+      {{ $imgResized = printf "%s?nfresize=fit?w=%d" $.img.RelPermalink $width.width }}
+    {{ end }}
+    {{/* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */}}
+    {{ $srcset = $srcset | append (printf "%s %s" $imgResized $width.desc) }}
+    {{/* if .width and 1x density (First iteration), add image to src variable for use as fallback */}}
+    {{ if $.width  }}
+      {{ if eq $index 0 }}
+        {{ $src = $imgResized }}
+      {{ end }}
+    {{ else }}
+      {{/* else largest width (last iteration), add image to src variable for use as fallback */}}
+      {{ if eq (len $.widths) (add $index 1) }}
+        {{ $src = $imgResized }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+  {{/* convert srcset array into a string, delimit with , between each image */}}
+  {{ $srcset := delimit $srcset ", " }}
+  {{/* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */}}
+  {{ $picture = merge $picture (dict $format (dict "srcset" $srcset "src" $src)) }}
+{{ end }}
+{{ return $picture }}
+
+

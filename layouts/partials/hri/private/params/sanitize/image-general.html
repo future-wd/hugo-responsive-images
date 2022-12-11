@@ -1,0 +1,171 @@
+{{/*
+  bg-images/private/sanitize/image-general.html 
+  Sanitizes params
+
+  @author @sean-au
+
+  @context (dict)
+    "params" dict of params
+    "type" site/page/meta/inline
+    "ctx" page context
+    "img" image resource
+    )
+
+  @access private
+
+  @example - Go Template
+    {{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" $general_params) }}
+  */}}
+{{ $error_ctx := dict 
+  "ctx" .ctx
+  "img" .img
+  "element" "image"
+  "module" "Hugo Responsive Images" }}
+
+{{ if or .params.suppress_width_warning .params.suppress_width_warning }}
+{{ $suppress_width_warning := .params.suppress_width_warning | default .params.suppress_width_warning }}
+{{ with $suppress_width_warning }}
+  {{ if ne (printf "%T" .) "bool" }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+      "var" "suppress_width_warning"
+      "val" .
+      "opts" "true/false"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+{{ end }}
+
+{{ with .params.densities }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
+        {{ partial "img-common/private/utils/options-error" (dict 
+        "var" "densities slice item"
+        "val" .
+        "opts" "integers in a slice"
+        "ctx" $error_ctx
+        ) }}
+      {{ end }}
+    {{ end }}
+  {{ else }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+    "var" "densities"
+    "val" .
+    "opts" "integers in a slice"
+    "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .params.formats }}
+  {{ $formatOpts := (slice "original" "bmp" "gif" "jpeg" "jpg" "png" "tif" "tiff" "webp") }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if not (in $formatOpts .) }}
+        {{ partial "img-common/private/utils/options-error" (dict 
+          "var" "formats array item"
+          "val" .
+          "opts" (delimit $formatOpts ", " " and ")
+          "ctx" $error_ctx
+        ) }}
+        {{ end }}
+    {{ end }}
+  {{ else }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+        "var" "formats array"
+        "val" .
+        "opts" "array of image formats"
+        "ctx" $error_ctx
+      ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .params.provider }}
+  {{ $providerOpts := (slice "netlify") }}
+  {{ if not ( in $providerOpts . ) }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+      "var" "provider"
+      "val" .
+      "opts" (delimit $providerOpts ", " " and ")
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .params.loading }}
+  {{ $loadingOpts := false }}
+  {{ if $.provider }}
+    {{/* disable lazy loading for external image processing */}}
+    {{ $loadingOpts = (slice "auto" "eager" "lazy") }}
+  {{ else }}
+    {{ $loadingOpts = (slice "auto" "lazy" "eager" "lazysizes") }}
+  {{ end }}
+  {{ if not (in $loadingOpts .) }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+      "var" "loading"
+      "val" .
+      "opts" (delimit $loadingOpts ", " " and ")
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ $fill_ratio := .params.fill_ratio | default .params.fill_ratio }}
+{{ with $fill_ratio }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
+        {{ partial "img-common/private/utils/options-error" (dict 
+        "var" "fill_ratio slice item"
+        "val" .
+        "opts" "2x integers in a slice"
+        "ctx" $error_ctx
+        ) }}
+      {{ end }}
+    {{ end }}
+  {{ else }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+    "var" "fill_ratio"
+    "val" .
+    "opts" "2x integers in a slice"
+    "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .params.title }}
+  {{ if ne (printf "%T" .) "string" }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+      "var" "title"
+      "val" .
+      "opts" "a string"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+
+{{ with .params.width }}
+  {{ if ne (printf "%T" .) "int" }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+      "var" "width"
+      "val" .
+      "opts" "an integer"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .sizesParam }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "img-common/private/utils/options-error" (dict 
+      "var" "sizes"
+      "val" .
+      "opts" "strings"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ return true}}

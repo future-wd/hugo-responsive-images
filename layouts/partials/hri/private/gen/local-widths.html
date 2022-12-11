@@ -1,0 +1,73 @@
+{{/*
+  img-common/private/utils/local-widths.html
+  Generates a .picture map of the image resized to different widths
+
+  @author @sean-au
+
+  @context sanitized params
+
+  @return Map including . .picture added
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/local-widths" . }}
+*/}}
+
+
+
+{{/**********************************
+  **** loop over each image format ****
+  *************************************/}}
+{{ $picture := dict }}
+
+{{ range $index, $format:= .formats }}
+  {{/* add format to options array (for format transformation) if not original */}}
+  {{ $options := $.options }}
+  {{ if ne $format "original" }}
+    {{ $options = merge $options (dict "format" $format) }}
+  {{ end }}
+  {{/*********************************
+    ** loop over each width         **
+    **********************************/}}
+  {{ $srcset := slice }}
+  {{ $src := false }}
+  {{ $placeholder := false }}
+  {{ range $index, $width := $.widths }}
+    {{ $img_resized := partial "img-common/private/utils/image-resize" (dict 
+      "img" $.img
+      "width" $width.width
+      "fill_ratio" $.fill_ratio
+      "crop_ratio" $.crop_ratio
+      "options" $options) }}
+    {{/* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */}}
+    {{ $srcset = $srcset | append (printf "%s %s" $img_resized.RelPermalink $width.desc) }}
+    {{/* if .width and 1x density (First iteration), add image to src variable for use as fallback */}}
+    {{ if eq $format "original" }}
+      {{ if eq $index 0}}
+        {{/* smallest image width for placeholder generation */}}
+        {{ $placeholder_params := merge $ (dict "placeholder_img" $img_resized) }}
+        {{ if eq $.loading "lazysizes" }}
+          {{ $placeholder = partial "hri/private/gen/placeholder" $placeholder_params }}
+        {{ end }}
+      {{ end }}
+      {{/* add smallest image to src for screen density srcset */}}
+      {{ if $.width }}
+        {{ if eq $index 0}}
+          {{ $src = $img_resized }}
+        {{ end }}
+      {{ else if eq (len $.widths) (add $index 1) }}
+        {{/* else largest width (last iteration), add image to src variable for use as fallback */}}
+        {{ $src = $img_resized }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+  {{/* convert srcset array into a string, delimit with , between each image */}}
+  {{ $srcset_str := delimit $srcset ", " }}
+  {{/* add $srcset and $src to map {original: {srcset: $srcset, src: $src}, webp: {srcset: $srcset, src: $src}, etc. */}}
+  {{ $picture = merge $picture (dict $format (dict "weight" $index "format" $format "srcset" $srcset_str "src" $src "placeholder" $placeholder)) }}
+{{ end }}
+
+{{/* merge and return params */}}
+
+{{ return (merge . (dict "picture" $picture)) }}

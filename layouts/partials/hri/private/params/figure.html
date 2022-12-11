@@ -1,0 +1,61 @@
+{{ $params := dict }}
+{{ $meta := dict }}
+
+{{/* assign page resource image meta data to $meta if image is page resource */}}
+{{ with .ctx.Resources.GetMatch (print .src) }}
+  {{ $meta = .Params.images }}
+{{ end }}
+
+{{/**********************************
+  ** get params from different places
+  ********************************/}}
+
+{{/* inline & meta */}}
+{{ $attr := .attr | default $meta.attr }}
+{{ $attr_link := .attr_link | default .attrLink | default $meta.attr_link  | default $meta.attrLink }}
+{{ $caption := .caption | default $meta.caption }}
+{{ $link := .link | default $meta.link }}
+{{ $figcaption_title := .figcaption_title | default .figureTitle | default $meta.figcaption_title | default $meta.figureTitle }}
+
+{{/* inline, meta, page & site */}}
+{{ $figure_class := .figure_class | default .figureClass | default $meta.figure_class | default $meta.figureClass | default (.ctx.Param "image.figureClass") | default (.ctx.Param "image.figure_class")  }}
+{{ $figcaption_class := .figcaption_class | default .figCaptionClass | default $meta.figcaption_class | default $meta.figureCaptionClass | default (.ctx.Param "image.figCaptionClass") | default (.ctx.Param "image.figcaption_class") }}
+{{ $figcaption_title_h := .figcaption_title_h | default .figureTitleH |  default $meta.figcaption_title_h | default $meta.figureTitleH | default (.ctx.Param "image.figureTitleH") | default (.ctx.Param "image.figcaption_title_h") }}
+{{ $rel := .rel | default $meta.rel | default (.ctx.Param "image.rel") }}
+{{ $target := .target | default $meta.target | default (.ctx.Param "image.target") }}
+{{/* processed here and exported for use in image partial */}}
+{{ $class := .class | default .figureImageClass | default $meta.class | default $meta.figureImageClass | default (.ctx.Param "image.figureImageClass") | default (.ctx.Param "image.figure_image_class") }}
+
+
+{{/* SANITIZE HERE */}}
+
+
+{{/*********************************************
+  ** default open http links new window       **
+  ** use relref for internal links            **
+  **********************************************/}}
+
+{{ if hasPrefix $link "http" }}
+  {{ $target = $target | default "_blank" }}
+  {{ $rel = $rel | default "noopener noreferrer" }}
+{{ else }}
+  {{ $link = relref .ctx $link }}
+{{ end }}
+
+{{/* merge params */}}
+
+{{ $params = merge $params (dict
+  "attr" $attr
+  "attr_link" $attr_link
+  "caption" $caption
+  "link" $link
+  "figure_class" $figure_class
+  "figcaption_title" $figcaption_title
+  "figcaption_class" $figcaption_class
+  "figcaption_title_h" $figcaption_title_h
+  "target" $target
+  "rel" $rel
+  "class" $class
+  ) }}
+
+{{ return $params  }}

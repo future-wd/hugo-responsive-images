@@ -1,0 +1,79 @@
+{{/*
+  shortcode params
+  generates params from shortcode input.
+  some strings (comma separated arrays) are converted to arrays of integers
+  standard params are passed through
+
+  @author @sean-au
+
+  @context . Context from image/figure shortcode
+
+  @returns map of params
+
+  @access private
+
+  @example - Go Template
+  {{ partial "shortcode-params" . }}
+
+*/}}
+{{ $site := site.Params.image }}
+{{ $page := .Page.Params }}
+
+{{ $meta := dict }}
+{{ $params := dict }}
+{{/****************************************
+  ** check for named params in shortcode **
+  *****************************************/}}
+{{ if .IsNamedParams }}
+
+  {{/* santize params (convert string-arrays and string-integers) */}}
+  {{ $shortcode_params := partial "hri/private/utils/process-shortcode-params" .Params }}
+
+  {{/* merge shortcode .Params map with $params map */}}
+  {{ $params = merge $params $shortcode_params }}
+
+  {{/* check for src if not throw error */}}
+  {{ if not (.Get "src") }}
+    {{ errorf "The %q shortcode on page %s requires the 'src' named parameter. See %s" .Name .Page .Position }}
+  {{ end }}
+
+{{ else }}
+{{/**************************************************************
+  ** single positional parameter                               **
+  ** this will generate an error as no alt has been provided,  **
+  ** but the error can be suppressed if required               **
+  ** alt may have been provided in page resource meta data     **
+  ***************************************************************/}}
+{{/* if only 1 un named param in shortcode */}}
+  {{ with (.Get 0) }}
+  {{ $params = merge $params (dict "src" .) }}
+  {{ end -}}
+  {{ if ge (len .Params) 2 }}
+    {{ errorf "If using positional parameters, only 1 parameter can be provided (src)" }}
+  {{ end }}
+{{ end }}
+
+{{ with .Page.Resources.GetMatch (print $params.src)   }}
+  {{/* add page resource image params to variable if image is page resource */}}
+  {{ $meta = .Params }}
+{{ end }}
+
+{{ $shortcode_wrapper_class := $params.shortcode_wrapper_class | default $params.shortcodeWrapperClass | default $meta.shortcode_wrapper_class | default $meta.shortcodeWrapperClass | default (.Page.Param "image.shortcodeWrapperClass") | default (.Page.Param "image.shortcode_wrapper_class") }}
+
+{{ $shortcode_params := dict
+  "shortcode_wrapper_class" $shortcode_wrapper_class
+  "name" .Name }}
+
+{{ $widths_site := default $site.shortcodeWidths | default $site.shortcode_widths | default $site.widths }}
+{{ $withs_page  := $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
+{{ $widths_meta := $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths | default $withs_page  }}
+{{ $widths := $params.widths | default $widths_meta }}
+
+{{ $params = merge $params (dict
+  "widths" $widths
+  "input" "shortcode" 
+  "ctx" $.Page) }}
+
+{{ return dict
+  "params" $params
+  "shortcode_params" $shortcode_params }}
