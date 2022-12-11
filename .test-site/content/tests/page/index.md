@@ -192,5 +192,4 @@ testImages:
     alt: Test Image Alt
     title: Test Image Title
     placeholder: dominant
-  tests:
 --- 
