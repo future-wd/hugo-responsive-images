@@ -484,13 +484,14 @@ Test site resides in /.testSite
 
 See <https://gohugo.io/content-management/image-processing/#imaging-configuration> for settings
 
-| Name           | Inline | Meta | Page Param | Site Param | Description |
-| -------------- | --- | --- | --- | --- | ----------- |
-| quality        | YES | YES | YES | YES | Override hugo image processing default |
-| rotate         | YES | YES | YES | YES | Override hugo image processing default |
-| resample_filter| YES | YES | YES | YES | Override hugo image processing default |
-| hint           | YES | YES | YES | YES | Override hugo image processing default |
-| anchor         | YES | YES | YES | YES | Override hugo image processing default |
+| Name             | Inline | Meta | Page Param | Site Param | Description |
+| -----------------| --- | --- | --- | --- | ----------- |
+| quality          | YES | YES | YES | YES | Override hugo image processing default |
+| rotate           | YES | YES | YES | YES | Override hugo image processing default |
+| resample_filter  | YES | YES | YES | YES | Override hugo image processing default |
+| hint             | YES | YES | YES | YES | Override hugo image processing default |
+| anchor           | YES | YES | YES | YES | Override hugo image processing default |
+| background_color | YES | YES | YES | YES | Override hugo image processing default |
 
 ## Figure Specific Parameters
 

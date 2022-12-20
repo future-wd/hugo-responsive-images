@@ -1,0 +1,26 @@
+{{/*
+  img-common/private/utils/errorf.html
+  Emits an error with the modules name on a new line as a header, 
+  error message on new line
+
+  @author @sean-au
+
+  @usage
+  - github.com/future-wd/hugo-responsive-images
+  - github.com/future-wd/hugo-responsive-background-images
+  
+  @version 1.0.0
+
+  @context dict
+    .message - error message
+    .module - module name
+
+  @access public
+
+  @example - Go Template
+  {{ partial "hri/private/error" (dict "message" "error message" "module" "Hugo Responsive Images") }}
+*/}}
+
+{{ errorf "\n%s:\n%s" .module .message }}
+
+{{ return true }}

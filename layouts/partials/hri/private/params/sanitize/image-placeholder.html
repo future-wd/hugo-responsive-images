@@ -24,7 +24,7 @@
 
 {{ with .params.placeholder }}
   {{ if not (eq (printf "%T" .) "string") }}
-    {{ partial "img-common/private/utils/options-error" (dict 
+    {{ partial "bg-images/private/utils/options-error" (dict 
       "var" "placeholder"
       "val" .
       "opts" "lqip, dominant or a color which matches a gif file"
@@ -35,7 +35,7 @@
 
 {{ with .params.lqip_blur_amount }}
   {{ if not (or (eq (printf "%T" .) "int") (eq (printf "%T" .) "float") ) }}
-    {{ partial "img-common/private/utils/options-error" (dict 
+    {{ partial "bg-images/private/utils/options-error" (dict 
       "var" "lqip_blur_amount"
       "val" .
       "opts" "an integer or float blur amount"
@@ -46,7 +46,7 @@
 
 {{ with .params.gif_div_factor }}
   {{ if not (or (eq (printf "%T" .) "int") (eq (printf "%T" .) "float") ) }}
-    {{ partial "img-common/private/utils/options-error" (dict 
+    {{ partial "bg-images/private/utils/options-error" (dict 
       "var" "gif_div_factor"
       "val" .
       "opts" "an integer or float division factor"

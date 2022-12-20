@@ -1,0 +1,47 @@
+{{/*
+  img-common/private/utils/image-resize.html
+    Resize images with all of hugo's image processing options + image Fill
+
+  @author @sean-au
+
+  @context dict
+    .options - slice of image processing options. For original format image, not format is specified.
+    .fill_ratio - decimal for resize image, used to calculate height relative to .width (only for .Fill)
+    .crop_ratio - decimal for crop image, used to calculate height relative to .width (only for .Crop)
+    .width - width to resize to
+    .img - image resource object
+
+  @usage
+    - github.com/future-wd/hugo-responsive-images
+    - github.com/future-wd/hugo-responsive-background-images
+
+  @version 1.1.0
+
+  @change-log
+    - 1.1.0 added support for crop transform, refactored code to make more terse
+
+  @return Map including . .picture added
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/local-widths" . }}
+*/}}
+
+{{ $options_string := delimit .options " " }}
+{{ $img_resized := false }}
+
+{{ if or .fill_ratio .crop_ratio }}
+  {{ $height := mul ($.width | float) (.fill_ratio | default .crop_ratio) | int }}
+  {{ $params := (printf "%dx%d %s" .width $height $options_string) }}
+  {{ if .fill_ratio }}
+    {{ $img_resized = .img.Fill $params }}
+  {{ else if .crop_ratio }}
+    {{ $img_resized = .img.Crop $params }}
+  {{ end }}
+{{ else }}
+  {{ $params := (printf "%dx %s" $.width $options_string)}}
+  {{ $img_resized = .img.Resize $params }}
+{{ end }}
+
+{{ return $img_resized }}

@@ -1,0 +1,93 @@
+{{/*
+  hri/private/utils/santize-widths.html
+  Removed widths that are greater than image width.
+  If a width has been removed, adds the image width as a width if img w > difference > largest new width
+
+  @author @sean-au
+
+  @version 1.0.2
+ 
+  @usage
+    - github.com/future-wd/hugo-responsive-images
+    - github.com/future-wd/hugo-responsive-background-images
+
+  @change-log
+    1.0.1 - remove colon line 64 $max_resize_width was being re defined
+          - use warning partial to utilise warning header
+    1.0.2 - changed .fill_ratio to .ratio for universal input (crop/fill)
+
+  @context dict
+    .ctx - page context
+    .img - image resource
+    .widths - user provided widths
+    .ratio - ratio for .Fill or .Crop transform
+    .difference - min_width_difference for new width
+    .suppress - suppress width warning if true
+
+  @return slice of sanitized image widths
+
+  @access private
+
+  @example - Go Template
+    {{ $new_widths := partial "hri/private/utils/sanitize-widths" (dict 
+    "ctx" $.ctx
+    "img" $img
+    "widths" $widths
+    "ratio" $ratio
+    "difference" (site.Params.min_width_difference | int)
+    "suppress" $suppress_width_warning )}}
+  
+*/}}
+
+{{/* check that the image is not smaller than the resized version */}}
+{{ $new_widths := slice }}
+{{ $removed := false }}
+{{ $difference := site.Params.minWidthDifference | int }}
+{{ $message := false }}
+
+{{ range .widths }}
+  {{ if $.ratio }}
+    {{ if and (gt $.img.Width .) (gt $.img.Height (mul . $.ratio)) }}
+      {{ $new_widths = $new_widths | append . }}
+    {{ else }}
+      {{ $removed = true }}
+    {{ end }}
+  {{ else }}
+    {{ if gt $.img.Width . }}
+      {{ $new_widths = $new_widths | append . }}
+    {{ else }}
+      {{ $removed = true }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+
+{{ if $removed }}
+  {{ $vertical := gt .ratio 1  }}
+  {{ $largest := index $new_widths (sub (len $new_widths) 1) | int }}
+  {{ $min := sub $.img.Width $difference }}
+  {{ $max_resize_width := $.img.Width }}
+  {{ if and $.ratio $vertical }}
+    {{ $inverse := div 1 .ratio }}
+    {{ $max_resize_width = mul .img.Height $inverse }}
+  {{ end }}
+  {{ if gt $min $largest }}
+    {{ $new_widths = $new_widths | append ($max_resize_width | int) }}  
+  {{ end }}
+  {{ if not .suppress }}
+    {{ $old_width := index .widths (sub (len $new_widths) 1) | int }}
+    {{ $new_width := index $new_widths (sub (len $new_widths) 1) | int }}
+    {{ if .ratio }}
+      {{ $old_height := mul $old_width .ratio | int }}
+      {{ $new_height := mul $new_width .ratio | int }}
+      {{ $message = printf "Source image %s (%dx%dpx) on page %s cannot be resized to %dx%dpx wide. Resized to %dx%dpx" .img.RelPermalink .img.Width .img.Height .ctx.RelPermalink $old_width $old_height $new_width $new_height }}
+    {{ else }}
+    {{ $message = printf "Source image %s (%dx%dpx) on page %s is not wide enough to resize to %dpx wide. Resized to %dpx wide" .img.RelPermalink .img.Width .img.Height .ctx.RelPermalink $old_width $new_width }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ if $message }}
+  {{ partial "img-common/private/utils/warnf" (dict "message" $message "module" "Hugo Responsive Images") }}
+{{ end }}
+{{ return $new_widths }}
