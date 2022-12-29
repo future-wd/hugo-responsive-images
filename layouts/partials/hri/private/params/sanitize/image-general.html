@@ -26,7 +26,7 @@
 {{ $suppress_width_warning := .params.suppress_width_warning | default .params.suppress_width_warning }}
 {{ with $suppress_width_warning }}
   {{ if ne (printf "%T" .) "bool" }}
-    {{ partial "bg-images/private/utils/options-error" (dict 
+    {{ partial "hri/private/utils/options-error" (dict 
       "var" "suppress_width_warning"
       "val" .
       "opts" "true/false"
@@ -40,7 +40,7 @@
   {{ if reflect.IsSlice . }}
     {{ range . }}
       {{ if ne (printf "%T" .) "int" }}
-        {{ partial "bg-images/private/utils/options-error" (dict 
+        {{ partial "hri/private/utils/options-error" (dict 
         "var" "densities slice item"
         "val" .
         "opts" "integers in a slice"
@@ -49,7 +49,7 @@
       {{ end }}
     {{ end }}
   {{ else }}
-    {{ partial "bg-images/private/utils/options-error" (dict 
+    {{ partial "hri/private/utils/options-error" (dict 
     "var" "densities"
     "val" .
     "opts" "integers in a slice"
@@ -63,7 +63,7 @@
   {{ if reflect.IsSlice . }}
     {{ range . }}
       {{ if not (in $formatOpts .) }}
-        {{ partial "bg-images/private/utils/options-error" (dict 
+        {{ partial "hri/private/utils/options-error" (dict 
           "var" "formats array item"
           "val" .
           "opts" (delimit $formatOpts ", " " and ")
@@ -72,7 +72,7 @@
         {{ end }}
     {{ end }}
   {{ else }}
-    {{ partial "bg-images/private/utils/options-error" (dict 
+    {{ partial "hri/private/utils/options-error" (dict 
         "var" "formats array"
         "val" .
         "opts" "array of image formats"
@@ -84,7 +84,7 @@
 {{ with .params.provider }}
   {{ $providerOpts := (slice "netlify") }}
   {{ if not ( in $providerOpts . ) }}
-    {{ partial "bg-images/private/utils/options-error" (dict 
+    {{ partial "hri/private/utils/options-error" (dict 
       "var" "provider"
       "val" .
       "opts" (delimit $providerOpts ", " " and ")
@@ -102,7 +102,7 @@
     {{ $opts = (slice "auto" "lazy" "eager" "lazysizes") }}
   {{ end }}
   {{ if not (in $opts .) }}
-    {{ partial "bg-images/private/utils/options-error" (dict 
+    {{ partial "hri/private/utils/options-error" (dict 
       "var" "loading"
       "val" .
       "opts" (delimit $opts ", " " and ")
@@ -116,7 +116,7 @@
   {{ if reflect.IsSlice . }}
     {{ range . }}
       {{ if ne (printf "%T" .) "int" }}
-        {{ partial "bg-images/private/utils/options-error" (dict 
+        {{ partial "hri/private/utils/options-error" (dict 
         "var" "aspect_ratio slice item"
         "val" .
         "opts" "2x integers in a slice"
@@ -125,7 +125,7 @@
       {{ end }}
     {{ end }}
   {{ else }}
-    {{ partial "bg-images/private/utils/options-error" (dict 
+    {{ partial "hri/private/utils/options-error" (dict 
     "var" "aspect_ratio"
     "val" .
     "opts" "2x integers in a slice"
@@ -137,7 +137,7 @@
 {{ with .params.fit }}
   {{ $opts := (slice "cover" "contain" "fill") }}
   {{ if not (in $opts .) }}
-    {{ partial "bg-images/private/utils/options-error" (dict 
+    {{ partial "hri/private/utils/options-error" (dict 
       "var" "fit"
       "val" .
       "opts" (delimit $opts ", " " and ")
@@ -148,7 +148,7 @@
 
 {{ with .params.title }}
   {{ if ne (printf "%T" .) "string" }}
-    {{ partial "bg-images/private/utils/options-error" (dict 
+    {{ partial "hri/private/utils/options-error" (dict 
       "var" "title"
       "val" .
       "opts" "a string"
@@ -158,9 +158,31 @@
 {{ end }}
 
 
+{{ with .params.widths }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
+        {{ partial "hri/private/utils/options-error" (dict 
+          "var" "width in widths slice"
+          "val" .
+          "opts" "an integer"
+          "ctx" $error_ctx
+        ) }}
+      {{ end }}
+    {{ end }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+    "var" "widths slice"
+    "val" .
+    "opts" "slice of integers"
+    "ctx" $error_ctx
+  ) }}
+  {{ end }}
+{{ end }}
+
 {{ with .params.width }}
   {{ if ne (printf "%T" .) "int" }}
-    {{ partial "bg-images/private/utils/options-error" (dict 
+    {{ partial "hri/private/utils/options-error" (dict 
       "var" "width"
       "val" .
       "opts" "an integer"
@@ -169,9 +191,27 @@
   {{ end }}
 {{ end }}
 
-{{ with .sizes }}
+{{ with .params.height }}
+  {{ if ne (printf "%T" .) "int" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "height"
+      "val" .
+      "opts" "an integer"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{/*  if and .params.width .params.widths }}
+  {{ partial "hri/private/utils/options-error" (dict 
+        "msg" "You cannot provide both width and widths params"
+        "ctx" $error_ctx
+      ) }}
+{{ end */}}
+
+{{ with .params.sizes }}
   {{ if not (eq (printf "%T" .) "string") }}
-    {{ partial "bg-images/private/utils/options-error" (dict 
+    {{ partial "hri/private/utils/options-error" (dict 
       "var" "sizes"
       "val" .
       "opts" "strings"
