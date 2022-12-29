@@ -133,41 +133,43 @@ testImages:
     source: 
       dataWidths: ['900w', '1200w', '1920w']
 - id: js-test10
-  title: 10. Fill ratio 9:16, larger than original width/height. orig width 1920px
+  title: 10. aspect_ratio 3:4, larger than original width/height. orig width 1920px
   subtitle: Width 200, 400, 900 down to  607
   params:
     src: test10.jpg
     alt: Test Image Alt
     title: Test Image Title
     widths: [200, 400, 900]
-    fillRatio: [9, 16]
+    aspect_ratio: [3,4]
   tests:
     source: 
       dataWidths: ['200w', '400w', '607w']
 - id: js-test11
-  title: 11. Crop ratio
+  title: 11. aspect ratio, fit=contain
   subtitle: Width 900, 1200, 2000 down to 1920
   params:
     src: test11.jpg
     alt: Test Image Alt
     title: Test Image Title
     widths: [900, 1200, 2000]
-    crop_ratio: [4, 3]
+    aspect_ratio: [3,4]
+    fit: contain
   tests:
     source: 
       dataWidths: ['900w', '1200w', '1920w']
 - id: js-test12
-  title: 12. Crop ratio 9:16, larger than original width/height. orig width 1920px
-  subtitle: Width 200, 400, 900 down to  607
+  title: 11. aspect ratio, fit=fill
+  subtitle: Width 900, 1200, 2000 down to 1920
   params:
-    src: test12.jpg
+    src: test11.jpg
     alt: Test Image Alt
     title: Test Image Title
-    widths: [200, 400, 900]
-    crop_ratio: [9, 16]
+    widths: [900, 1200, 2000]
+    aspect_ratio: [3,4]
+    fit: fill
   tests:
     source: 
-      dataWidths: ['200w', '400w', '607w']
+      dataWidths: ['900w', '1200w', '1920w']
 - id: js-test13
   title: 13. Image processing options
   subtitle: 

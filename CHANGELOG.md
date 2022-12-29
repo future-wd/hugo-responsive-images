@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.14](/github.com/future-wd/hugo-responsive-image/compare/v0.0.5...v1.1.14) (2022-12-29)
+
+
+### Bug Fixes
+
+* add <picture> partial support ([ab4bf4c](/github.com/future-wd/hugo-responsive-image/commit/ab4bf4cfefab669df47bcec04f7e6491e5b2bc89))
+* add hri scoped partials if name clash ([4edc84d](/github.com/future-wd/hugo-responsive-image/commit/4edc84dce1b7e8ac8ff877681f03747104285be4))
+* add sanitization ([970d368](/github.com/future-wd/hugo-responsive-image/commit/970d368ed9adc238d1d5a9ccce77a53fee97edbe))
+* add support for height ([3aa55e4](/github.com/future-wd/hugo-responsive-image/commit/3aa55e4ca4c690ff4ca34ff0b91141942a226e14))
+* add widths and height sanitize ([f635959](/github.com/future-wd/hugo-responsive-image/commit/f6359595e9705cab143abe8f7fc52419add33d43))
+* bump img-common mod ver ([8c92bf4](/github.com/future-wd/hugo-responsive-image/commit/8c92bf4ddfda74c54919b158f1631d6753415224))
+* change fill_ratio to aspect_ratio ([c89046d](/github.com/future-wd/hugo-responsive-image/commit/c89046d8db447b5c68c10e16e75fa90f64609412))
+* move options error to local ([bfb5047](/github.com/future-wd/hugo-responsive-image/commit/bfb504736cdf689ccb5da1d9fc932b25eaa787d3))
+* remove crop ([0fe1c0a](/github.com/future-wd/hugo-responsive-image/commit/0fe1c0a69f3b51ba7d310c6493db74ff77f7637e))
+* remove crop ratio ([6f02d18](/github.com/future-wd/hugo-responsive-image/commit/6f02d18892932d35c9fe060e903801f6b639975f))
+* remove redundant files ([a11193a](/github.com/future-wd/hugo-responsive-image/commit/a11193a5b44158832f5ad8a38eda0241ed7f6cc8))
+* single format transofrm for <img> ([1807c54](/github.com/future-wd/hugo-responsive-image/commit/1807c54affe0c2a7d97b21d0ec24b0098dad3e31))
+* work on test site ([1a8b3dc](/github.com/future-wd/hugo-responsive-image/commit/1a8b3dc7b49596dd63294f78a1be3074c113be29))
+
 ### [1.1.13](/github.com/future-wd/hugo-responsive-image/compare/v1.1.12...v1.1.13) (2022-12-11)
 
 

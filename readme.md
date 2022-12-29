@@ -7,11 +7,13 @@
 
 Hugo responsive images makes generating responsive images for either figures or standard picture elements a breeze.
 
-Minimal inline code is required and configuration can take place either inline or in your site's config file.
+Minimal inline code is required and configuration can take place either inline, image resource meta data (front matter), page front matter, or in your site's config file.
 
-The project generates both fixed width responsive images (1x,2x etc) and variable width responsive images for responsive pages. All of Hugo's powerful image processing options have been exposed.
+The project generates both fixed width responsive images (1x,2x etc) and variable width responsive images for responsive pages. Nearly of Hugo's powerful image processing options have been exposed.
 
-You images will have a default class of `img-fluid` (Bootstrap responsive image), but you can set this in the config, or inline.
+The default CSS classes which are added to images and figures are based on Bootstrap, although this can be easily overridden with the configuration below.
+
+In-keeping with Hugo's philosophy of being non-opinionated, this module does not come with any CSS. Parameter naming is derived from Hugo with the exception of image fit types for aspect ratio resizing based on CSS due to a naming conflict.
 
 ## Installation (as a module)
 
@@ -24,9 +26,9 @@ module:
 
 ## Prerequisites
 
-- The latest GoLang (minimum 1.12). See <https://golang.org/dl/>.
+- The latest GoLang (minimum 1.16). See <https://golang.org/dl/>.
 - The lates git for downloading the module. See <https://git-scm.com/downloads/>.
-- Install the latest hugo (at least 0.83.0)
+- Install the latest hugo (at least 0.101.0)
 - You hugo project must be initialized for hugo modules e.g. `hugo mod init github.com/username/project` in the root of your project.
 - Update your modules with `hugo mod get -u`
 
@@ -34,7 +36,7 @@ module:
 
 The first set of configuration items are from [Hugo's image processing configuration. See the docs for more info.](https://gohugo.io/content-management/image-processing/#processing-options).
 
-You can suppress the no alt text error with the `ignoreErrors` config. 
+You can suppress the no alt text error with the `ignoreErrors` config.
 
 ```yaml
 
@@ -68,7 +70,7 @@ params:
     # shortcode_widths: [600, 900, 1300] # custom widths for shortcode use in markdown files. If unset defaults to widths
     # render_hook_widths: [600, 900, 1300] # custom widths for render hook use in markdown files. If unset defaults to shortcode widths
     densities: [1,2] # densities which are output when an image width is specified
-    formats: [webp, original] # set output formats. options are `original`, `bmp`, `gif`, `jpeg`, `jpg`, `png`, `tif`, `tiff`, and `webp`. In order of least supported to most supported.
+    formats: [webp, original] # set output formats. options are `original`, `bmp`, `gif`, `jpeg`, `jpg`, `png`, `tif`, `tiff`, and `webp`. In order of least supported to most supported. For "image_only" the first format will be used.
     class: img-fluid # default image class if no class is specified
     figure_class: "figure img-fluid" # default figure class
     figure_image_class: "figure-img img-fluid" # default figure image class (appended to image class) ## USE .class to override outside of config
@@ -111,18 +113,17 @@ resources:
       placeholder: lqip # use any of the settings here
 ```
 
-
 ## Partial or shortcode configuration
 
 The following options are only available at a partial or shortcode level:
 
 ```go
-# image and figure
+# image_only, picture and figure
 "src" "image_path.jpg" # relative to page, or assets folder (for global resource)
 "title" "Image Title" # defaults to figureTitle, and then the pages title
 "class" "img-fluid" # class for image (not a figure image)
 "alt" "Image Alt Text"
-"fill_ratio" (slice 4 3) # width by height, image will be cropped. 
+"aspect_ratio" (slice 4 3) # width by height, image will be cropped. 
 "width" 300 # for fixed with image
 "widths" (slice 500 900 1500) # for responsive images
 # figure only
@@ -136,72 +137,88 @@ The following options can be configured at a partial/shortcode & page/site confi
 
 See above for explanations
 
+image and figure (with partial example)
+
 ```go
-# image and figure (with partial example)
 {{ partial "image" (dict 
   "densities" (slice 1 2)
-  "type" "page"
   "formats" (slice "original" "jpg")
   "provider" "netlify"
   "loading" "lazy"
   "sizes" "100vw"
 ) }}
+```
 
-# figure only
+figure only
 
+```go
 "target" "_blank"
 "rel" "noopener noreferrer"
 "link" "https://gohugo.io"
 "figure_class" "figure-img img-fluid"
 "figcaption_class" "figure-caption"
 "figcaption_title_h" 4
+```
 
-# placeholder options
+placeholder options
 
+```go
 "placeholder" "lqip" # set to lqip, dominant, [file_name] or false
 "lqip_div_factor" 5 # smallest image in srcset is divided by this number for LQIP size
 "lqip_blur_amount" 5 # amount of gaussian blur to apply to LQIP
 "gif_div_factor" 10 # dominant/gif file is resized to this division factor (of smallest image in srcset)
+```
 
-# hugo image processing options
+hugo image processing options
 
 its recommended to use [hugos native image config](https://gohugo.io/content-management/image-processing/#imaging-configuration) unless you want to only set for this module.
 
+```go
 "quality" 75
 "rotate" 0
 "resample_filter" "box"
 "hint" "photo"
 "anchor" "smart"
-``
+"bg_color" "#ffffff"
+```
 
 > See below for examples of how to set these options from within a shortcode
 
-## Usage Examples
+## Usage Examples (Quick Start)
 
 ###  Partial - Fixed width & page resource
 
 ```html
-{{ partial "image"  (dict
-  "page" .
+<!-- <img> generation -->
+{{ partial "image_only"  (dict
+  "ctx" .
+  "src" "image.jpg"
+  "width" "300"
+  ) }}
+```
+
+```html
+<!-- <picture> generation, with original and webp image formats included (default)-->
+{{ partial "picture"  (dict
+  "ctx" .
   "src" "image.jpg"
   "width" "300"
   )}}
 ```
 
-> A "type" of "page" does not need to be provided. Default behavior is page resource images.
+> By providing the "width" key, you will be generating a fixed with image with multiple densities.
 >
-> By providing the "width" key, you will be generating a fixed with image.
+> Providing `width` will override `widths`. You can also provide `height` (see below - to alter aspect ratio)
 >
-> "src" is relative to the page's directory
+> "src" is relative to the page's directory, unless you specify a gobal resource is "assets/{image path}"
 
-### Partial - Fixed with & gobal resource
+### Partial - Fixed with & global resource
 
 ```html
 {{ partial "image"  (dict
-  "page" .
-  "src" "image.jpg"
+  "ctx" .
+  "src" "assets/images/image.jpg"
   "width" "300"
-  "type" "global"
   )}}
 ```
 
@@ -209,10 +226,10 @@ its recommended to use [hugos native image config](https://gohugo.io/content-man
 
 ```html
 
-{{ partial "image" (dict
+{{ partial "picture" (dict
   "src" "images/image.jpg"
-  "page" .
-  // sizes not needed if loading=lazysizes) 
+  "ctx" .
+  // sizes not needed if loading=lazysizes
   "sizes" [string] // set the sizes property for the image tag, defaults to "100vw"
   // optional 
   "widths" (slice 400 800 1200) // override default responsive widths.
@@ -224,17 +241,29 @@ its recommended to use [hugos native image config](https://gohugo.io/content-man
 ### Partial - Cropping an image to an aspect ratio
 
 ```html
-{{ partial "image"  (dict
-  "page" .
+{{ partial "picture"  (dict
+  "ctx" .
   "src" "image.jpg"
-  "fill_ratio" (slice 4 3)
+  "aspect_ratio" (slice 4 3)
+  ) }}
+```
+
+If you are generating a fixed with image, you can alternatively specify the aspect ratio by supplying a `height` along with the `width`. This overrides `aspect_ratio`.
+
+
+```html
+{{ partial "picture"  (dict
+  "ctx" .
+  "src" "image.jpg"
+  "width" 300
+  "height" 300
   ) }}
 ```
 
 ### Shortcode - Cropping an image to an aspect ratio, custom respnsive widths
 
 ```html
-{{< image src=image.jpg fillRatio=4,3  widths=400,900 >}}
+{{< picture src=image.jpg aspect_ratio=4,3  widths=400,900 >}}
 ```
 
 > The page context is already provided by the shortcode
@@ -246,16 +275,16 @@ its recommended to use [hugos native image config](https://gohugo.io/content-man
 ### Shortcode - Single positional parameter
 
 ```html
-{{< image image.jpg >}}
+{{< picture image.jpg >}}
 ```
 
-> The image will have no alt text, you will need to suppress the error.
+> The image will have no alt text, you will need to suppress the error, or use resource meta data to pass params.
 
 ## Partial - Figure
 
 ```html
 {{ partial "figure"  (dict
-  "page" .
+  "ctx" .
   "src" "image.jpg" 
   "figure_title" "Boat x54"
   "caption" "My favourite boat"
@@ -277,9 +306,8 @@ The render hook template will take title and alt from the markdown image tag e.g
 
 You can set configuration at a resource meta data, page or site level e.g.
 
-- make all images on the page global (image.type: global)
 - turn on the render hook just for one page (image.imageRenderHook: true)
-- set the widths for the page (image.widths: [400, 900])
+- set the responsive widths (image.widths: [400, 900])
 - set the image width through page image resource meta data
 
 Render hook only responsive widths default to shortcode responsive widths, and then standard widths. See above for site/page configuration. (image.RenderHookWidths > image.ShortcodeWidths > image.widths)
@@ -308,10 +336,19 @@ Then..
 
 (I have opted to set alt and title via frontmatter to make the example more informative..)
 
+### Aspect ratio resizing
+
+To alter the aspect ratio of the image set `aspect_ratio` with a slice e.g. (slice 16 9) or [16,9] (yaml).
+
+The `fit` option allows you to set the kind of resize (uses CSS rules)
+
+- `cover` (crops the image to the aspect ratio using Image.Fill - **default**)
+- `contain` (image is contained within the aspect ratio (letterboxing) uses Image.Fit) CSS may be required to center the image vertically/horizontally as desired.
+- `fill` (image is resized to fill the aspect ratio, one edge will be squished or stretched uses Image.Resize)
 
 ### Noscript required HTML, JS and CSS
 
-The following elements are required for the `<noscript>` module to work. The script must come first.
+The following elements are required for the `<noscript>` module to work. 
 
 ```yaml
 #config.yaml
@@ -320,8 +357,10 @@ params:
     noscript: true # or enable at page/meta data/inline level
 ```
 
-```HTML
+The script must be the first item in the `<head>` to ensure that the `js` class is added before any rendering takes plage.
 
+```HTML
+<!-- baseof.html -->
 <html>
   <head>
     <script>
@@ -347,7 +386,7 @@ params:
 
   </body>
 </html>
-
+```
 
 ## Placeholder
 
@@ -454,22 +493,22 @@ Test site resides in /.testSite
 
 ## Parameters
 
-| Name  | Inline | Meta | Page Param | Site Param | Description | Default |
-| --------- | --- | --- | --- | --- | ----------- | ------- |
-| src       | YES | NO  | NO  | NO  | Provide resource path | `undefined` |
-| type      | YES | YES | YES | YES | page/global - Type of image resource | `"page"` |
-| title     | YES | YES | NO  | NO  | Image title | `figcaption_title` |
-| fill_ratio | YES | YES | YES | NO | Fill ratio for image | `null` |
-| crop_ratio | YES | YES | YES | NO | Crop ratio for image | `null` |
-| widths    | YES | YES | YES | YES | Widths for responsive width image generation | [600, 900, 1300] |
-| width     | YES | YES | YES | NO  | Set widths for fixed with image. Disables widths | 'null' |
-| densities | YES | YES | YES | YES | Densities for fixed with image generation | [1,2] |
-| formats   | YES | YES | YES | YES | Image formats to generate. One must be original. In order of browser support. | ["original", "webp" ] |
-| provider  | YES | YES | YES | YES | External image processing provider. Only netlify supported for now | `null` |
-| loading   | YES | YES | YES | YES | auto/lazy/lazysizes - Type of image loading | `"auto"` |
-| sizes     | YES | YES | YES | NO  | [string] - Image sizes for responsive widths images | `"100vw"` |
-| class     | YES | YES | YES | YES | Image class | `"img-fluid"` |
-| alt       | YES | YES | NO  | NO  | Image alt text | `caption` (figure) then `Image of [title]` then generates error. |
+| Name   | Inline | Meta | Page | Site | Description | Default |
+| ------------ | --- | --- | --- | --- | ----------- | ------- |
+| src          | YES | NO  | NO  | NO  | Provide resource path | `undefined` |
+| type         | YES | YES | YES | YES | page/global - Type of image resource | `page` |
+| title        | YES | YES | NO  | NO  | Image title | `figcaption_title` |
+| aspect_ratio | YES | YES | YES | NO  | Aspect ratio for image | `null` |
+| fit          | YES | YES | YES | NO  | Fit type for aspect_ratio (`cover`, `contain`, `fill`) | `cover` |
+| widths       | YES | YES | YES | YES | Widths for responsive width image generation | [600, 900, 1300] |
+| width        | YES | YES | YES | NO  | Set widths for fixed with image. Disables widths | 'null' |
+| densities    | YES | YES | YES | YES | Densities for fixed with image generation | [1,2] |
+| formats      | YES | YES | YES | YES | Image formats to generate. One must be original. In order of browser support. | ["original", "webp" ] |
+| provider     | YES | YES | YES | YES | External image processing provider. Only netlify supported for now | `null`|
+| loading      | YES | YES | YES | YES | auto/lazy/lazysizes - Type of image loading | `"auto"` |
+| sizes        | YES | YES | YES | NO  | [string] - Image sizes for responsive widths images | `"100vw"` |
+| class        | YES | YES | YES | YES | Image class | `"img-fluid"` |
+| alt          | YES | YES | NO  | NO  | Image alt text | `caption` (figure) then `Image of [title]` then generates error. |
 
 ## Placeholder variables
 
@@ -484,13 +523,14 @@ Test site resides in /.testSite
 
 See <https://gohugo.io/content-management/image-processing/#imaging-configuration> for settings
 
-| Name           | Inline | Meta | Page Param | Site Param | Description |
-| -------------- | --- | --- | --- | --- | ----------- |
-| quality        | YES | YES | YES | YES | Override hugo image processing default |
-| rotate         | YES | YES | YES | YES | Override hugo image processing default |
-| resample_filter| YES | YES | YES | YES | Override hugo image processing default |
-| hint           | YES | YES | YES | YES | Override hugo image processing default |
-| anchor         | YES | YES | YES | YES | Override hugo image processing default |
+| Name             | Inline | Meta | Page Param | Site Param | Description |
+| -----------------| --- | --- | --- | --- | ----------- |
+| quality          | YES | YES | YES | YES | Override hugo image processing default |
+| rotate           | YES | YES | YES | YES | Override hugo image processing default |
+| resample_filter  | YES | YES | YES | YES | Override hugo image processing default |
+| hint             | YES | YES | YES | YES | Override hugo image processing default |
+| anchor           | YES | YES | YES | YES | Override hugo image processing default |
+| background_color | YES | YES | YES | YES | Override hugo image processing default |
 
 ## Figure Specific Parameters
 

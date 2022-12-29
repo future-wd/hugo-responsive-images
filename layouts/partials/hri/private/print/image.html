@@ -1,0 +1,56 @@
+{{- with .picture.original.src }}
+  <img
+  {{- if (or (eq $.loading "auto") (eq $.loading "lazy")) }}
+    loading="{{ $.loading }}"
+  {{- end -}}
+  {{- if eq $.loading "lazysizes" }}
+    data-src="{{ .RelPermalink }}"
+    height="{{ .Height }}"
+    width="{{ .Width }}"
+    {{- with $.picture.original.placeholder }}
+    src="{{ . | safeURL }}"
+    {{- end }}
+  {{- else if $.provider }}
+    src="{{ . }}"
+    height="{{ $.img.Height }}"
+    width="{{ $.img.Width }}"
+  {{- else }}
+    src="{{ .RelPermalink }}"
+    height="{{ .Height }}"
+    width="{{ .Width }}"
+  {{- end }}
+  {{- with $.class }}
+    class="{{ . }}"
+  {{- end -}}
+  {{- with $.sizes_prop }}
+    {{ . | safeHTMLAttr }}
+  {{- end }}
+  {{- with $.alt }}
+    alt="{{ . }}"
+  {{- end }}
+  {{- with $.title }}
+    title="{{ . }}"
+  {{- end }}
+  />
+{{ end  -}}
+</picture>
+{{ if and .noscript (eq .loading "lazysizes") }}
+{{- with .picture.original.src }}
+<noscript>
+  <img 
+  src="{{ .RelPermalink }}"
+  height="{{ .Height }}"
+  width="{{ .Width }}" 
+  {{- with $.class }}
+    class="{{ . }} noscript"
+  {{- end -}}
+  {{- with $.alt }}
+    alt="{{ . }}"
+  {{- end }}
+  {{- with $.title }}
+    title="{{ . }}"
+  {{- end }} >
+</noscript>
+{{ end }}
+{{ end }}
+

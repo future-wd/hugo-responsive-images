@@ -5,12 +5,6 @@
 
   @author @sean-au
 
-  @version 1.0.0
-
-  @usage
-  - github.com/future-wd/hugo-responsive-images
-  - github.com/future-wd/hugo-responsive-background-images
-
   @context (dict)
     "val" (string) - variable value (user input)
     "opts" (string)  correct options
@@ -25,7 +19,7 @@
 
   @example - Go Template
     {{ partial "bg-images/private/utils/options-error" (dict 
-    "var" "fill_ratio array item"
+    "var" "aspect_ratio array item"
     "val" .
     "opts" "2x integers in an array/slice"
     "ctx" $params
@@ -33,7 +27,7 @@
 
     Input missing:
     {{ partial "bg-images/private/utils/options-error" (dict 
-    "var" "fill_ratio array item"
+    "var" "aspect_ratio array item"
     "ctx" $params
     ) }}
 

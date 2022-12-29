@@ -28,15 +28,22 @@
 {{ $page := .ctx.Params.image }}
 {{ $params :=  . }}
 {{ $img := false }}
+{{ $src := .src }}
+
+{{/* .type depreciated, keep for v1. only use $type from v2 */}}
 {{ $type := .type | default (.ctx.Param "image.type") }}
+{{ $prefix := substr $src 0 7 }}
+{{ if eq $prefix "assets/" }}
+  {{ $src = substr $src 7 }}
+  {{ $type = "global" }}
+{{ end }}
 {{ if eq $type "global" }}
-  {{/* global resource */}}
-  {{ $img = resources.Get .src }}
+  {{ $img = resources.Get $src }}
 {{ else if (eq $type "remote") }}
-  {{ $img = resources.GetRemote .src }}
+  {{ $img = resources.GetRemote $src }}
 {{ else }}
   {{/* page resource */}}
-  {{ $img = .ctx.Resources.GetMatch (print .src)   }}
+  {{ $img = .ctx.Resources.GetMatch (print $src)   }}
   {{/* add page resource image params to variable */}}
   {{ $meta = $img.Params.images }}
 {{ end }}
@@ -50,17 +57,21 @@
 {{/* general params */}}
 {{ $suppress_width_warning := .suppress_width_warning | default .suppressWidthWarning | default (.ctx.Param "image.suppressWidthWarning") | default (.ctx.Param "image.suppress_width_warning") }}
 {{ $resource_title := "" }}
+{{ if eq $type "page" }}
   {{ if ne $img.Title ($img | string) }}
-  {{ $resource_title = $img.Title }}
+    {{ $resource_title = $img.Title }}
+  {{ end }}
 {{ end }}
 {{ $title := .title | default $meta.title | default $resource_title }}
 
-{{ $fill_ratio :=  .fill_ratio | default .fillRatio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fillRatio  }}
-{{ $crop_ratio :=  .crop_ratio | default $meta.crop_ratio | default $page.crop_ratio }}
+{{ $aspect_ratio :=  .aspect_ratio | default .fill_ratio | default .fillRatio | default $meta.aspect_ratio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fill_ratio | default $page.fillRatio  }}
+{{ $fit := .fit | default $meta.fit | default .ctx.Params.image.fit }}
 {{ $width := .width | default $meta.width | default .ctx.Params.image.width }}
+{{ $height := .height | default $meta.height | default .ctx.Params.image.height }}
 {{ $densities := .densities | default $meta.densities | default (.ctx.Param "image.densities") }}
 {{ $densities = sort $densities }}
 {{ $widths := "" }}
+{{/* shortcode and render hook widths defaults are handled higher up */}}
 {{ if or (eq .input "render_hook") (eq .input "shortcode") }}
   {{ $widths = .widths }}
 {{ else }}
@@ -85,8 +96,8 @@
 {{ $general_params := dict 
   "suppress_width_warning" $suppress_width_warning
   "title" $title
-  "fill_ratio" $fill_ratio
-  "crop_ratio" $crop_ratio
+  "aspect_ratio" $aspect_ratio
+  "fit" $fit
   "widths" $widths
   "width" $width
   "densities" $densities
@@ -140,18 +151,16 @@
 
 {{/* POST SANITIZATION MODIFICATIONS TO PARAMS */}}
 
-{{ with $fill_ratio }}
-  {{/* height to width ratio of .fill_ratio */}}
-  {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
-  {{ $fill_ratio = div (index . 1 | float) (index . 0 | float) }}
-  {{ $params = merge $params (dict "fill_ratio" $fill_ratio) }}
-{{ end }}
-
-{{ with $crop_ratio }}
-  {{/* height to width ratio of .crop_ratio */}}
-  {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
-  {{ $crop_ratio = div (index . 1 | float) (index . 0 | float) }}
-  {{ $params = merge $params (dict "crop_ratio" $crop_ratio) }}
+{{ with $aspect_ratio }}
+  {{ if and $height $width }}
+    {{/* even though width and height have been provided, we need a ratio for densities */}}
+    {{ $aspect_ratio = div ( $height | float) ($width | float) }}
+  {{ else }}
+    {{/* height to width ratio of .aspect_ratio */}}
+    {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
+    {{ $aspect_ratio = div (index . 1 | float) (index . 0 | float) }}
+  {{ end }}
+  {{ $params = merge $params (dict "aspect_ratio" $aspect_ratio) }}
 {{ end }}
 
 {{/*********************************************************************
@@ -178,18 +187,12 @@
   ** produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
   */}}
   {{ $widths = sort $widths }}
-  {{ $ratio := false }}
-  {{ if $fill_ratio }}
-    {{ $ratio = $fill_ratio }}
-  {{ else if $crop_ratio }}
-    {{ $ratio = $crop_ratio }}
-  {{ end }}
   {{/* SANTIZE WIDTHS WITH UTIL */}}
   {{ $new_widths := partial "img-common/private/utils/restrict-widths" (dict 
     "ctx" $.ctx
     "img" $img
     "widths" $widths
-    "ratio" $ratio
+    "aspect_ratio" $aspect_ratio
     "difference" (site.Params.minWidthDifference | int)
     "suppress" $suppress_width_warning )}}
 
@@ -224,8 +227,9 @@
 
 {{ if eq $loading "lazysizes" }} 
   {{ $class = print $class " lazyload" }}
+  {{ $params = merge $params (dict "class" $class ) }}
 {{ end }}
-{{ $params = merge $params (dict "class" $class ) }}
+
 
 {{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
 
@@ -237,13 +241,24 @@
   {{ else }}
     {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $img.RelPermalink .ctx.RelPermalink }}
   {{ end }}
+  {{ $params = merge $params (dict "alt" $alt) }}
 {{ end }}
-{{ $params = merge $params (dict "alt" $alt) }}
 
+
+{{/* add figure caption as title if no title */}}
 {{ if not $title }}
   {{ with .figcaption_title }}
     {{ $title = . }}
+    {{ $params = merge $params (dict "title" $title) }}
   {{ end }}
 {{ end }}
+
+
+{{/* if only generating img tag, only process first format */}}
+{{ if eq .image_only true }}
+  {{ $single_format := index $formats 0 }}
+  {{ $params = merge $params (dict "formats" $single_format) }}
+{{ end }}
+
 
 {{ return $params }}

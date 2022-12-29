@@ -22,3 +22,8 @@ enableInlineShortcodes: true
 #temp use only!
 # ignoreErrors: ["alt-error"]
 
+# turn off module caching for the test site
+caches:
+  modules:
+    dir: :cacheDir/modules
+    maxAge: 0

@@ -1,0 +1,28 @@
+{{- /*
+  image.html
+  Takes inputs and page context.
+  - Passes inputs to params partial for processing
+  - Then passes params to generate-widths for image generation
+  - Then passes params to picture-tag to generate HTML
+
+  @author @sean-au
+
+  @context . Context (dict) from a page template, figure/image partial, or render hook partial.
+
+  @access public
+
+  @example - Go Template
+  {{ partial "image" (dict "src" "image.jpg" "alt" "alt text") }}
+
+*/ -}}
+{{- /* use .page or .ctx as ctx */ -}}
+{{- $ctx := .ctx -}}
+{{- if .page -}}
+  {{- $ctx = .page -}}
+{{- end -}}
+{{- /* santize inputs, process params */ -}}
+{{- $params := partial "hri/private/params/image.html" (merge . (dict "ctx" $ctx)) }}
+{{- /* generate image widths*/ -}}
+{{- $params = partial "hri/private/gen/widths" $params -}}
+{{- /* generate picture tag */ -}}
+{{- partial "hri/private/print/picture" $params -}}
