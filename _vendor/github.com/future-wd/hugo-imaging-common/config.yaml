@@ -1,7 +1,0 @@
-module:
-  hugoVersion:
-    extended: false
-    min: 0.101.0
-  # mounts:
-  # - source: layouts
-  #   target: layouts
