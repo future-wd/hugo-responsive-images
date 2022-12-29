@@ -45,6 +45,7 @@
 {{ $picture := dict }}
 {{ $srcset := slice }}
 {{ $src := "" }}
+{{/* netlify images does not support converting image format */}}
 {{ range $format := (slice "original") }}
 
   {{ range $index, $width := $.widths }}
