@@ -111,13 +111,13 @@
   {{ end }}
 {{ end }}
 
-{{ $fill_ratio := .params.fill_ratio | default .params.fill_ratio }}
-{{ with $fill_ratio }}
+
+{{ with .params.aspect_ratio }}
   {{ if reflect.IsSlice . }}
     {{ range . }}
       {{ if ne (printf "%T" .) "int" }}
         {{ partial "bg-images/private/utils/options-error" (dict 
-        "var" "fill_ratio slice item"
+        "var" "aspect_ratio slice item"
         "val" .
         "opts" "2x integers in a slice"
         "ctx" $error_ctx
@@ -126,7 +126,7 @@
     {{ end }}
   {{ else }}
     {{ partial "bg-images/private/utils/options-error" (dict 
-    "var" "fill_ratio"
+    "var" "aspect_ratio"
     "val" .
     "opts" "2x integers in a slice"
     "ctx" $error_ctx

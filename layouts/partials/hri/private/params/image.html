@@ -28,15 +28,22 @@
 {{ $page := .ctx.Params.image }}
 {{ $params :=  . }}
 {{ $img := false }}
+{{ $src := .src }}
+
+{{/* .type depreciated, keep for v1. only use $type from v2 */}}
 {{ $type := .type | default (.ctx.Param "image.type") }}
+{{ $prefix := substr $src 0 7 }}
+{{ if eq $prefix "assets/" }}
+  {{ $src = substr $src 7 }}
+  {{ $type = "global" }}
+{{ end }}
 {{ if eq $type "global" }}
-  {{/* global resource */}}
-  {{ $img = resources.Get .src }}
+  {{ $img = resources.Get $src }}
 {{ else if (eq $type "remote") }}
-  {{ $img = resources.GetRemote .src }}
+  {{ $img = resources.GetRemote $src }}
 {{ else }}
   {{/* page resource */}}
-  {{ $img = .ctx.Resources.GetMatch (print .src)   }}
+  {{ $img = .ctx.Resources.GetMatch (print $src)   }}
   {{/* add page resource image params to variable */}}
   {{ $meta = $img.Params.images }}
 {{ end }}
@@ -50,12 +57,14 @@
 {{/* general params */}}
 {{ $suppress_width_warning := .suppress_width_warning | default .suppressWidthWarning | default (.ctx.Param "image.suppressWidthWarning") | default (.ctx.Param "image.suppress_width_warning") }}
 {{ $resource_title := "" }}
+{{ if eq $type "page" }}
   {{ if ne $img.Title ($img | string) }}
-  {{ $resource_title = $img.Title }}
+    {{ $resource_title = $img.Title }}
+  {{ end }}
 {{ end }}
 {{ $title := .title | default $meta.title | default $resource_title }}
 
-{{ $fill_ratio :=  .fill_ratio | default .fillRatio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fillRatio  }}
+{{ $aspect_ratio :=  .aspect_ratio | default .fill_ratio | default .fillRatio | default $meta.aspect_ratio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fill_ratio | default $page.fillRatio  }}
 {{ $width := .width | default $meta.width | default .ctx.Params.image.width }}
 {{ $densities := .densities | default $meta.densities | default (.ctx.Param "image.densities") }}
 {{ $densities = sort $densities }}
@@ -84,7 +93,7 @@
 {{ $general_params := dict 
   "suppress_width_warning" $suppress_width_warning
   "title" $title
-  "fill_ratio" $fill_ratio
+  "aspect_ratio" $aspect_ratio
   "widths" $widths
   "width" $width
   "densities" $densities
@@ -138,18 +147,11 @@
 
 {{/* POST SANITIZATION MODIFICATIONS TO PARAMS */}}
 
-{{ with $fill_ratio }}
-  {{/* height to width ratio of .fill_ratio */}}
+{{ with $aspect_ratio }}
+  {{/* height to width ratio of .aspect_ratio */}}
   {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
-  {{ $fill_ratio = div (index . 1 | float) (index . 0 | float) }}
-  {{ $params = merge $params (dict "fill_ratio" $fill_ratio) }}
-{{ end }}
-
-{{ with $crop_ratio }}
-  {{/* height to width ratio of .crop_ratio */}}
-  {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
-  {{ $crop_ratio = div (index . 1 | float) (index . 0 | float) }}
-  {{ $params = merge $params (dict "crop_ratio" $crop_ratio) }}
+  {{ $aspect_ratio = div (index . 1 | float) (index . 0 | float) }}
+  {{ $params = merge $params (dict "aspect_ratio" $aspect_ratio) }}
 {{ end }}
 
 {{/*********************************************************************
@@ -181,7 +183,7 @@
     "ctx" $.ctx
     "img" $img
     "widths" $widths
-    "ratio" $fill_ratio
+    "aspect_ratio" $aspect_ratio
     "difference" (site.Params.minWidthDifference | int)
     "suppress" $suppress_width_warning )}}
 
