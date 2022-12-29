@@ -4,6 +4,7 @@ image:
   # render_hook_widths: [600, 900, 1300]
   densities: [1, 2]
   formats: [original, webp]
+  fit: cover
   class: img-fluid
   figure_class: figure
   figcaption_class: figure-caption
@@ -17,7 +18,7 @@ image:
   lqip_blur_amount: 6
   lqip_div_factor: 2
   gif_div_factor: 10
-  # provider: netlify
+  provider: false
   suppress_width_warning: false
   type: page # or global
   min_width_difference: 40

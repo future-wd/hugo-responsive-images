@@ -94,18 +94,18 @@
 {{ end }}
 
 {{ with .params.loading }}
-  {{ $loadingOpts := false }}
+  {{ $opts := false }}
   {{ if $.provider }}
     {{/* disable lazy loading for external image processing */}}
-    {{ $loadingOpts = (slice "auto" "eager" "lazy") }}
+    {{ $opts = (slice "auto" "eager" "lazy") }}
   {{ else }}
-    {{ $loadingOpts = (slice "auto" "lazy" "eager" "lazysizes") }}
+    {{ $opts = (slice "auto" "lazy" "eager" "lazysizes") }}
   {{ end }}
-  {{ if not (in $loadingOpts .) }}
+  {{ if not (in $opts .) }}
     {{ partial "bg-images/private/utils/options-error" (dict 
       "var" "loading"
       "val" .
-      "opts" (delimit $loadingOpts ", " " and ")
+      "opts" (delimit $opts ", " " and ")
       "ctx" $error_ctx
     ) }}
   {{ end }}
@@ -130,6 +130,18 @@
     "val" .
     "opts" "2x integers in a slice"
     "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with .params.fit }}
+  {{ $opts := (slice "cover" "contain" "fill") }}
+  {{ if not (in $opts .) }}
+    {{ partial "bg-images/private/utils/options-error" (dict 
+      "var" "fit"
+      "val" .
+      "opts" (delimit $opts ", " " and ")
+      "ctx" $error_ctx
     ) }}
   {{ end }}
 {{ end }}
