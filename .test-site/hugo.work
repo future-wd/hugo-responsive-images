@@ -1,0 +1,9 @@
+go 1.19
+
+use .
+
+replace (
+  // github.com/future-wd/hugo-responsive-images => ../
+  // only replace common during dev
+  github.com/future-wd/hugo-imaging-common => ../../hugo-imaging-common
+)

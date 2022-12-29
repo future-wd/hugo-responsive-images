@@ -1,5 +1,7 @@
 imports:
 - path: github.com/future-wd/hugo-responsive-images
 
+
+
 ## replacement moved to go.mod for now, since here doesn't support replacements for nested modules
 # replacements: "github.com/future-wd/hugo-responsive-images -> ../../"

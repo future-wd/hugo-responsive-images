@@ -2,6 +2,7 @@ module github.com/future-wd/hugo-responsive-images-test-site
 
 go 1.18
 
+// replace main module in all envs for test site
 replace github.com/future-wd/hugo-responsive-images => ../
 
 require (
