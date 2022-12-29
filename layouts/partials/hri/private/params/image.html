@@ -220,8 +220,9 @@
 
 {{ if eq $loading "lazysizes" }} 
   {{ $class = print $class " lazyload" }}
+  {{ $params = merge $params (dict "class" $class ) }}
 {{ end }}
-{{ $params = merge $params (dict "class" $class ) }}
+
 
 {{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
 
@@ -233,18 +234,24 @@
   {{ else }}
     {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $img.RelPermalink .ctx.RelPermalink }}
   {{ end }}
+  {{ $params = merge $params (dict "alt" $alt) }}
 {{ end }}
-{{ $params = merge $params (dict "alt" $alt) }}
 
+
+{{/* add figure caption as title if no title */}}
 {{ if not $title }}
   {{ with .figcaption_title }}
     {{ $title = . }}
+    {{ $params = merge $params (dict "title" $title) }}
   {{ end }}
 {{ end }}
+
 
 {{/* if only generating img tag, only process first format */}}
 {{ if eq .image_only true }}
   {{ $single_format := index $formats 0 }}
   {{ $params = merge $params (dict "formats" $single_format) }}
 {{ end }}
+
+
 {{ return $params }}
