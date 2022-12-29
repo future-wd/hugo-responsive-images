@@ -206,7 +206,9 @@ its recommended to use [hugos native image config](https://gohugo.io/content-man
   )}}
 ```
 
-> By providing the "width" key, you will be generating a fixed with image.
+> By providing the "width" key, you will be generating a fixed with image with multiple densities.
+>
+> Providing `width` will override `widths`. You can also provide `height` (see below - to alter aspect ratio)
 >
 > "src" is relative to the page's directory, unless you specify a gobal resource is "assets/{image path}"
 
@@ -243,6 +245,18 @@ its recommended to use [hugos native image config](https://gohugo.io/content-man
   "ctx" .
   "src" "image.jpg"
   "aspect_ratio" (slice 4 3)
+  ) }}
+```
+
+If you are generating a fixed with image, you can alternatively specify the aspect ratio by supplying a `height` along with the `width`. This overrides `aspect_ratio`.
+
+
+```html
+{{ partial "picture"  (dict
+  "ctx" .
+  "src" "image.jpg"
+  "width" 300
+  "height" 300
   ) }}
 ```
 
