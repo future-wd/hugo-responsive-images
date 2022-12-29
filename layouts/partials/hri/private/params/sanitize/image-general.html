@@ -169,7 +169,7 @@
   {{ end }}
 {{ end }}
 
-{{ with .sizesParam }}
+{{ with .sizes }}
   {{ if not (eq (printf "%T" .) "string") }}
     {{ partial "bg-images/private/utils/options-error" (dict 
       "var" "sizes"
