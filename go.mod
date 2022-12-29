@@ -2,4 +2,4 @@ module github.com/future-wd/hugo-responsive-images
 
 go 1.16
 
-require github.com/future-wd/hugo-imaging-common v0.0.4 // indirect
+require github.com/future-wd/hugo-imaging-common v0.0.7 // indirect
