@@ -38,6 +38,7 @@
       "img" $.img
       "width" $width.width
       "aspect_ratio" $.aspect_ratio
+      "fit" $.fit
       "options" $options) }}
     {{/* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */}}
     {{ $srcset = $srcset | append (printf "%s %s" $img_resized.RelPermalink $width.desc) }}
