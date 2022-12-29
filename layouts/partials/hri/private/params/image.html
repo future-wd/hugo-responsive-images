@@ -67,9 +67,11 @@
 {{ $aspect_ratio :=  .aspect_ratio | default .fill_ratio | default .fillRatio | default $meta.aspect_ratio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fill_ratio | default $page.fillRatio  }}
 {{ $fit := .fit | default $meta.fit | default .ctx.Params.image.fit }}
 {{ $width := .width | default $meta.width | default .ctx.Params.image.width }}
+{{ $height := .height | default $meta.height | default .ctx.Params.image.height }}
 {{ $densities := .densities | default $meta.densities | default (.ctx.Param "image.densities") }}
 {{ $densities = sort $densities }}
 {{ $widths := "" }}
+{{/* shortcode and render hook widths defaults are handled higher up */}}
 {{ if or (eq .input "render_hook") (eq .input "shortcode") }}
   {{ $widths = .widths }}
 {{ else }}
@@ -150,9 +152,14 @@
 {{/* POST SANITIZATION MODIFICATIONS TO PARAMS */}}
 
 {{ with $aspect_ratio }}
-  {{/* height to width ratio of .aspect_ratio */}}
-  {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
-  {{ $aspect_ratio = div (index . 1 | float) (index . 0 | float) }}
+  {{ if and $height $width }}
+    {{/* even though width and height have been provided, we need a ratio for densities */}}
+    {{ $aspect_ratio = div ( $height | float) ($width | float) }}
+  {{ else }}
+    {{/* height to width ratio of .aspect_ratio */}}
+    {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
+    {{ $aspect_ratio = div (index . 1 | float) (index . 0 | float) }}
+  {{ end }}
   {{ $params = merge $params (dict "aspect_ratio" $aspect_ratio) }}
 {{ end }}
 
