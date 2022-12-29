@@ -65,6 +65,7 @@
 {{ $title := .title | default $meta.title | default $resource_title }}
 
 {{ $aspect_ratio :=  .aspect_ratio | default .fill_ratio | default .fillRatio | default $meta.aspect_ratio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fill_ratio | default $page.fillRatio  }}
+{{ $fit := .fit | default $meta.fit | default .ctx.Params.image.fit }}
 {{ $width := .width | default $meta.width | default .ctx.Params.image.width }}
 {{ $densities := .densities | default $meta.densities | default (.ctx.Param "image.densities") }}
 {{ $densities = sort $densities }}
@@ -94,6 +95,7 @@
   "suppress_width_warning" $suppress_width_warning
   "title" $title
   "aspect_ratio" $aspect_ratio
+  "fit" $fit
   "widths" $widths
   "width" $width
   "densities" $densities
