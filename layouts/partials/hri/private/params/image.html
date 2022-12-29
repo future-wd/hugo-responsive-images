@@ -242,4 +242,9 @@
   {{ end }}
 {{ end }}
 
+{{/* if only generating img tag, only process first format */}}
+{{ if eq .image_only true }}
+  {{ $single_format := index $formats 0 }}
+  {{ $params = merge $params (dict "formats" $single_format) }}
+{{ end }}
 {{ return $params }}
