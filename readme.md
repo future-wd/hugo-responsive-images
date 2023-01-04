@@ -11,7 +11,7 @@ Minimal inline code is required and configuration can take place either inline, 
 
 The project generates both fixed width responsive images (1x,2x etc) and variable width responsive images for responsive pages. Nearly of Hugo's powerful image processing options have been exposed.
 
-The default CSS classes which are added to images and figures are based on Bootstrap, although this can be easily overridden with the configuration below.
+The default CSS classes which are added to images and figures are based on Bootstrap, although this can be easily overridden with the configuration below. **You must provide your own CSS or CSS framework.**
 
 In-keeping with Hugo's philosophy of being non-opinionated, this module does not come with any CSS. Parameter naming is derived from Hugo with the exception of image fit types for aspect ratio resizing based on CSS due to a naming conflict.
 
