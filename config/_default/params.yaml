@@ -8,7 +8,6 @@ image:
   class: img-fluid
   figure_class: figure
   figcaption_class: figure-caption
-  figcaption_title_class: 4
   figcaption_title_h: 4
   figure_image_class: "figure-img img-fluid"
   render_hook_wrapper_class: img-wrapper
