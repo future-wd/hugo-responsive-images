@@ -46,158 +46,6 @@ hugo mod get
 - You hugo project must be initialized for hugo modules e.g. `hugo mod init github.com/username/project` in the root of your project.
 - Update your modules with `hugo mod get -u`
 
-## Configuration - Site Config
-
-The first set of configuration items are from [Hugo's image processing configuration. See the docs for more info.](https://gohugo.io/content-management/image-processing/#processing-options).
-
-You can suppress the no alt text error with the `ignoreErrors` config.
-
-```yaml
-
-imaging:
-  anchor: Smart # for smart cropping when setting the fillRatio
-  bgColor: '#ffffff' # when converting transparent images to formats which dont support transparency
-  hint: photo # for conversin to webp
-  quality: 75 # compression quality
-  resample_filter: Box # compression filter
-ignoreErrors: ["alt-error"] # suppress error message if no alt text (or title) has been provided.
-```
-
-> If setting imaging options at a site level, this is the best method. You can also use image parameters if you wish to set image options just for this module, although this would probably be best used at a page level.
-
-```yaml
-params:
-  image:
-    anchor: Smart
-    bgColor: "#ffffff"
-    hint: photo
-    quality: 75
-    resample_filter: Box
-```
-
-## Configuration - Site or page params (Defaults shown)
-
-```yaml
-params:
-  image:
-    widths: [600, 900, 1300] # widths to generate if widths not specified
-    # shortcode_widths: [600, 900, 1300] # custom widths for shortcode use in markdown files. If unset defaults to widths
-    # render_hook_widths: [600, 900, 1300] # custom widths for render hook use in markdown files. If unset defaults to shortcode widths
-    densities: [1,2] # densities which are output when an image width is specified
-    formats: [webp, original] # set output formats. options are `original`, `bmp`, `gif`, `jpeg`, `jpg`, `png`, `tif`, `tiff`, and `webp`. In order of least supported to most supported. For "image_only" the first format will be used.
-    class: img-fluid # default image class if no class is specified
-    figure_class: "figure img-fluid" # default figure class
-    figure_image_class: "figure-img img-fluid" # default figure image class (appended to image class) ## USE .class to override outside of config
-    figcaption_class: figure-caption # default figcaption class
-    figcaption_title_h: 4 # heading level for figure title
-    render_hook_wrapper_class: img-wrapper # image wrapper class for render hook
-    shortcode_wrapper_class: img-wrapper # image wrapper class for shortcode
-    loading: lazy # or auto/lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js
-    render_hook: false # set to false to disable included markdown image render hook
-                      # override by setting imageRenderHook: true/false in front matter
-    # placeholder: lqip # or dominant/file_name  (see colours set up in assets/images/placeholder-colors) use filename without .gif
-    lqip_blur_amount: 5 # apply gaussian blur amount of 5 to lqip
-                      # may need to be increased at a page level for larger images
-    lqip_div_amount: 5 # lqip is 5x smaller than the smallest image in srcset
-    gif_div_amount: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
-    # provider: netlify # currently only supports netlify image processing.
-    suppress_width_warning: false # turn of warning that image cannot be resized to the widths specified
-    type: page # or global # useful for setting all images on a page to global resources, or set default
-```
-
-All of image parameter configuration items can also be configured on a per page basis by adding the config to the page's front matter.
-
-For example:
-
-```markdown
----
-title: About 
-image:
-  widths: [400, 750, 1300]
----
-```
-
-You can also use [resource meta data](https://gohugo.io/content-management/page-resources/#page-resources-metadata) in the page's markdown - you have to target the resource(s) with glob matching e.g.
-
-```
-resources:
-- src: images/sunset.jpg # you can also glob match e.g. "product*.jpg"
-  params:
-    images:
-      placeholder: lqip # use any of the settings here
-```
-
-## Partial or shortcode configuration
-
-The following options are only available at a partial or shortcode level:
-
-```go
-# image_only, picture and figure
-"src" "image_path.jpg" # relative to page, or assets folder (for global resource)
-"title" "Image Title" # defaults to figureTitle, and then the pages title
-"class" "img-fluid" # class for image (not a figure image)
-"alt" "Image Alt Text"
-"aspect_ratio" (slice 4 3) # width by height, image will be cropped. 
-"width" 300 # for fixed with image
-"widths" (slice 500 900 1500) # for responsive images
-# figure only
-"figure_title" "Title for figure caption" # can be left blank
-"caption" "Figure Caption Text"
-"attr" "Author Attribution"
-"attr_link" "Attribution link"
-```
-
-The following options can be configured at a partial/shortcode & page/site config level
-
-See above for explanations
-
-image and figure (with partial example)
-
-```go
-{{ partial "image" (dict 
-  "densities" (slice 1 2)
-  "formats" (slice "original" "jpg")
-  "provider" "netlify"
-  "loading" "lazy"
-  "sizes" "100vw"
-) }}
-```
-
-figure only
-
-```go
-"target" "_blank"
-"rel" "noopener noreferrer"
-"link" "https://gohugo.io"
-"figure_class" "figure-img img-fluid"
-"figcaption_class" "figure-caption"
-"figcaption_title_h" 4
-```
-
-placeholder options
-
-```go
-"placeholder" "lqip" # set to lqip, dominant, [file_name] or false
-"lqip_div_factor" 5 # smallest image in srcset is divided by this number for LQIP size
-"lqip_blur_amount" 5 # amount of gaussian blur to apply to LQIP
-"gif_div_factor" 10 # dominant/gif file is resized to this division factor (of smallest image in srcset)
-```
-
-hugo image processing options
-
-its recommended to use [hugos native image config](https://gohugo.io/content-management/image-processing/#imaging-configuration) unless you want to only set for this module.
-
-```go
-"quality" 75
-"rotate" 0
-"resample_filter" "box"
-"hint" "photo"
-"anchor" "smart"
-"bg_color" "#ffffff"
-```
-
-> See below for examples of how to set these options from within a shortcode
-
 ## Usage Examples (Quick Start)
 
 ###  Partial - Fixed width & page resource
@@ -359,6 +207,159 @@ The `fit` option allows you to set the kind of resize (uses CSS rules)
 - `cover` (crops the image to the aspect ratio using Image.Fill - **default**)
 - `contain` (image is contained within the aspect ratio (letterboxing) uses Image.Fit) CSS may be required to center the image vertically/horizontally as desired.
 - `fill` (image is resized to fill the aspect ratio, one edge will be squished or stretched uses Image.Resize)
+
+
+## Configuration - Site Config
+
+The first set of configuration items are from [Hugo's image processing configuration. See the docs for more info.](https://gohugo.io/content-management/image-processing/#processing-options).
+
+You can suppress the no alt text error with the `ignoreErrors` config.
+
+```yaml
+
+imaging:
+  anchor: Smart # for smart cropping when setting the fillRatio
+  bgColor: '#ffffff' # when converting transparent images to formats which dont support transparency
+  hint: photo # for conversin to webp
+  quality: 75 # compression quality
+  resample_filter: Box # compression filter
+ignoreErrors: ["alt-error"] # suppress error message if no alt text (or title) has been provided.
+```
+
+> If setting imaging options at a site level, this is the best method. You can also use image parameters if you wish to set image options just for this module, although this would probably be best used at a page level.
+
+```yaml
+params:
+  image:
+    anchor: Smart
+    bgColor: "#ffffff"
+    hint: photo
+    quality: 75
+    resample_filter: Box
+```
+
+## Configuration - Site or page params (Defaults shown)
+
+```yaml
+params:
+  image:
+    widths: [600, 900, 1300] # widths to generate if widths not specified
+    # shortcode_widths: [600, 900, 1300] # custom widths for shortcode use in markdown files. If unset defaults to widths
+    # render_hook_widths: [600, 900, 1300] # custom widths for render hook use in markdown files. If unset defaults to shortcode widths
+    densities: [1,2] # densities which are output when an image width is specified
+    formats: [webp, original] # set output formats. options are `original`, `bmp`, `gif`, `jpeg`, `jpg`, `png`, `tif`, `tiff`, and `webp`. In order of least supported to most supported. For "image_only" the first format will be used.
+    class: img-fluid # default image class if no class is specified
+    figure_class: "figure img-fluid" # default figure class
+    figure_image_class: "figure-img img-fluid" # default figure image class (appended to image class) ## USE .class to override outside of config
+    figcaption_class: figure-caption # default figcaption class
+    figcaption_title_h: 4 # heading level for figure title
+    render_hook_wrapper_class: img-wrapper # image wrapper class for render hook
+    shortcode_wrapper_class: img-wrapper # image wrapper class for shortcode
+    loading: lazy # or auto/lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js
+    render_hook: false # set to false to disable included markdown image render hook
+                      # override by setting imageRenderHook: true/false in front matter
+    # placeholder: lqip # or dominant/file_name  (see colours set up in assets/images/placeholder-colors) use filename without .gif
+    lqip_blur_amount: 5 # apply gaussian blur amount of 5 to lqip
+                      # may need to be increased at a page level for larger images
+    lqip_div_amount: 5 # lqip is 5x smaller than the smallest image in srcset
+    gif_div_amount: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
+    # provider: netlify # currently only supports netlify image processing.
+    suppress_width_warning: false # turn of warning that image cannot be resized to the widths specified
+    type: page # or global # useful for setting all images on a page to global resources, or set default
+```
+
+All of image parameter configuration items can also be configured on a per page basis by adding the config to the page's front matter.
+
+For example:
+
+```markdown
+---
+title: About 
+image:
+  widths: [400, 750, 1300]
+---
+```
+
+You can also use [resource meta data](https://gohugo.io/content-management/page-resources/#page-resources-metadata) in the page's markdown - you have to target the resource(s) with glob matching e.g.
+
+```
+resources:
+- src: images/sunset.jpg # you can also glob match e.g. "product*.jpg"
+  params:
+    images:
+      placeholder: lqip # use any of the settings here
+```
+
+## Partial or shortcode configuration
+
+The following options are only available at a partial or shortcode level:
+
+```go
+# image_only, picture and figure
+"src" "image_path.jpg" # relative to page, or assets folder (for global resource)
+"title" "Image Title" # defaults to figureTitle, and then the pages title
+"class" "img-fluid" # class for image (not a figure image)
+"alt" "Image Alt Text"
+"aspect_ratio" (slice 4 3) # width by height, image will be cropped. 
+"width" 300 # for fixed with image
+"widths" (slice 500 900 1500) # for responsive images
+# figure only
+"figure_title" "Title for figure caption" # can be left blank
+"caption" "Figure Caption Text"
+"attr" "Author Attribution"
+"attr_link" "Attribution link"
+```
+
+The following options can be configured at a partial/shortcode & page/site config level
+
+See above for explanations
+
+image and figure (with partial example)
+
+```go
+{{ partial "image" (dict 
+  "densities" (slice 1 2)
+  "formats" (slice "original" "jpg")
+  "provider" "netlify"
+  "loading" "lazy"
+  "sizes" "100vw"
+) }}
+```
+
+figure only
+
+```go
+"target" "_blank"
+"rel" "noopener noreferrer"
+"link" "https://gohugo.io"
+"figure_class" "figure-img img-fluid"
+"figcaption_class" "figure-caption"
+"figcaption_title_h" 4
+```
+
+placeholder options
+
+```go
+"placeholder" "lqip" # set to lqip, dominant, [file_name] or false
+"lqip_div_factor" 5 # smallest image in srcset is divided by this number for LQIP size
+"lqip_blur_amount" 5 # amount of gaussian blur to apply to LQIP
+"gif_div_factor" 10 # dominant/gif file is resized to this division factor (of smallest image in srcset)
+```
+
+hugo image processing options
+
+its recommended to use [hugos native image config](https://gohugo.io/content-management/image-processing/#imaging-configuration) unless you want to only set for this module.
+
+```go
+"quality" 75
+"rotate" 0
+"resample_filter" "box"
+"hint" "photo"
+"anchor" "smart"
+"bg_color" "#ffffff"
+```
+
+> See above for examples of how to set these options from within a shortcode
 
 ### Noscript required HTML, JS and CSS
 
