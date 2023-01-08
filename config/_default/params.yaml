@@ -13,6 +13,7 @@ image:
   render_hook_wrapper_class: img-wrapper
   shortcode_wrapper_class: img-wrapper
   render_hook: false
+  placeholder: false
   loading: lazy
   lqip_blur_amount: 6
   lqip_div_factor: 2
