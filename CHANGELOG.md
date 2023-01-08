@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](/github.com/future-wd/hugo-responsive-image/compare/v1.2.0...v1.2.1) (2023-01-08)
+
+
+### Bug Fixes
+
+* pass through eager, auto, lazy loading props to variable and print ([5520ef5](/github.com/future-wd/hugo-responsive-image/commit/5520ef54757f6a611687b78e1fbcb5945e493453))
+
 ## [1.2.0](/github.com/future-wd/hugo-responsive-image/compare/v1.1.14...v1.2.0) (2022-12-29)
 
 
