@@ -17,11 +17,25 @@ In-keeping with Hugo's philosophy of being non-opinionated, this module does not
 
 ## Installation (as a module)
 
-``` YAML
+You must initialize your project for hugo modules using the command
+
+```YAML
+hugo mod init github.com/user/project
+```
+
+Then add this module to your projects configuration
+
+```YAML
 # config.yaml
 module:
   imports:
   - path: github.com/future-wd/hugo-responsive-images
+```
+
+Then you need to install the module with 
+
+```
+hugo mod get
 ```
 
 ## Prerequisites
