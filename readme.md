@@ -55,7 +55,8 @@ hugo mod get
 {{ partial "image_only"  (dict
   "ctx" .
   "src" "image.jpg"
-  "width" "300"
+  "width" 300
+  "alt" "Test image"
   ) }}
 ```
 
@@ -64,7 +65,8 @@ hugo mod get
 {{ partial "picture"  (dict
   "ctx" .
   "src" "image.jpg"
-  "width" "300"
+  "width" 300
+  "alt" "Test image"
   )}}
 ```
 
@@ -80,7 +82,8 @@ hugo mod get
 {{ partial "image"  (dict
   "ctx" .
   "src" "assets/images/image.jpg"
-  "width" "300"
+  "width" 300
+  "alt" "Test image"
   )}}
 ```
 
@@ -91,6 +94,7 @@ hugo mod get
 {{ partial "picture" (dict
   "src" "images/image.jpg"
   "ctx" .
+  "alt" "Test image"
   // sizes not needed if loading=lazysizes
   "sizes" [string] // set the sizes property for the image tag, defaults to "100vw"
   // optional 
@@ -107,6 +111,7 @@ hugo mod get
   "ctx" .
   "src" "image.jpg"
   "aspect_ratio" (slice 4 3)
+  "alt" "Test image"
   ) }}
 ```
 
@@ -119,13 +124,14 @@ If you are generating a fixed with image, you can alternatively specify the aspe
   "src" "image.jpg"
   "width" 300
   "height" 300
+  "alt" "Test image"
   ) }}
 ```
 
 ### Shortcode - Cropping an image to an aspect ratio, custom respnsive widths
 
 ```html
-{{< picture src=image.jpg aspect_ratio=4,3  widths=400,900 >}}
+{{< picture src=image.jpg aspect_ratio=4,3  widths=400,900 alt="Test Image" >}}
 ```
 
 > The page context is already provided by the shortcode
@@ -151,6 +157,7 @@ If you are generating a fixed with image, you can alternatively specify the aspe
   "figure_title" "Boat x54"
   "caption" "My favourite boat"
   "link" "https://www.google.com"
+  "alt" "Test figure"
   ) }}
 ```
 
