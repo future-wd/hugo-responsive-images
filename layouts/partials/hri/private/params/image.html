@@ -228,6 +228,9 @@
 {{ if eq $loading "lazysizes" }} 
   {{ $class = print $class " lazyload" }}
   {{ $params = merge $params (dict "class" $class ) }}
+{{ else }}
+  {{/* only generate loading property if not lazy sizes */}}
+  {{ $params = merge $params (dict "loading_prop" $loading ) }}
 {{ end }}
 
 

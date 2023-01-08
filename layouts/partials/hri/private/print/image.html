@@ -1,7 +1,7 @@
 {{- with .picture.original.src }}
   <img
-  {{- if (or (eq $.loading "auto") (eq $.loading "lazy")) }}
-    loading="{{ $.loading }}"
+  {{- with $.loading_prop }}
+    loading="{{ . }}"
   {{- end -}}
   {{- if eq $.loading "lazysizes" }}
     data-src="{{ .RelPermalink }}"
