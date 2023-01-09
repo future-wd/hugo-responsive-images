@@ -35,6 +35,7 @@
 {{ $widths_page  := $page.render_hook_widths | default $page.renderHookWidths | default $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
 {{ $widths_meta := $meta.render_hook_widths | default $meta.renderHookWidths | default $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths | default $widths_page}}
 {{ $widths := $widths_meta }}
+{{ $output := $meta.output }}
 
 {{ $params := dict 
   "ctx" .Page 
@@ -42,7 +43,8 @@
   "alt" .PlainText 
   "title" .Title
   "input" "render_hook"
-  "widths" $widths }}
+  "widths" $widths
+  "output" $output }}
 
 {{ return dict 
   "params" $params
