@@ -170,7 +170,7 @@ The render hook will only render page resource images - the image path will be r
 The render hook template will take title and alt from the markdown image tag e.g.
 
 ```md
-[Image ALT text](img1.jpg "Image TITLE text")
+![Image ALT text](img1.jpg "Image TITLE text")
 ```
 
 You can set configuration at a resource meta data, page or site level e.g.
