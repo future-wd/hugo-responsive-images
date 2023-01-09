@@ -45,7 +45,7 @@
   {{/* page resource */}}
   {{ $img = .ctx.Resources.GetMatch (print $src)   }}
   {{/* add page resource image params to variable */}}
-  {{ $meta = $img.Params.images }}
+  {{ $meta = $img.Params }}
 {{ end }}
 
 {{ $params = merge $params (dict 
