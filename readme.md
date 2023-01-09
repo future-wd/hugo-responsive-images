@@ -154,8 +154,24 @@ If you are generating a fixed with image, you can alternatively specify the aspe
 {{ partial "figure"  (dict
   "ctx" .
   "src" "image.jpg" 
-  "figure_title" "Boat x54"
+  "figcaption_title" "Boat x54"
   "caption" "My favourite boat"
+  "link" "https://www.google.com"
+  "alt" "Test figure"
+  ) }}
+```
+
+And all the options...
+
+```html
+{{ partial "figure"  (dict
+  "ctx" .
+  "src" "image.jpg" 
+  "figcaption_title" "Boat x54"
+  "figcaption_title_h" 4
+  "caption" "My favourite boat"
+  "attr" "Author name"
+  "attr_link" "http://www.author-page.com"
   "link" "https://www.google.com"
   "alt" "Test figure"
   ) }}
