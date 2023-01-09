@@ -52,7 +52,7 @@ hugo mod get
 
 ```html
 <!-- <img> generation -->
-{{ partial "image_only"  (dict
+{{ partial "img"  (dict
   "ctx" .
   "src" "image.jpg"
   "width" 300
@@ -204,6 +204,20 @@ Then..
 ```
 
 (I have opted to set alt and title via frontmatter to make the example more informative..)
+
+#### Render hook figure
+
+If you wish to output a figure with a render hook, you need to set the param "figure: true" e.g.
+
+```yaml
+---
+resources:
+- src: img1.jpg
+  params:
+    figure: true
+    caption: Figure caption text
+    figcaption_title: Caption title
+---
 
 ### Aspect ratio resizing
 
@@ -531,6 +545,7 @@ Test site resides in /.testSite
 | sizes        | YES | YES | YES | NO  | [string] - Image sizes for responsive widths images | `"100vw"` |
 | class        | YES | YES | YES | YES | Image class | `"img-fluid"` |
 | alt          | YES | YES | NO  | NO  | Image alt text | `caption` (figure) then `Image of [title]` then generates error. |
+| output          | NO | YES | NO  | NO  | Render hook output. Default `picture` can be set to `figure` or `img` |
 
 ## Placeholder variables
 

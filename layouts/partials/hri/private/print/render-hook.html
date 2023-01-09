@@ -16,5 +16,11 @@
 
 */ -}}
 <div class="{{ .render_hook_params.render_hook_wrapper_class }}">
-  {{ partial "picture" .params }}
+  {{ if eq .params.output "figure" }}
+    {{ partial "hri/figure" .params }}
+  {{ else if (eq .params.output "img") }}
+    {{ partial "hri/img" .params }}
+  {{ else }}
+    {{ partial "hri/picture" .params }}
+  {{ end }}
 </div>
