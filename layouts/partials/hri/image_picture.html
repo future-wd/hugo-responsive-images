@@ -24,5 +24,11 @@
 {{- $params := partial "hri/private/params/image.html" (merge . (dict "ctx" $ctx)) }}
 {{- /* generate image widths*/ -}}
 {{- $params = partial "hri/private/gen/widths" $params -}}
-{{- /* generate picture tag */ -}}
-{{- partial "hri/private/print/picture" $params -}}
+{{- /* generate picture or img tag */ -}}
+{{- if $params.image_only -}}
+  {{- partial "hri/private/print/image_set" $params -}}
+{{- else -}}
+  {{- partial "hri/private/print/picture_set" $params -}}
+{{- end -}}
+
+
