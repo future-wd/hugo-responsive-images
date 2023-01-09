@@ -13,7 +13,7 @@
   
 */}}
 {{- if .link }}</a>{{ end -}}
-  {{ if or (or .figure_title .caption) .attr }}
+  {{ if or (or .figcaption_title .caption) .attr }}
   <figcaption class="{{ .figcaption_class }}">
   {{ with .figcaption_title -}}
     <h{{ $.figcaption_title_h | safeHTMLAttr }}>{{ . }}</h{{ $.figcaption_title_h | safeHTMLAttr }}>
