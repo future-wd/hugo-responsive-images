@@ -175,11 +175,11 @@ The render hook template will take title and alt from the markdown image tag e.g
 
 You can set configuration at a resource meta data, page or site level e.g.
 
-- turn on the render hook just for one page (image.imageRenderHook: true)
+- turn on the render hook just for one page (image.render_hook: true)
 - set the responsive widths (image.widths: [400, 900])
 - set the image width through page image resource meta data
 
-Render hook only responsive widths default to shortcode responsive widths, and then standard widths. See above for site/page configuration. (image.RenderHookWidths > image.ShortcodeWidths > image.widths)
+Render hook only responsive widths default to shortcode responsive widths, and then standard widths. See above for site/page configuration. (image.render_hook_widths > image.shortcode_widths > image.widths)
 
 A div wrapper around the image has been provided see above for configuration (image.render_hook_wrapper_class)
 
