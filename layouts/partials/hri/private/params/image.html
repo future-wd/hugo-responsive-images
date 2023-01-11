@@ -263,11 +263,23 @@
   {{ $params = merge $params (dict "formats" (slice $single_format)) }}
 {{ end }}
 
-{{ if eq $img.MediaType.SubType "webp" }}
-  {{ if in $formats "webp" }}
 
+{{/* if a format is the same as the image media type, change the format to original */}}
+{{ $imgType := $img.MediaType.SubType }}
+{{ if in $formats $imgType }}
+  {{ $newFormats := slice }}
+  {{ range $formats }}
+    {{ if eq . $imgType }}
+    {{ $newFormats = $newFormats | append "original" }}
+    {{ else }}
+      {{ $newFormats = $newFormats | append . }}
+    {{ end }}
   {{ end }}
+  {{/* remove duplicates */}}
+  {{ $newFormats = $newFormats | uniq }}
+  {{ $params = merge $params (dict "formats" $newFormats) }}
 {{ end }}
+
 
 
 {{ return $params }}
