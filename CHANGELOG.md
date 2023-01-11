@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.10](/github.com/future-wd/hugo-responsive-image/compare/v1.2.9...v1.2.10) (2023-01-11)
+
+
+### Bug Fixes
+
+* links change to relpermalink for deploy preview ([0c17ecc](/github.com/future-wd/hugo-responsive-image/commit/0c17ecce1e0d35938a3a44c988061fea7bade474))
+* only process select shortcode params to array ([cffd319](/github.com/future-wd/hugo-responsive-image/commit/cffd319d575259ae70da47ea2696f6d44ef51622))
+
 ### [1.2.9](/github.com/future-wd/hugo-responsive-image/compare/v1.2.8...v1.2.9) (2023-01-11)
 
 
