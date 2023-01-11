@@ -263,5 +263,11 @@
   {{ $params = merge $params (dict "formats" $single_format) }}
 {{ end }}
 
+{{ if eq $img.MediaType.SubType "webp" }}
+  {{ if in $formats "webp" }}
+
+  {{ end }}
+{{ end }}
+
 
 {{ return $params }}

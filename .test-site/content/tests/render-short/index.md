@@ -36,7 +36,7 @@ testImages:
   <h2>2. Basic - shortcode</h2>
   <p>test2.jpg</p>
 {{< /shortcode2a.inline >}}
-{{< image src=test2.jpg alt="Alt text" title="Title text" widths=200,600,2000 >}}
+{{< img src=test2.jpg alt="Alt text" title="Title text" widths=200,600,2000 >}}
 {{< shortcode2b.inline >}}
 <div id="js-test2-results"></div>
 </div>
