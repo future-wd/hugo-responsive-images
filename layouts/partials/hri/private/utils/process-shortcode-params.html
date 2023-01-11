@@ -23,8 +23,12 @@
 {{/* convert any comma delimited string-arrays to arrays */}}
 {{ $arrays := dict}}
 {{ range $key, $elem := . }}
-  {{/* work on the elem and reassign */}}
-  {{ $elem = partial "hri/private/utils/string-to-array" $elem }}
+  {{/* only convert comma delim string to array if one of the following keys */}}
+  {{ $toProcess := slice "widths" "aspect_ratio" "fill_ratio" "densities" "formats"}}
+  {{ if in $toProcess $key }}
+    {{/* work on the elem and reassign */}}
+    {{ $elem = partial "hri/private/utils/string-to-array" $elem }}
+  {{ end }}
   {{/* create a new, identical dict as the original context */}}
   {{ $arrays = merge $arrays (dict $key $elem) }}
 {{ end }}

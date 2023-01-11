@@ -99,7 +99,7 @@ testImages:
     alt: figure
     figcaption_title: Figure Title
     figcaption_title_h: 3
-    caption: Figure Caption
+    caption: Figure Caption, including comma
     attr: Attribution Text
     attr_link: http://www.author.com
     link: /
