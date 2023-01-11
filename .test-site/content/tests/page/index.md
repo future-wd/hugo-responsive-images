@@ -194,4 +194,11 @@ testImages:
     alt: Test Image Alt
     title: Test Image Title
     placeholder: dominant
+- id: js-test15
+  title: 15. Duplicate format (original, webp for webp src)
+  subtitle: 
+  params:
+    src: webp-test.webp
+    alt: Test Image Alt
+    title: Test Image Title
 --- 
