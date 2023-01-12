@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.12](/github.com/future-wd/hugo-responsive-image/compare/v1.2.11...v1.2.12) (2023-01-12)
+
+
+### Bug Fixes
+
+* meta data working ([a6af78f](/github.com/future-wd/hugo-responsive-image/commit/a6af78f9fb3dbc6359ebb5cd4e8fbefb0174108e))
+
 ### [1.2.11](/github.com/future-wd/hugo-responsive-image/compare/v1.2.10...v1.2.11) (2023-01-12)
 
 re-instate params.image.... for meta data params (as per docs)
