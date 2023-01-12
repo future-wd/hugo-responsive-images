@@ -323,7 +323,7 @@ You can also use [resource meta data](https://gohugo.io/content-management/page-
 resources:
 - src: images/sunset.jpg # you can also glob match e.g. "product*.jpg"
   params:
-    images:
+    image:
       placeholder: lqip # use any of the settings here
 ```
 
