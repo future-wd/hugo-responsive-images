@@ -43,9 +43,10 @@
   {{ $img = resources.GetRemote $src }}
 {{ else }}
   {{/* page resource */}}
-  {{ $img = .ctx.Resources.GetMatch (print $src)   }}
-  {{/* add page resource image params to variable */}}
-  {{ $meta = $img.Params.image }}
+  {{ with .ctx.Resources.GetMatch (print $src)   }}
+  {{ $img = . }}
+  {{ $meta = .Params.image }}
+  {{ end }}
 {{ end }}
 
 {{ $params = merge $params (dict 

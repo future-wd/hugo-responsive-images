@@ -16,5 +16,5 @@
 
 */ -}}
 <div class="{{ .shortcode_params.shortcode_wrapper_class }}">
-  {{ partial (print .shortcode_params.name) .params }}
+  {{ partial (printf "hri/%v" .shortcode_params.name) .params }}
 </div>

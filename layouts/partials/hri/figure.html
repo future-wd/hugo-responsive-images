@@ -28,7 +28,6 @@
       "caption" $figure_params.caption
       "figcaption_title" $figure_params.figcaption_title
       "class" $figure_params.class ) -}}
-{{- /* call 3 partials for each part of figure */ -}}
-{{- partial "hri/private/print/figure-top" $figure_params }}
-{{- partial "hri/image_picture" $image_params -}}
-{{- partial "hri/private/print/figure-bottom" $figure_params }}
+{{- partial "hri/private/print/figure-set" (dict 
+  "figure_params" $figure_params 
+  "image_params" $image_params ) -}}
