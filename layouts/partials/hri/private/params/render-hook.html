@@ -17,9 +17,9 @@
 */}}
 
 {{/* extract image meta data for param below */}}
-{{ $meta := dict }}
+{{ $meta := false }}
 {{ with .Page.Resources.GetMatch .Destination }}
-  {{ $meta = .Params }}
+  {{ $meta = .Params.image }}
 {{ end }}
 {{ $page := .Page.Params.image }}
 {{ $site := site.Params.image }}

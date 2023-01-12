@@ -18,8 +18,7 @@
 */}}
 {{ $site := site.Params.image }}
 {{ $page := .Page.Params }}
-
-{{ $meta := dict }}
+{{ $meta := false }}
 {{ $params := dict }}
 {{/****************************************
   ** check for named params in shortcode **
@@ -55,7 +54,7 @@
 
 {{ with .Page.Resources.GetMatch (print $params.src)   }}
   {{/* add page resource image params to variable if image is page resource */}}
-  {{ $meta = .Params }}
+  {{ $meta = .Params.image }}
 {{ end }}
 
 {{ $shortcode_wrapper_class := $params.shortcode_wrapper_class | default $params.shortcodeWrapperClass | default $meta.shortcode_wrapper_class | default $meta.shortcodeWrapperClass | default (.Page.Param "image.shortcodeWrapperClass") | default (.Page.Param "image.shortcode_wrapper_class") }}

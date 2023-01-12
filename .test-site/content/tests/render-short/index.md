@@ -4,15 +4,11 @@ date: 2022-08-28T15:35:39-07:00
 draft: false
 disable_range: true
 resources:
-- src: test2.jpg
-  params: 
-    image:
-      widths: [100,200]
-      aspect_ratio: [1,1]
-resources:
 - src: test3.jpg
   params: 
-    widths: [400, 600, 2000]
+    image:
+      widths: [100,200, 2000]
+      aspect_ratio: [1,1]
 testImages:
 - id: js-test1
   tests:

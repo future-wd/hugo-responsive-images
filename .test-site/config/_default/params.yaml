@@ -16,5 +16,5 @@ image:
   shortcodeWrapperClass: img-wrapper
   placeholder: lqip # /dominant/file_name 
   noscript: true
-  suppress_width_warning: true
+  suppress_width_warning: false
   # provider: netlify
