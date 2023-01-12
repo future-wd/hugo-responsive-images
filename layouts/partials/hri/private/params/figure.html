@@ -3,7 +3,7 @@
 
 {{/* assign page resource image meta data to $meta if image is page resource */}}
 {{ with .ctx.Resources.GetMatch (print .src) }}
-  {{ $meta = .Params }}
+  {{ $meta = .Params.image }}
 {{ end }}
 
 {{/**********************************
