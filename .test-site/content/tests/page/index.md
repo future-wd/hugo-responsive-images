@@ -5,7 +5,7 @@ draft: false
 resources: # for test 8 (metadata)
 - src: test8.jpg
   params:
-    images:
+    image:
       alt: Alt set via metadata
       title: Title set via metadata
 testImages:
@@ -116,7 +116,6 @@ testImages:
   subtitle: title and alt set in markup metadata
   params:
     src: test8.jpg
-    figcaption_title: figcaption title
   tests:
     img:
       title: Title set via metadata
