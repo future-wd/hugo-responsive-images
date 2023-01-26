@@ -13,7 +13,7 @@
   "license": "ISC",
   "homepage": "https://hugo-responsive-images.netlify.app/",
   "dependencies": {
-    "bootstrap": "^5.2.0",
+    "bootstrap": "^5.2.3",
     "lazysizes": "^5.3.2"
   }
 }

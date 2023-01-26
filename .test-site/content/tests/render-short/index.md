@@ -9,13 +9,17 @@ resources:
     image:
       widths: [100,200, 2000]
       aspect_ratio: [1,1]
-testImages:
-- id: js-test1
-  tests:
-    img:
-      alt: 'Alt text'
-      title: 'Title text'
-      class: ['img-fluid', 'lazyload']
+- src: test4.jpg
+  params: 
+    image:
+      render_hook: false
+# testImages:
+# - id: js-test1
+#   tests:
+#     img:
+#       alt: 'Alt text'
+#       title: 'Title text'
+#       class: ['img-fluid', 'lazyload']
 --- 
 {{< renderhook1a.inline >}}
 <div class="col-md-6 render-hook-test" id="js-test1">
@@ -28,17 +32,17 @@ testImages:
 </div>
 {{< /renderhook1b.inline >}}
 
-{{< shortcode1a.inline >}}
+{{< shortcode2a.inline >}}
 <div class="col-md-6 render-hook-test" id="js-test2">
   <h2>2. Basic - shortcode</h2>
   <p>test2.jpg</p>
-{{< /shortcode1a.inline >}}
+{{< /shortcode2a.inline >}}
 {{/*widths=200,600,2000 */}}
 {{< picture src=test2.jpg alt="Alt text" title="Title text"  >}}
-{{< shortcode1b.inline >}}
+{{< shortcode2b.inline >}}
 <div id="js-test2-results"></div>
 </div>
-{{< /shortcode1b.inline >}}
+{{< /shortcode2b.inline >}}
 
 {{< shortcode3a.inline >}}
 <div class="col-md-6 render-hook-test" id="js-test3">
@@ -50,3 +54,13 @@ testImages:
 <div id="js-test3-results"></div>
 </div>
 {{< /shortcode3b.inline >}}
+{{< renderhook4a.inline >}}
+<div class="col-md-6 render-hook-test" id="js-test1">
+  <h2>4. Basic - render_hook: false (replicated stock markdown handling of img)</h2>
+  <p>test4.jpg</p>
+{{< /renderhook4a.inline >}}
+![Alt Text](test4.jpg "Test Title")
+{{< renderhook4b.inline >}}
+<div id="js-test1-results"></div>
+</div>
+{{< /renderhook4b.inline >}}
