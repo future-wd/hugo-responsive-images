@@ -15,13 +15,11 @@
   {{ partial "image" (dict "src" "image.jpg" "alt" "alt text") }}
 
 */ -}}
-{{- /* use .page or .ctx as ctx .page to be depreciated in v2*/ -}}
-{{- $ctx := .ctx -}}
-{{- if .page -}}
-  {{- $ctx = .page -}}
-{{- end -}}
+
+{{- /* get image resource */ -}}
+{{- $params := partial "hri/private/params/get-image.html" . }}
 {{- /* santize inputs, process params */ -}}
-{{- $params := partial "hri/private/params/image.html" (merge . (dict "ctx" $ctx)) }}
+{{- $params = partial "hri/private/params/image.html" $params }}
 {{- /* generate image widths*/ -}}
 {{- $params = partial "hri/private/gen/widths" $params -}}
 {{- /* generate picture or img tag */ -}}

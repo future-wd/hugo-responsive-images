@@ -9,7 +9,7 @@ image:
   figcaptionClass: figure-caption # default figcaption class
   figureImageClass: "figure-img img-fluid" # default figure image class
   figureTitleH: 4 # heading level for figure title
-  # depreciated lazysizes: true # enable integration of the lazysizes js library (`loading: lazysizes` needed for )
+  # deprecated lazysizes: true # enable integration of the lazysizes js library (`loading: lazysizes` needed for )
   loading: lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js to handle image loading. Defaults to lazy. If you use default (`lazy`) or `lazysizes`, you will need to set above the fold images to `auto`. 
   renderHook: true # set to false to disable included markdown image render hook
   renderHookWrapperClass: img-wrapper

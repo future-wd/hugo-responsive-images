@@ -24,39 +24,25 @@
   
 */}}
 
-{{ $meta := dict }}
-{{ $page := .ctx.Params.image }}
+
+{{ $ctx := .ctx }}
+{{ $meta := .meta }}
+{{ $page :=  $ctx.Params.image }}
 {{ $params :=  . }}
-{{ $img := false }}
+{{ $img := .img }}
+{{ $type := .type }}
 {{ $src := .src }}
 
-{{/* .type depreciated, keep for v1. only use $type from v2 */}}
-{{ $type := .type | default (.ctx.Param "image.type") }}
-{{ $prefix := substr $src 0 7 }}
-{{ if eq $prefix "assets/" }}
-  {{ $src = substr $src 7 }}
-  {{ $type = "global" }}
-{{ end }}
-{{ if eq $type "global" }}
-  {{ $img = resources.Get $src }}
-{{ else if (eq $type "remote") }}
-  {{ $img = resources.GetRemote $src }}
-{{ else }}
-  {{/* page resource */}}
-  {{ with .ctx.Resources.GetMatch (print $src)   }}
-  {{ $img = . }}
-  {{ $meta = .Params.image }}
-  {{ end }}
-{{ end }}
+{{ warnf "ctx is %s for image " $ctx $img}}
 
 {{ $params = merge $params (dict 
   "img" $img
   "type" $type) }}
 
-{{/* camelCase params have been kept to avoid breaking changes, will be depreciated in future versions */}}
+{{/* camelCase params have been kept to avoid breaking changes, will be deprecated in future versions */}}
 
 {{/* general params */}}
-{{ $suppress_width_warning := .suppress_width_warning | default .suppressWidthWarning | default (.ctx.Param "image.suppressWidthWarning") | default (.ctx.Param "image.suppress_width_warning") }}
+{{ $suppress_width_warning := .suppress_width_warning | default .suppressWidthWarning | default ( $ctx.Param "image.suppressWidthWarning") | default ( $ctx.Param "image.suppress_width_warning") }}
 {{ $resource_title := "" }}
 {{ if eq $type "page" }}
   {{ if ne $img.Title ($img | string) }}
@@ -66,32 +52,32 @@
 {{ $title := .title | default $meta.title | default $resource_title }}
 
 {{ $aspect_ratio :=  .aspect_ratio | default .fill_ratio | default .fillRatio | default $meta.aspect_ratio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fill_ratio | default $page.fillRatio  }}
-{{ $fit := .fit | default $meta.fit | default .ctx.Params.image.fit }}
-{{ $width := .width | default $meta.width | default .ctx.Params.image.width }}
-{{ $height := .height | default $meta.height | default .ctx.Params.image.height }}
-{{ $densities := .densities | default $meta.densities | default (.ctx.Param "image.densities") }}
+{{ $fit := .fit | default $meta.fit | default $ctx.Params.image.fit }}
+{{ $width := .width | default $meta.width | default $ctx.Params.image.width }}
+{{ $height := .height | default $meta.height | default $ctx.Params.image.height }}
+{{ $densities := .densities | default $meta.densities | default ($ctx.Param "image.densities") }}
 {{ $densities = sort $densities }}
 {{ $widths := "" }}
 {{/* shortcode and render hook widths defaults are handled higher up */}}
 {{ if or (eq .input "render_hook") (eq .input "shortcode") }}
   {{ $widths = .widths }}
 {{ else }}
-  {{ $widths = .widths | default $meta.widths | default (.ctx.Param "image.widths") }}
+  {{ $widths = .widths | default $meta.widths | default ($ctx.Param "image.widths") }}
 {{ end }}
 
-{{ $formats := .formats | default $meta.formats | default (.ctx.Param "image.formats") }}
-{{ $provider := .provider | default $meta.provider | default (.ctx.Param "image.provider") }}
-{{ $loading := .loading | default $meta.loading | default (.ctx.Param "image.loading") }}
+{{ $formats := .formats | default $meta.formats | default ($ctx.Param "image.formats") }}
+{{ $provider := .provider | default $meta.provider | default ($ctx.Param "image.provider") }}
+{{ $loading := .loading | default $meta.loading | default ($ctx.Param "image.loading") }}
 {{ $sizes := .sizes | default $meta.sizes | default $page.sizes }}
 {{ $alt :=  .alt | default $meta.alt }}
-{{ $noscript := .noscript | default $meta.noscript | default (.ctx.Param "image.noscript") }}
+{{ $noscript := .noscript | default $meta.noscript | default ($ctx.Param "image.noscript") }}
 {{ $class := "" }}
 {{ $caption := "" }}
 {{ if eq .input "figure" }}
   {{ $class = .class }}
   {{ $caption = .caption }}
 {{ else }}
-  {{ $class = .class | default $meta.class | default (.ctx.Param "image.class") }}
+  {{ $class = .class | default $meta.class | default ($ctx.Param "image.class") }}
 {{ end }}
 
 {{ $general_params := dict 
@@ -112,10 +98,10 @@
   "noscript" $noscript }}
 
 {{/* placeholder params */}}
-{{ $placeholder := .placeholder | default $meta.placeholder | default (.ctx.Param "image.placeholder") }}
-{{ $lqip_div_factor := .lqip_div_factor | default .lqipDivFactor | default $meta.lqip_div_factor | default $meta.lqipDivFactor | default (.ctx.Param "image.lqip_div_factor") | default (.ctx.Param "image.lqip_div_factor") }}
-{{ $lqip_blur_amount := .lqip_blur_amount | default .lqipBlurAmount | default $meta.lqip_blur_amount | default $meta.lqipBlurAmount | default (.ctx.Param "image.lqipBlurAmount") | default (.ctx.Param "image.lqip_blur_amount") }}
-{{ $gif_div_factor := .gif_div_factor | default .gifDivFactor | default $meta.gif_div_factor | default $meta.gifDivFactor | default (.ctx.Param "image.gifDivFactor") | default (.ctx.Param "image.gif_div_factor") }}
+{{ $placeholder := .placeholder | default $meta.placeholder | default ($ctx.Param "image.placeholder") }}
+{{ $lqip_div_factor := .lqip_div_factor | default .lqipDivFactor | default $meta.lqip_div_factor | default $meta.lqipDivFactor | default ($ctx.Param "image.lqip_div_factor") | default ($ctx.Param "image.lqip_div_factor") }}
+{{ $lqip_blur_amount := .lqip_blur_amount | default .lqipBlurAmount | default $meta.lqip_blur_amount | default $meta.lqipBlurAmount | default ($ctx.Param "image.lqipBlurAmount") | default ($ctx.Param "image.lqip_blur_amount") }}
+{{ $gif_div_factor := .gif_div_factor | default .gifDivFactor | default $meta.gif_div_factor | default $meta.gifDivFactor | default ($ctx.Param "image.gifDivFactor") | default ($ctx.Param "image.gif_div_factor") }}
 {{ $placeholder_params := dict 
   "placeholder" $placeholder
   "lqip_div_factor" $lqip_div_factor
@@ -125,12 +111,12 @@
 {{/* image processing params - dont export these params */}}
 {{ $processing_params := dict }}
 {{ if not $provider }}
-  {{ $quality := .quality | default $meta.quality | default (.ctx.Param "image.quality") }}
-  {{ $rotate := .rotate | default $meta.rotate | default (.ctx.Param "image.rotate") }}
-  {{ $resample_filter := .resample_filter | default .resampleFilter | default $meta.resample_filter | default $meta.resampleFilter | default (.ctx.Param "image.resampleFilter") | default (.ctx.Param "image.resample_filter") }}
-  {{ $hint := .hint | default $meta.hint | default (.ctx.Param "image.hint") }}
-  {{ $anchor := .anchor | default $meta.anchor | default (.ctx.Param "image.anchor") }}
-  {{ $background_color := .background_color | default $meta.background_color | default (.ctx.Param "image.background_color") }}
+  {{ $quality := .quality | default $meta.quality | default ($ctx.Param "image.quality") }}
+  {{ $rotate := .rotate | default $meta.rotate | default ($ctx.Param "image.rotate") }}
+  {{ $resample_filter := .resample_filter | default .resampleFilter | default $meta.resample_filter | default $meta.resampleFilter | default ($ctx.Param "image.resampleFilter") | default ($ctx.Param "image.resample_filter") }}
+  {{ $hint := .hint | default $meta.hint | default ($ctx.Param "image.hint") }}
+  {{ $anchor := .anchor | default $meta.anchor | default ($ctx.Param "image.anchor") }}
+  {{ $background_color := .background_color | default $meta.background_color | default ($ctx.Param "image.background_color") }}
   {{ $processing_params = dict 
     "quality" $quality 
     "rotate" $rotate 
@@ -146,9 +132,9 @@
 {{ $params = merge $params $placeholder_params }}
 
 
-{{ partial "hri/private/params/sanitize/image-general" (dict "ctx" .ctx "img" $img "params" $general_params) }}
-{{ partial "hri/private/params/sanitize/image-processing" (dict "ctx" .ctx "img" $img "params" $processing_params) }}
-{{ partial "hri/private/params/sanitize/image-placeholder" (dict "ctx" .ctx "img" $img "params" $placeholder_params) }}
+{{ partial "hri/private/params/sanitize/image-general" (dict "ctx" $ctx "img" $img "params" $general_params) }}
+{{ partial "hri/private/params/sanitize/image-processing" (dict "ctx" $ctx "img" $img "params" $processing_params) }}
+{{ partial "hri/private/params/sanitize/image-placeholder" (dict "ctx" $ctx "img" $img "params" $placeholder_params) }}
 
 {{/* POST SANITIZATION MODIFICATIONS TO PARAMS */}}
 
@@ -190,7 +176,7 @@
   {{ $widths = sort $widths }}
   {{/* SANTIZE WIDTHS WITH UTIL */}}
   {{ $new_widths := partial "img-common/private/utils/restrict-widths" (dict 
-    "ctx" $.ctx
+    "ctx" $ctx
     "img" $img
     "widths" $widths
     "aspect_ratio" $aspect_ratio
@@ -243,7 +229,7 @@
   {{ else if $title }}
     {{ $alt = printf "Image of %s" $title }}
   {{ else }}
-    {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $img.RelPermalink .ctx.RelPermalink }}
+    {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $img.RelPermalink $ctx.RelPermalink }}
   {{ end }}
   {{ $params = merge $params (dict "alt" $alt) }}
 {{ end }}
