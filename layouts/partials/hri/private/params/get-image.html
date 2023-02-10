@@ -7,12 +7,12 @@
 
   @context . Context from image partial
 
-  @return
+  @return Image and other params (via scratch) are merged with . input
 
   @access private
 
   @example - Go Template
-  {{ partial "hri/private/params/get-image" (dict "params" .)}}
+  {{ partial "hri/private/params/get-image" . }}
   
 */}}
 
@@ -30,7 +30,7 @@
 {{ if not (or .ctx .page) }}
   {{ $message = printf "ctx must be set for image %s" .src }}
 {{ end }}
-{{ $s.Set "params" "ctx" $ctx}}
+{{ $s.SetInMap "params" "ctx" $ctx}}
 
 {{/* check .ctx actually pointing to a page context */}}
 {{ if and (ne  .input "render_hook") (ne .input "shortcode") }}
@@ -43,6 +43,7 @@
     {{ $message = printf "Shortcode ctx error for image %s" .src }}
   {{ end }}
 {{ else if (eq .input "render_hook") }}
+  {{ warnf "rh source: %s" .src }}
   {{ if ne (printf "%T" $ctx) "*hugolib.pageForRenderHooks" }}
     {{ $message = printf "Render hook ctx error for image %s" .src }}
   {{ end }}
@@ -81,6 +82,5 @@
   {{ partial "img-common/private/utils/errorf" (dict "message" $message "module" $module) }}
 {{ end }}
 
-
-{{ warnf "get image params %v" ($s.Get "params")}}
-{{ return merge .params ($s.Get "params") }}
+{{/* merge params scratch into original params */}}
+{{ return merge . ($s.Get "params") }}
