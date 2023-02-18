@@ -17,7 +17,7 @@
     <div class="col-md-6" id="{{ .id }}">
       <h2>{{ .title }}</h2>
       <p>{{ .subtitle }}</p>
-      {{ $partial := .partial | default "image" }}
+      {{ $partial := .partial | default "picture" }}
       {{ with .params }}
         {{ $params := merge (dict "page" $) . }}
         {{ partial $partial $params }}
