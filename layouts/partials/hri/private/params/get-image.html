@@ -43,7 +43,6 @@
     {{ $message = printf "Shortcode ctx error for image %s" .src }}
   {{ end }}
 {{ else if (eq .input "render_hook") }}
-  {{ warnf "rh source: %s" .src }}
   {{ if ne (printf "%T" $ctx) "*hugolib.pageForRenderHooks" }}
     {{ $message = printf "Render hook ctx error for image %s" .src }}
   {{ end }}
