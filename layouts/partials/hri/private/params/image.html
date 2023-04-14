@@ -111,7 +111,13 @@
 {{ $processing_params := dict }}
 {{ if not $provider }}
   {{ $quality := .quality | default $meta.quality | default ($ctx.Param "image.quality") }}
+  {{ with $quality }}
+    {{ $quality = printf "q%v" . }}
+  {{ end }}
   {{ $rotate := .rotate | default $meta.rotate | default ($ctx.Param "image.rotate") }}
+  {{ with $rotate }}
+    {{ $rotate = printf "r%v" . }}
+  {{ end }}
   {{ $resample_filter := .resample_filter | default .resampleFilter | default $meta.resample_filter | default $meta.resampleFilter | default ($ctx.Param "image.resampleFilter") | default ($ctx.Param "image.resample_filter") }}
   {{ $hint := .hint | default $meta.hint | default ($ctx.Param "image.hint") }}
   {{ $anchor := .anchor | default $meta.anchor | default ($ctx.Param "image.anchor") }}
