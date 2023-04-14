@@ -6,20 +6,13 @@
 {{ $s := newScratch }}
 {{ $s.Set "params" dict }}
 
-{{ $error_ctx := dict 
-  "ctx" .ctx
-  "img" .img
-  "element" "image"
-  "module" "Hugo Responsive Images" }}
-
-
 {{ with .placeholder | default $meta.placeholder | default ($ctx.Param "image.placeholder") }}
   {{ if not (eq (printf "%T" .) "string") }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "placeholder"
       "val" .
       "opts" "lqip, dominant or a color which matches a gif file"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "placeholder" . }}
@@ -32,7 +25,7 @@
       "var" "lqip_blur_amount"
       "val" .
       "opts" "an integer or float blur amount"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "lqip_blur_amount" . }}
@@ -45,7 +38,7 @@
       "var" "gif_div_factor"
       "val" .
       "opts" "an integer or float division factor"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "gif_div_factor" . }}
@@ -58,7 +51,7 @@
       "var" "gif_div_factor"
       "val" .
       "opts" "an integer or float division factor"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "lqip_div_factor" . }}

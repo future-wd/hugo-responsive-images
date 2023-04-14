@@ -8,12 +8,6 @@
 {{ $s.Set "params" dict }}
 {{ $params := $s.Get "params"}}
 
-{{ $error_ctx := dict 
-  "ctx" .ctx
-  "img" .img
-  "element" "image"
-  "module" "Hugo Responsive Images" }}
-
 
 {{ with .suppress_width_warning | default .suppressWidthWarning | default ( $ctx.Param "image.suppressWidthWarning") | default ( $ctx.Param "image.suppress_width_warning") }}
   {{ if ne (printf "%T" .) "bool" }}
@@ -21,7 +15,7 @@
       "var" "suppress_width_warning"
       "val" .
       "opts" "true/false"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "suppress_width_warning" .}}
@@ -37,7 +31,7 @@
         "var" "densities slice item"
         "val" .
         "opts" "integers in a slice"
-        "ctx" $error_ctx
+        "ctx" $.error_ctx
         ) }}
       {{ end }}
     {{ end }}
@@ -47,7 +41,7 @@
     "var" "densities"
     "val" .
     "opts" "integers in a slice"
-    "ctx" $error_ctx
+    "ctx" $.error_ctx
     ) }}
   {{ end }}
 {{ end }}
@@ -63,7 +57,7 @@
           "var" "formats array item"
           "val" .
           "opts" (delimit $formatOpts ", " " and ")
-          "ctx" $error_ctx
+          "ctx" $.error_ctx
         ) }}
         {{ end }}
     {{ end }}
@@ -72,7 +66,7 @@
         "var" "formats array"
         "val" .
         "opts" "array of image formats"
-        "ctx" $error_ctx
+        "ctx" $.error_ctx
       ) }}
   {{ end }}
 {{ end }}
@@ -107,7 +101,7 @@
       "var" "provider"
       "val" .
       "opts" (delimit $providerOpts ", " " and ")
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "provider" . }}
@@ -127,7 +121,7 @@
       "var" "loading"
       "val" .
       "opts" (delimit $opts ", " " and ")
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "loading" . }}
@@ -145,7 +139,7 @@
       "var" "fit"
       "val" .
       "opts" (delimit $opts ", " " and ")
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "fit" . }}
@@ -158,7 +152,7 @@
       "var" "height"
       "val" .
       "opts" "an integer"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "height" . }}
@@ -179,7 +173,7 @@
       "var" "alt"
       "val" .
       "opts" "strings"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     
@@ -207,7 +201,7 @@
       "var" "noscript"
       "val" .
       "opts" "strings"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "noscript" . }}
@@ -229,7 +223,7 @@
       "var" "title"
       "val" .
       "opts" "a string"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "title" . }}
@@ -259,7 +253,7 @@
 {{ if and ($s.Get "width") $user_widths }}
   {{ partial "hri/private/utils/options-error" (dict 
     "msg" "You cannot provide both width and widths params"
-    "ctx" $error_ctx
+    "ctx" $.error_ctx
   ) }}
 {{ end }}
 
@@ -271,7 +265,7 @@
           "var" "width in widths slice"
           "val" .
           "opts" "an integer"
-          "ctx" $error_ctx
+          "ctx" $.error_ctx
         ) }}
       {{ end }}
     {{ end }}
@@ -280,7 +274,7 @@
     "var" "widths slice"
     "val" .
     "opts" "slice of integers"
-    "ctx" $error_ctx
+    "ctx" $.error_ctx
   ) }}
   {{ end }}
 {{ end }}
@@ -318,7 +312,7 @@
       "var" "width"
       "val" .
       "opts" "an integer"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "width" . }}
@@ -353,7 +347,7 @@
       "var" "class"
       "val" .
       "opts" "strings"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ end }}
 {{ end }}
@@ -379,7 +373,7 @@
         "var" "aspect_ratio slice item"
         "val" .
         "opts" "2x integers in a slice"
-        "ctx" $error_ctx
+        "ctx" $.error_ctx
         ) }}
       {{ end }}
     {{ end }}
@@ -389,7 +383,7 @@
     "var" "aspect_ratio"
     "val" .
     "opts" "2x integers in a slice"
-    "ctx" $error_ctx
+    "ctx" $.error_ctx
     ) }}
   {{ end }}
 {{ end }}
@@ -412,7 +406,7 @@
       "var" "sizes"
       "val" .
       "opts" "strings"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "sizes" . }}

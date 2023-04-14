@@ -1,15 +1,14 @@
 # TODO
 
-scope figure sanitized params present in image as "figure_params"
-
-separate .test_site into separate repo to keep git history clean. Use git submodules?
+scope figure sanitized params present in image as "figure_params" etc.
+fix up the rest of the params/merge sanitization
 
 allow the param of image_only: true for render hook to only generate <img> and figure: true for figure
 
 astro image processing params:
 - aspect_ratio: string ratio for image resize string "16:9", int also e.g. 1.32
 - use regex to check for 0-9*:0-9*
-- depreciate slice
+- deprecate slice
 
 test site fix js error - forEach iterating over undefined.. need to debug
 

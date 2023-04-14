@@ -16,7 +16,6 @@
   
 */}}
 
-{{ $module := "Hugo Responsive Images" }}
 {{ $message := false }}
 {{ $s := newScratch }}
 {{ $s.Set "params" dict }}
@@ -78,7 +77,7 @@
 
 
 {{ if $message }}
-  {{ partial "img-common/private/utils/errorf" (dict "message" $message "module" $module) }}
+  {{ partial "img-common/private/utils/errorf" (dict "message" $message "module" .module) }}
 {{ end }}
 
 {{/* merge params scratch into original params */}}

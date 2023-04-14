@@ -31,19 +31,13 @@
 {{ $s := newScratch }}
 {{ $s.Set "params" dict }}
 
-{{ $error_ctx := dict 
-  "ctx" .ctx
-  "img" .img
-  "element" "image"
-  "module" "Hugo Responsive Images" }}
-
 {{ with .quality | default $meta.quality | default ($ctx.Param "image.quality") }}
   {{ if not (and (eq (printf "%T" .) "int") (and (ge . 1) (le . 100))) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "quality"
       "val" .
       "opts" "integers between 1-100 inclusive"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "quality" (printf "q%v" . )}}
@@ -56,7 +50,7 @@
       "var" "rotate"
       "val" .
       "opts" "integers between 1-360 inclusive"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "rotate" (printf "r%v" . ) }}
@@ -71,7 +65,7 @@
       "var" "resample_filter"
       "val" .
       "opts" (delimit $filter_opts ", ")
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "resample_filter" . }}
@@ -85,7 +79,7 @@
       "var" "hint"
       "val" .
       "opts" (delimit $hint_opts ", ")
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "hint" . }}
@@ -99,7 +93,7 @@
       "var" "anchor"
       "val" .
       "opts" (delimit $anchor_opts ", ")
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "anchor" . }}
@@ -113,7 +107,7 @@
       "var" "background_color"
       "val" .
       "opts" "3 or 6 digit hex color code"
-      "ctx" $error_ctx
+      "ctx" $.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "background_color" . }}

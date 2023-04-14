@@ -15,9 +15,11 @@
   {{ partial "image" (dict "src" "image.jpg" "alt" "alt text") }}
 
 */ -}}
+{{ $module := "Hugo Responsive Images" }}
+{{ $ctx := merge . (dict "module" $module) }}
 
 {{- /* get image resource */ -}}
-{{- $params := partial "hri/private/params/get-image.html" . }}
+{{- $params := partial "hri/private/params/get-image.html" $ctx }}
 {{- /* santize inputs, process params */ -}}
 {{- $params = partial "hri/private/params/image.html" $params }}
 {{- /* generate image widths*/ -}}

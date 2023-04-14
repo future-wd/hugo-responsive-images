@@ -24,30 +24,21 @@
   
 */}}
 
-{{/*
-{{ $s := newScratch }}
-{{ $s.Set "params" dict }}
-{{ $params :=  $s.Get "params" }}
-*/}}
+{{/* camelCase params have been kept to avoid breaking changes, will be deprecated in future versions */}}
 
-{{ $ctx := .ctx }}
-{{ $meta := .meta }}
-{{ $page :=  $ctx.Params.image }}
+{{ $error_ctx := dict 
+  "ctx" .ctx
+  "img" .img
+  "element" "image"
+  "module" .module }}
 
-{{ $img := .img }}
-{{ $type := .type }}
-{{ $src := .src }}
+{{ $partial_ctx := merge . (dict "meta" .meta "ctx" .ctx "error_ctx" $error_ctx  ) }}
+
 
 {{ $params := dict }}
 {{ $params = merge $params (dict 
-  "img" $img
-  "type" $type) }}
-
-
-{{/* camelCase params have been kept to avoid breaking changes, will be deprecated in future versions */}}
-
-{{ $partial_ctx := merge . (dict "meta" $meta "ctx" $ctx ) }}
-
+  "img" .img
+  "type" .type) }}
 {{ $general_params := partial "hri/private/params/image-general" $partial_ctx }}
 {{ $params = merge $params $general_params }}
 
@@ -62,4 +53,3 @@
 
 
 {{ return $params }}
-
