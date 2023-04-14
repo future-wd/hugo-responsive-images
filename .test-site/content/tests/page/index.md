@@ -140,6 +140,7 @@ testImages:
     title: Test Image Title
     widths: [200, 400, 900]
     aspect_ratio: [3,4]
+    anchor: TopLeft
   tests:
     source: 
       dataWidths: ['200w', '400w', '607w']
