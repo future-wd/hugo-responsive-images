@@ -1,6 +1,6 @@
 {{/*
   bg-images/private/sanitize/image-processing.html 
-  Sanitizes image processing params
+  Sanitizes and passes image processing params as a dict
     - quality
     - rotate
     - resample_filter
@@ -11,11 +11,10 @@
   @author @sean-au
 
   @context (dict)
-    "params" dict of params
-    "type" site/page/meta/inline
+    . params extracted from context
     "ctx" page context
-    "img" image resource
-    )
+    "meta" page resource meta data
+    
 
   @access private
 
@@ -24,14 +23,21 @@
   */}}
 
 
+
+{{/* need to create $variables as .variables dont work if = nill */}}
+{{ $meta := .meta }}
+{{ $ctx := .ctx }}
+
+{{ $s := newScratch }}
+{{ $s.Set "params" dict }}
+
 {{ $error_ctx := dict 
   "ctx" .ctx
   "img" .img
   "element" "image"
   "module" "Hugo Responsive Images" }}
 
-{{/* see rotate below - need to re-order 
-{{ with .params.quality }}
+{{ with .quality | default $meta.quality | default ($ctx.Param "image.quality") }}
   {{ if not (and (eq (printf "%T" .) "int") (and (ge . 1) (le . 100))) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "quality"
@@ -39,12 +45,12 @@
       "opts" "integers between 1-100 inclusive"
       "ctx" $error_ctx
     ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "quality" (printf "q%v" . )}}
   {{ end }}
 {{ end }}
-*/}}
 
-{{/* disabled as does not like r90 need to run this before prepending r to value  
-{{ with .params.rotate }}
+{{ with .rotate | default $meta.rotate | default ($ctx.Param "image.rotate") }}
   {{ if not (and (eq (printf "%T" .) "int") (and (ge . 1) (le . 360))) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "rotate"
@@ -52,11 +58,13 @@
       "opts" "integers between 1-360 inclusive"
       "ctx" $error_ctx
     ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "rotate" (printf "r%v" . ) }}
   {{ end }}
 {{ end }}
-*/}}
 
-{{ with .params.resample_filter }}
+
+{{ with .resample_filter | default .resampleFilter | default $meta.resample_filter | default $meta.resampleFilter | default ($ctx.Param "image.resampleFilter") | default ($ctx.Param "image.resample_filter") }}
   {{ $filter_opts := (slice "Box" "Lanczos" "CatmullRom" "MitchellNetravali" "Linear" "NearestNeighbor") }}
   {{ if not (in $filter_opts .) }}
     {{ partial "hri/private/utils/options-error" (dict 
@@ -65,10 +73,12 @@
       "opts" (delimit $filter_opts ", ")
       "ctx" $error_ctx
     ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "resample_filter" . }}
   {{ end }}
 {{ end }}
 
-{{ with .params.hint }}
+{{ with .hint | default $meta.hint | default ($ctx.Param "image.hint") }}
   {{ $hint_opts := (slice "picture" "photo" "drawing" "icon" "text") }}
   {{ if not (in $hint_opts . ) }}
     {{ partial "hri/private/utils/options-error" (dict 
@@ -77,10 +87,12 @@
       "opts" (delimit $hint_opts ", ")
       "ctx" $error_ctx
     ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "hint" . }}
   {{ end }}
 {{ end }}
 
-{{with .params.anchor }}
+{{with .anchor | default $meta.anchor | default ($ctx.Param "image.anchor") }}
   {{ $anchor_opts := (slice "Smart" "Center" "TopLeft" "Top" "TopRight" "Left" "Right" "BottomLeft" "Bottom" "BottomRight") }}
   {{ if not (in $anchor_opts .) }}
     {{ partial "hri/private/utils/options-error" (dict 
@@ -89,10 +101,12 @@
       "opts" (delimit $anchor_opts ", ")
       "ctx" $error_ctx
     ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "anchor" . }}
   {{ end }}
 {{ end }}
 
-{{ with .params.background_color }}
+{{ with .background_color | default $meta.background_color | default ($ctx.Param "image.background_color") }}
   {{ $hex := findRE `^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$` . }}
   {{ if not $hex }}
     {{ partial "hri/private/utils/options-error" (dict 
@@ -101,7 +115,9 @@
       "opts" "3 or 6 digit hex color code"
       "ctx" $error_ctx
     ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "background_color" . }}
   {{ end }}
 {{ end }}
 
-{{ return true }}
+{{ return $s.Get "params" }}

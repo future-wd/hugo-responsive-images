@@ -1,0 +1,438 @@
+
+{{/* need to create $variables as .variables dont work if = nill */}}
+{{ $meta := .meta }}
+{{ $ctx := .ctx }}
+{{ $page :=  $ctx.Params.image }}
+
+{{ $s := newScratch }}
+{{ $s.Set "params" dict }}
+{{ $params := $s.Get "params"}}
+
+{{ $error_ctx := dict 
+  "ctx" .ctx
+  "img" .img
+  "element" "image"
+  "module" "Hugo Responsive Images" }}
+
+
+{{ with .suppress_width_warning | default .suppressWidthWarning | default ( $ctx.Param "image.suppressWidthWarning") | default ( $ctx.Param "image.suppress_width_warning") }}
+  {{ if ne (printf "%T" .) "bool" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "suppress_width_warning"
+      "val" .
+      "opts" "true/false"
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "suppress_width_warning" .}}
+  {{ end }}
+{{ end }}
+
+
+{{ with .densities | default $meta.densities | default ($ctx.Param "image.densities") }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
+        {{ partial "hri/private/utils/options-error" (dict 
+        "var" "densities slice item"
+        "val" .
+        "opts" "integers in a slice"
+        "ctx" $error_ctx
+        ) }}
+      {{ end }}
+    {{ end }}
+    {{ $s.SetInMap "params" "densities" (sort . ) }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+    "var" "densities"
+    "val" .
+    "opts" "integers in a slice"
+    "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ $user_formats := .formats | default $meta.formats | default ($ctx.Param "image.formats") }}
+
+{{ with $user_formats }}
+  {{ if reflect.IsSlice . }}
+    {{ $formatOpts := (slice "original" "bmp" "gif" "jpeg" "jpg" "png" "tif" "tiff" "webp") }}
+    {{ range . }}
+      {{ if not (in $formatOpts .) }}
+        {{ partial "hri/private/utils/options-error" (dict 
+          "var" "formats array item"
+          "val" .
+          "opts" (delimit $formatOpts ", " " and ")
+          "ctx" $error_ctx
+        ) }}
+        {{ end }}
+    {{ end }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+        "var" "formats array"
+        "val" .
+        "opts" "array of image formats"
+        "ctx" $error_ctx
+      ) }}
+  {{ end }}
+{{ end }}
+
+{{/* if only generating img tag, only process first format */}}
+{{ if eq $.image_only true }}
+  {{ $single_format := index $user_formats 0 }}
+  {{ $user_formats = slice $single_format }}
+{{ end }}
+
+{{/* if a format is the same as the image media type, change the format to original, remove duplicates */}}
+{{ $formats := slice }}
+{{ $imgType := .img.MediaType.SubType }}
+{{ range $user_formats }}
+  {{ if eq . $imgType }}
+    {{ $formats = $formats | append "original" }}
+  {{ else }}
+    {{ $formats = $formats | append . }}
+  {{ end }}
+{{ end }}
+{{/* remove duplicates */}}
+{{ $formats = $formats | uniq }}
+{{ $s.SetInMap "params" "formats" $formats }}
+
+
+
+
+{{ with .provider | default $meta.provider | default ($ctx.Param "image.provider") }}
+  {{ $providerOpts := (slice "netlify") }}
+  {{ if not ( in $providerOpts . ) }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "provider"
+      "val" .
+      "opts" (delimit $providerOpts ", " " and ")
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "provider" . }}
+  {{ end }}
+{{ end }}
+
+{{ with .loading | default $meta.loading | default ($ctx.Param "image.loading") }}
+  {{ $opts := false }}
+  {{ if $.provider }}
+    {{/* disable lazy loading for external image processing */}}
+    {{ $opts = (slice "auto" "eager" "lazy") }}
+  {{ else }}
+    {{ $opts = (slice "auto" "lazy" "eager" "lazysizes") }}
+  {{ end }}
+  {{ if not (in $opts .) }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "loading"
+      "val" .
+      "opts" (delimit $opts ", " " and ")
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "loading" . }}
+    {{ if ne "lazysizes" . }}
+      {{/* only generate loading property if not lazy sizes */}}
+      {{ $s.SetInMap "params" "loading_prop" . }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ with .fit | default $meta.fit | default $ctx.Params.image.fit }}
+  {{ $opts := (slice "cover" "contain" "fill") }}
+  {{ if not (in $opts .) }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "fit"
+      "val" .
+      "opts" (delimit $opts ", " " and ")
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "fit" . }}
+  {{ end }}
+{{ end }}
+
+{{ with .height | default $meta.height | default $ctx.Params.image.height }}
+  {{ if ne (printf "%T" .) "int" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "height"
+      "val" .
+      "opts" "an integer"
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "height" . }}
+  {{ end }}
+{{ end }}
+
+
+
+
+
+
+
+
+
+{{ with .alt | default $meta.alt }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "alt"
+      "val" .
+      "opts" "strings"
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    
+  {{ end }}
+{{ else }}
+  {{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
+  {{ $alt := "" }}
+  {{ if .caption }}
+      {{ $alt = .caption | markdownify | plainify }}
+  {{ else if ($.Get "params").title }}
+    {{ $alt = printf "Image of %s" ($.Get "params").title }}
+  {{ else }}
+    {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." .img.RelPermalink $ctx.RelPermalink }}
+  {{ end }}
+  {{ $s.SetInMap "params" "alt" $alt }}
+{{ end }}
+
+
+
+
+
+{{ with .noscript | default $meta.noscript | default ($ctx.Param "image.noscript") }}
+  {{ if not (eq (printf "%T" .) "bool") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "noscript"
+      "val" .
+      "opts" "strings"
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "noscript" . }}
+  {{ end }}
+{{ end }}
+
+
+{{ $resource_title := "" }}
+{{ if eq .type "page" }}
+  {{ if ne .img.Title (.img | string) }}
+    {{ $resource_title = .img.Title }}
+  {{ end }}
+{{ end }}
+{{ $title := .title | default $meta.title | default $resource_title }}
+
+{{ with $title }}
+  {{ if ne (printf "%T" .) "string" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "title"
+      "val" .
+      "opts" "a string"
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "title" . }}
+  {{ end }}
+{{ else }}
+{{/* add figure caption as title if no title */}}
+  {{ with .figcaption_title }}
+    {{ $title = . }}
+    {{ $params = merge $params (dict "title" $title) }}
+  {{ end }}
+{{ end }}
+
+
+
+{{/***************************************
+  ** COMPLEX CASES ***********************
+  **************************************/}}
+
+{{ $user_widths := "" }}
+{{/* shortcode and render hook widths defaults are handled higher up */}}
+{{ if or (eq .input "render_hook") (eq .input "shortcode") }}
+  {{ $user_widths = .widths }}
+{{ else }}
+  {{ $user_widths = .widths | default $meta.widths | default ($ctx.Param "image.widths") }}
+{{ end }}
+
+{{ if and ($s.Get "width") $user_widths }}
+  {{ partial "hri/private/utils/options-error" (dict 
+    "msg" "You cannot provide both width and widths params"
+    "ctx" $error_ctx
+  ) }}
+{{ end }}
+
+{{ with $user_widths }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
+        {{ partial "hri/private/utils/options-error" (dict 
+          "var" "width in widths slice"
+          "val" .
+          "opts" "an integer"
+          "ctx" $error_ctx
+        ) }}
+      {{ end }}
+    {{ end }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+    "var" "widths slice"
+    "val" .
+    "opts" "slice of integers"
+    "ctx" $error_ctx
+  ) }}
+  {{ end }}
+{{ end }}
+
+{{ with $user_widths }}
+  {{/* produce responsive srcset
+    ** produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
+    */}}
+  {{/* SANTIZE WIDTHS WITH UTIL */}}
+  {{ $sanitized_widths := partial "img-common/private/utils/restrict-widths" (dict 
+    "ctx" $ctx
+    "img" $.img
+    "widths" (sort . )
+    "aspect_ratio" ($s.Get "aspect_ratio")
+    "difference" (site.Params.minWidthDifference | int)
+    "suppress" ($s.Get "suppress_width_warning")
+  )}}
+
+  {{/* create and export variable */}}
+  {{ $widths := slice }}
+  {{ range $width := $sanitized_widths }}
+    {{ $widths = $widths | append (slice
+      (dict
+      "desc" (printf "%dw" $width)
+      "width" $width
+      )) }}
+  {{ end }}
+  {{ $s.SetInMap "params" "widths" $widths }}
+{{ end }}
+
+
+{{ with .width | default $meta.width | default $ctx.Params.image.width }}
+  {{ if ne (printf "%T" .) "int" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "width"
+      "val" .
+      "opts" "an integer"
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "width" . }}
+  {{ end }}
+{{ end }}
+
+{{ with $width := $params.width }}
+  {{ $density_widths := slice }}
+  {{ range $density := $params.densities }}
+    {{ $density_widths = $density_widths | append (slice
+      (dict
+      "desc" (printf "%dx" $density)
+      "width" (mul $width $density)
+      )) }}
+  {{ end }}
+  {{ $s.SetInMap "params" "widths" $density_widths }}
+{{ end }}
+
+
+
+
+{{ $class := "" }}
+{{ if eq .input "figure" }}
+  {{ $class = .class }}
+{{ else }}
+  {{ $class = .class | default $meta.class | default ($ctx.Param "image.class") }}
+{{ end }}
+
+{{ with $class }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "class"
+      "val" .
+      "opts" "strings"
+      "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ if eq $params.loading "lazysizes" }} 
+  {{ $class = printf "%v lazyload" $class }}
+{{ end }}
+
+{{ $s.SetInMap "params" "class" $class }}
+
+{{/* caption sanitized at figure level */}}
+{{ $caption := "" }}
+{{ if eq .input "figure" }}
+  {{ $s.SetInMap "params" "caption" .caption }}
+{{ end }}
+
+{{ $user_aspect_ratio := slice }}
+{{ with .aspect_ratio | default .fill_ratio | default .fillRatio | default $meta.aspect_ratio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fill_ratio | default $page.fillRatio  }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
+        {{ partial "hri/private/utils/options-error" (dict 
+        "var" "aspect_ratio slice item"
+        "val" .
+        "opts" "2x integers in a slice"
+        "ctx" $error_ctx
+        ) }}
+      {{ end }}
+    {{ end }}
+    {{ $user_aspect_ratio = . }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+    "var" "aspect_ratio"
+    "val" .
+    "opts" "2x integers in a slice"
+    "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
+
+{{ with $user_aspect_ratio }}
+  {{ if and $params.height $params.width }}
+    {{/* even though width and height have been provided, we need a ratio for densities */}}
+    {{ $s.SetInMap "params" "aspect_ratio" (div ( $params.height | float) ($params.width | float)) }}
+  {{ else }}
+    {{/* height to width ratio of .aspect_ratio */}}
+    {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
+    {{ $s.SetInMap "params" "aspect_ratio" (div (index . 1 | float) (index . 0 | float)) }}
+  {{ end }}
+{{ end }}
+
+
+{{ with .sizes | default $meta.sizes | default $page.sizes }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "sizes"
+      "val" .
+      "opts" "strings"
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "sizes" . }}
+  {{ end }}
+{{ end }}
+
+{{/* if no width set, no sizes set & loading=lazysizes: sizes property defaults to data-sizes=auto 
+  ** otherwise if no width set and sizes is set, sizes property set */}}
+{{ if not $params.width }}
+  {{ $sizes_prop := false }}
+  {{ if and (eq $params.loading "lazysizes") (not $params.sizes) }}
+      {{ $sizes_prop = `data-sizes="auto"` }}
+  {{ else if $params.sizes }}
+    {{ $sizes_prop = printf `sizes="%s"` $params.sizes }}
+  {{ end }}
+  {{ with $sizes_prop }}
+    {{ $s.SetInMap "params" "sizes_prop" . }}
+  {{ end }}
+{{ end }}
+
+
+
+{{ return $s.Get "params" }}

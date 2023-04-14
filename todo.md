@@ -1,5 +1,7 @@
 # TODO
 
+scope figure sanitized params present in image as "figure_params"
+
 separate .test_site into separate repo to keep git history clean. Use git submodules?
 
 allow the param of image_only: true for render hook to only generate <img> and figure: true for figure
