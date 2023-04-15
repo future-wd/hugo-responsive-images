@@ -15,19 +15,27 @@
   {{ partial "figure" (dict "src" "image.jpg" "alt" "alt text") }}
 
 */ -}}
-{{- /* use .page or .ctx as ctx */ -}}
-{{- $ctx := .ctx -}}
-{{- if .page -}}
-  {{- $ctx = .page -}}
-{{- end -}}
-{{- /* process figure params */ -}}
-{{- $figure_params := partial "hri/private/params/figure" (merge . (dict "ctx" $ctx)) -}}
-{{/* merge select figure params into image params */}}
-{{- $image_params := merge . (dict 
-      "input" "figure"
-      "caption" $figure_params.caption
-      "figcaption_title" $figure_params.figcaption_title
-      "class" $figure_params.class ) -}}
+
+
+{{- /* get image resource */ -}}
+
+{{/*  
+{{ $params := "" }}
+{{ if not .common.img }}
+  {{ $common := dict }}
+  {{ if not .common.origin }}
+    {{ $common := dict "origin" "figure partial" }}
+  {{ end }}
+  {{- $params = merge . (partial "hri/private/params/common.html" (merge . (dict "common" $common))) }}
+{{ end }} */}}
+
+
+{{- /* process figure & image params */ -}}
+{{/*  
+{{- $params = partial "hri/private/params/figure" $params -}}
+
 {{- partial "hri/private/print/figure-set" (dict 
-  "figure_params" $figure_params 
-  "image_params" $image_params ) -}}
+  "figure_params" $params.figure
+  "image_params" (merge . $params.image )
+  ) -}}
+  */}}

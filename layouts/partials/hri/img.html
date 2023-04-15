@@ -1,1 +1,3 @@
-{{ partial "hri/image" (merge . (dict "image_only" true)) }}
+
+{{ $common := "img_only" true "origin" "img partial" }}
+{{ partial "hri/picture" (merge . (dict "common" $common)) }}

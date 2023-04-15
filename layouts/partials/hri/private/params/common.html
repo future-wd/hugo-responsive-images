@@ -1,0 +1,132 @@
+{{/*
+  get-image.html
+  Takes inputs and page context.
+  - converts image path into image resource
+
+  @author @sean-au
+
+  @context . Context from image partial
+
+  @return "common"
+    - .ctx 
+    - .page (params)
+    - .meta 
+    - .img
+    - .global
+    - .error_ctx
+    - .input (shortcode/render_hook/figure/picture/img)
+    - .img_only
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/params/get-image" . }}
+  
+*/}}
+{{ $module := "Hugo Responsive Images" }}
+{{ $meta := dict }}
+{{ $message := false }}
+{{ $s := newScratch }}
+{{ $s.Set "params" dict }}
+
+{{ $params := $s.Get "params"}}
+{{ $ctx := $params.ctx }}
+{{ $meta := $params.meta }}
+{{ $page := $params.page }}
+
+{{/* .page deprecated, to be removed */}}
+{{/* when .page is removed all instances of $ctx can be reverted to .ctx */}}
+{{ $ctx := .ctx }}
+{{ if .page }}
+  {{ $ctx = .page }}
+{{ end }}
+{{ if not (or $ctx .page) }}
+  {{ $message = printf "ctx must be set for image %s" .src }}
+{{ end }}
+{{ $s.SetInMap "params" "ctx" $ctx}}
+{{/* page params */}}
+{{ $s.SetInMap "params" "page" $ctx.Params.image }}
+
+{{/* check $ctx actually pointing to a page context */}}
+{{ if and (ne .input "render_hook") (ne .input "shortcode") }}
+  {{ if ne (printf "%T" $ctx) "*hugolib.pageState" }}
+    {{ $message = printf "ctx must be set for image %s via partial" .src }}
+  {{ end }}
+{{/* the following errors are code errors, not user errors as CTX is automatic */}}
+{{ else if (eq .input "shortcode") }}
+  {{ if ne (printf "%T" $ctx) "*hugolib.pageForShortcode" }}
+    {{ $message = printf "Shortcode ctx error for image %s" .src }}
+  {{ end }}
+{{ else if (eq .input "render_hook") }}
+  {{ if ne (printf "%T" $ctx) "*hugolib.pageForRenderHooks" }}
+    {{ $message = printf "Render hook ctx error for image %s" .src }}
+  {{ end }}
+{{ end }}
+
+
+
+{{/* .type deprecated, keep for v1. only use $global(bool) from v2 */}}
+{{ $type := .type | default ( $ctx.Param "image.type") }}
+{{ $src := .src }}
+{{ $prefix := substr .src 0 7 }}
+{{ if eq $prefix "assets/" }}
+  {{ $src = substr .src 7 }}
+  {{ $type = "global" }}
+{{ end }}
+{{ if eq $type "global" }}
+  {{ with resources.Get $src }}
+    {{ $s.SetInMap "params" "img" .}}
+    {{ $s.SetInMap "params" "global" "true" }}
+  {{ else }}
+    {{ $message = printf "Global resource image /assets/%s not found" $src}}
+  {{ end }}
+{{ else }}
+  {{/* page resource */}}
+  {{ with $ctx.Resources.GetMatch (print .src) }}
+    {{ with .Params.image }}
+      {{ $meta = . }}
+    {{ end }}
+    {{ $s.SetInMap "params" "img" . }}
+  {{ else }}
+    {{ $message = printf "Page resource image %s%s not found"  $ctx.RelPermalink $.src }}
+  {{ end }}
+{{ end }}
+{{ $s.SetInMap "params" "meta" $meta }}
+
+
+{{ if eq $params.origin "image partial" }}
+  {{ $warn_message := printf `Image %v%v: You are using the "image" partial which has been deprecated. It will be removed in v2` $ctx.RelPermalink $.src }}
+  {{ partial "img-common/private/utils/warnf" (dict "message" $warn_message "module" $module) }}
+{{ end }}
+
+{{ if $message }}
+  {{ partial "img-common/private/utils/errorf" (dict "message" $message "module" $module) }}
+{{ end }}
+
+
+{{ $error_ctx := dict 
+  "ctx" $ctx
+  "img" $params.img
+  "element" .element
+  "module" $module }}
+
+{{ $s.SetInMap "params" "error_ctx" $error_ctx }}
+
+
+{{ with .img_only | default $meta.img_only | default $page.img_only }}
+  {{ if ne (printf "%T" .) "bool" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "img_only"
+      "val" .
+      "opts" "true/false"
+      "ctx" $params.error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "img_only" . }}
+  {{ end }}
+{{ end }}
+
+{{/* not sanitized as comes from shortcode/render-hook/partial */}}
+{{ $s.SetInMap "params" "input" .input }}
+
+{{ return dict "common" $params }}

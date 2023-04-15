@@ -26,29 +26,16 @@
 
 {{/* camelCase params have been kept to avoid breaking changes, will be deprecated in future versions */}}
 
-{{ $error_ctx := dict 
-  "ctx" .ctx
-  "img" .img
-  "element" "image"
-  "module" .module }}
-
-{{ $partial_ctx := merge . (dict "meta" .meta "ctx" .ctx "error_ctx" $error_ctx  ) }}
-
-
-{{ $params := dict }}
-{{ $params = merge $params (dict 
-  "img" .img
-  "type" .type) }}
-{{ $general_params := partial "hri/private/params/image-general" $partial_ctx }}
-{{ $params = merge $params $general_params }}
+{{ $ctx := merge . .common }}
+{{ $params := partial "hri/private/params/image-general" $ctx }}
 
 {{ if not $params.provider }}
-  {{ $processing_params := partial "hri/private/params/image-processing" $partial_ctx }}
+  {{ $processing_params := partial "hri/private/params/image-processing" $ctx }}
   {{ $params = merge $params (dict "options" $processing_params) }}
 {{ end }}
 
 
-{{ $placeholder_params := partial "hri/private/params/image-placeholder" $partial_ctx }}
+{{ $placeholder_params := partial "hri/private/params/image-placeholder" $ctx }}
 {{ $params = merge $params $placeholder_params }}
 
 

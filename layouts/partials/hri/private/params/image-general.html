@@ -1,15 +1,20 @@
 
-{{/* need to create $variables as .variables dont work if = nill */}}
-{{ $meta := .meta }}
-{{ $ctx := .ctx }}
-{{ $page :=  $ctx.Params.image }}
+
+
+
 
 {{ $s := newScratch }}
-{{ $s.Set "params" dict }}
+{{/* initialize and merge in common params */}}
+{{ $s.Set "params" .common }}
+
 {{ $params := $s.Get "params"}}
+{{ $ctx := .ctx }}
+{{ $meta := .meta }}
+{{ $page := .page }}
 
 
-{{ with .suppress_width_warning | default .suppressWidthWarning | default ( $ctx.Param "image.suppressWidthWarning") | default ( $ctx.Param "image.suppress_width_warning") }}
+
+{{ with .suppress_width_warning | default .suppressWidthWarning | default $meta.suppress_width_warning | default ($ctx.Param "image.suppressWidthWarning") | default ($ctx.Param "image.suppress_width_warning") }}
   {{ if ne (printf "%T" .) "bool" }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "suppress_width_warning"
@@ -45,54 +50,6 @@
     ) }}
   {{ end }}
 {{ end }}
-
-{{ $user_formats := .formats | default $meta.formats | default ($ctx.Param "image.formats") }}
-
-{{ with $user_formats }}
-  {{ if reflect.IsSlice . }}
-    {{ $formatOpts := (slice "original" "bmp" "gif" "jpeg" "jpg" "png" "tif" "tiff" "webp") }}
-    {{ range . }}
-      {{ if not (in $formatOpts .) }}
-        {{ partial "hri/private/utils/options-error" (dict 
-          "var" "formats array item"
-          "val" .
-          "opts" (delimit $formatOpts ", " " and ")
-          "ctx" $.error_ctx
-        ) }}
-        {{ end }}
-    {{ end }}
-  {{ else }}
-    {{ partial "hri/private/utils/options-error" (dict 
-        "var" "formats array"
-        "val" .
-        "opts" "array of image formats"
-        "ctx" $.error_ctx
-      ) }}
-  {{ end }}
-{{ end }}
-
-{{/* if only generating img tag, only process first format */}}
-{{ if eq $.image_only true }}
-  {{ $single_format := index $user_formats 0 }}
-  {{ $user_formats = slice $single_format }}
-{{ end }}
-
-{{/* if a format is the same as the image media type, change the format to original, remove duplicates */}}
-{{ $formats := slice }}
-{{ $imgType := .img.MediaType.SubType }}
-{{ range $user_formats }}
-  {{ if eq . $imgType }}
-    {{ $formats = $formats | append "original" }}
-  {{ else }}
-    {{ $formats = $formats | append . }}
-  {{ end }}
-{{ end }}
-{{/* remove duplicates */}}
-{{ $formats = $formats | uniq }}
-{{ $s.SetInMap "params" "formats" $formats }}
-
-
-
 
 {{ with .provider | default $meta.provider | default ($ctx.Param "image.provider") }}
   {{ $providerOpts := (slice "netlify") }}
@@ -132,7 +89,7 @@
   {{ end }}
 {{ end }}
 
-{{ with .fit | default $meta.fit | default $ctx.Params.image.fit }}
+{{ with .fit | default $meta.fit | default $page.fit }}
   {{ $opts := (slice "cover" "contain" "fill") }}
   {{ if not (in $opts .) }}
     {{ partial "hri/private/utils/options-error" (dict 
@@ -146,7 +103,7 @@
   {{ end }}
 {{ end }}
 
-{{ with .height | default $meta.height | default $ctx.Params.image.height }}
+{{ with .height | default $meta.height | default $page.height }}
   {{ if ne (printf "%T" .) "int" }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "height"
@@ -158,42 +115,6 @@
     {{ $s.SetInMap "params" "height" . }}
   {{ end }}
 {{ end }}
-
-
-
-
-
-
-
-
-
-{{ with .alt | default $meta.alt }}
-  {{ if not (eq (printf "%T" .) "string") }}
-    {{ partial "hri/private/utils/options-error" (dict 
-      "var" "alt"
-      "val" .
-      "opts" "strings"
-      "ctx" $.error_ctx
-    ) }}
-  {{ else }}
-    
-  {{ end }}
-{{ else }}
-  {{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
-  {{ $alt := "" }}
-  {{ if .caption }}
-      {{ $alt = .caption | markdownify | plainify }}
-  {{ else if ($.Get "params").title }}
-    {{ $alt = printf "Image of %s" ($.Get "params").title }}
-  {{ else }}
-    {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." .img.RelPermalink $ctx.RelPermalink }}
-  {{ end }}
-  {{ $s.SetInMap "params" "alt" $alt }}
-{{ end }}
-
-
-
-
 
 {{ with .noscript | default $meta.noscript | default ($ctx.Param "image.noscript") }}
   {{ if not (eq (printf "%T" .) "bool") }}
@@ -209,38 +130,104 @@
 {{ end }}
 
 
-{{ $resource_title := "" }}
-{{ if eq .type "page" }}
-  {{ if ne .img.Title (.img | string) }}
-    {{ $resource_title = .img.Title }}
-  {{ end }}
-{{ end }}
-{{ $title := .title | default $meta.title | default $resource_title }}
-
-{{ with $title }}
-  {{ if ne (printf "%T" .) "string" }}
-    {{ partial "hri/private/utils/options-error" (dict 
-      "var" "title"
-      "val" .
-      "opts" "a string"
-      "ctx" $.error_ctx
-    ) }}
-  {{ else }}
-    {{ $s.SetInMap "params" "title" . }}
-  {{ end }}
-{{ else }}
-{{/* add figure caption as title if no title */}}
-  {{ with .figcaption_title }}
-    {{ $title = . }}
-    {{ $params = merge $params (dict "title" $title) }}
-  {{ end }}
-{{ end }}
-
 
 
 {{/***************************************
   ** COMPLEX CASES ***********************
   **************************************/}}
+
+
+  {{ $resource_title := "" }}
+  {{ if eq $params.global true }}
+    {{ if ne .img.Title (.img | string) }}
+      {{ $resource_title = .img.Title }}
+    {{ end }}
+  {{ end }}
+  
+  {{ with .title | default $meta.title | default $resource_title | default .figcaption_title }}
+    {{ if ne (printf "%T" .) "string" }}
+      {{ partial "hri/private/utils/options-error" (dict 
+        "var" "title"
+        "val" .
+        "opts" "a string"
+        "ctx" $.error_ctx
+      ) }}
+    {{ else }}
+      {{ $s.SetInMap "params" "title" . }}
+    {{ end }}
+  {{ end }}
+  
+
+  {{ with .alt | default $meta.alt }}
+    {{ if not (eq (printf "%T" .) "string") }}
+      {{ partial "hri/private/utils/options-error" (dict 
+        "var" "alt"
+        "val" .
+        "opts" "strings"
+        "ctx" $.error_ctx
+      ) }}
+    {{ else }}
+      {{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
+      {{ $alt := "" }}
+      {{ if $.caption }}
+        {{ $alt = $.caption | markdownify | plainify }}
+      {{ else if $params.title }}
+        {{ $alt = (printf "Image of %s" $params.title) }}
+      {{ else }}
+        {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $params.img.RelPermalink $ctx.RelPermalink }}
+      {{ end }}
+    {{ $s.SetInMap "params" "alt" $alt }}
+  {{ end }}
+{{ end }}
+
+
+
+
+{{ $user_formats := .formats | default $meta.formats | default ($ctx.Param "image.formats") }}
+{{ with $user_formats }}
+  {{ if reflect.IsSlice . }}
+    {{ $formatOpts := (slice "original" "bmp" "gif" "jpeg" "jpg" "png" "tif" "tiff" "webp") }}
+    {{ range . }}
+      {{ if not (in $formatOpts .) }}
+        {{ partial "hri/private/utils/options-error" (dict 
+          "var" "formats array item"
+          "val" .
+          "opts" (delimit $formatOpts ", " " and ")
+          "ctx" $.error_ctx
+        ) }}
+        {{ end }}
+    {{ end }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+        "var" "formats array"
+        "val" .
+        "opts" "array of image formats"
+        "ctx" $.error_ctx
+      ) }}
+  {{ end }}
+{{ end }}
+  
+{{/* if only generating img tag, only process first format */}}
+{{ if eq $params.img_only true }}
+  {{ $single_format := index $user_formats 0 }}
+  {{ $user_formats = slice $single_format }}
+{{ end }}
+  
+{{/* if a format is the same as the image media type, change the format to original, remove duplicates */}}
+{{ $formats := slice }}
+{{ $imgType := $params.img.MediaType.SubType }}
+{{ range $user_formats }}
+  {{ if eq . $imgType }}
+    {{ $formats = $formats | append "original" }}
+  {{ else }}
+    {{ $formats = $formats | append . }}
+  {{ end }}
+{{ end }}
+{{/* remove duplicates */}}
+{{ $formats = $formats | uniq }}
+{{ $s.SetInMap "params" "formats" $formats }}
+
+
 
 {{ $user_widths := "" }}
 {{/* shortcode and render hook widths defaults are handled higher up */}}
@@ -250,7 +237,7 @@
   {{ $user_widths = .widths | default $meta.widths | default ($ctx.Param "image.widths") }}
 {{ end }}
 
-{{ if and ($s.Get "width") $user_widths }}
+{{ if and $params.width $user_widths }}
   {{ partial "hri/private/utils/options-error" (dict 
     "msg" "You cannot provide both width and widths params"
     "ctx" $.error_ctx
@@ -279,6 +266,24 @@
   {{ end }}
 {{ end }}
 
+
+
+{{ $difference := 0 }}
+{{ with site.Params.min_width_difference | default site.Params.minWidthDifference }}
+  {{ if ne (printf "%T" .) "int" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "min_width_difference"
+      "val" .
+      "opts" "an integer"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{/* not exported just for use in this file */}}
+    {{ $difference = . }}
+  {{ end }}
+{{ end }}
+
+{{ warnf "img: %v" .img }}
 {{ with $user_widths }}
   {{/* produce responsive srcset
     ** produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
@@ -288,9 +293,9 @@
     "ctx" $ctx
     "img" $.img
     "widths" (sort . )
-    "aspect_ratio" ($s.Get "aspect_ratio")
-    "difference" (site.Params.minWidthDifference | int)
-    "suppress" ($s.Get "suppress_width_warning")
+    "aspect_ratio" $params.aspect_ratio
+    "difference" $difference
+    "suppress" $params.suppress_width_warning
   )}}
 
   {{/* create and export variable */}}
@@ -334,6 +339,7 @@
 
 
 
+
 {{ $class := "" }}
 {{ if eq .input "figure" }}
   {{ $class = .class }}
@@ -358,11 +364,12 @@
 
 {{ $s.SetInMap "params" "class" $class }}
 
-{{/* caption sanitized at figure level */}}
+{{/* caption sanitized at figure level - not needed outside this file */}}
+{{/* }}
 {{ $caption := "" }}
-{{ if eq .input "figure" }}
+{{ if eq $params.input "figure" }}
   {{ $s.SetInMap "params" "caption" .caption }}
-{{ end }}
+{{ end }}  */}}
 
 {{ $user_aspect_ratio := slice }}
 {{ with .aspect_ratio | default .fill_ratio | default .fillRatio | default $meta.aspect_ratio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fill_ratio | default $page.fillRatio  }}
@@ -418,7 +425,7 @@
 {{ if not $params.width }}
   {{ $sizes_prop := false }}
   {{ if and (eq $params.loading "lazysizes") (not $params.sizes) }}
-      {{ $sizes_prop = `data-sizes="auto"` }}
+    {{ $sizes_prop = `data-sizes="auto"` }}
   {{ else if $params.sizes }}
     {{ $sizes_prop = printf `sizes="%s"` $params.sizes }}
   {{ end }}
@@ -426,7 +433,5 @@
     {{ $s.SetInMap "params" "sizes_prop" . }}
   {{ end }}
 {{ end }}
-
-
 
 {{ return $s.Get "params" }}

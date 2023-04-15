@@ -1,61 +1,223 @@
-{{ $params := dict }}
-{{ $meta := dict }}
+{{ $s := newScratch }}
+{{ $s.Set "params" dict }}
+{{ $s.Set "image_params" dict }}
 
-{{/* assign page resource image meta data to $meta if image is page resource */}}
-{{ with .ctx.Resources.GetMatch (print .src) }}
-  {{ $meta = .Params.image }}
+{{ $external_link := false }}
+{{ $external_attr_link := false }}
+
+{{/* must assign .meta to $meta to prevent nil error */}}
+{{ $meta := .meta}}
+
+{{/* pass through params from "get-image" to partials */}}
+{{ $s.SetInMap "params" "img" .img }}
+{{ $s.SetInMap "image_params" "img" .img }}
+
+{{ $s.SetInMap "params" "ctx" .ctx }}
+{{ $s.SetInMap "image_params" "ctx" .ctx }}
+
+{{ $s.SetInMap "params" "meta" .meta }}
+{{ $s.SetInMap "image_params" "meta" .meta }}
+
+{{ $s.SetInMap "image_params" "error_ctx" .error_ctx }}
+
+ 
+{{/**********************
+  ** inline & meta ***/}}
+
+{{ with .attr | default $meta.attr }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "attr"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "attr" . }}
+  {{ end }}
 {{ end }}
 
-{{/**********************************
-  ** get params from different places
-  ********************************/}}
+{{ with $attr_link := .attr_link | default .attrLink | default $meta.attr_link  | default $meta.attrLink }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "attr_link"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ if hasPrefix $attr_link "http" }}
+      {{ $external_attr_link = true }}
+      {{ $attr_link = relref $.ctx $attr_link }}
+    {{ end }}
+    {{ $s.SetInMap "params" "attr_link" $attr_link }}
+  {{ end }}
+{{ end }}
 
-{{/* inline & meta */}}
-{{ $attr := .attr | default $meta.attr }}
-{{ $attr_link := .attr_link | default .attrLink | default $meta.attr_link  | default $meta.attrLink }}
-{{ $caption := .caption | default $meta.caption }}
-{{ $link := .link | default $meta.link }}
-{{ $figcaption_title := .figcaption_title | default .figureTitle | default $meta.figcaption_title | default $meta.figureTitle }}
+{{ with $attr_link_rel := .rel | default $meta.rel | default (.ctx.Param "image.rel") }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "attr_link_rel"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ if eq $external_link true }}
+      {{ $attr_link_rel = $attr_link_rel | default "noopener noreferrer" }}
+    {{ end }}
+    {{ $s.SetInMap "params" "attr_link_rel" $attr_link_rel }}
+  {{ end }}
+{{ end }}
+
+{{ with $attr_link_target := .target | default $meta.target | default (.ctx.Param "image.target") }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "attr_link_target"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+      {{ if eq $external_link true }}
+        {{ $attr_link_target = $attr_link_target | default "_blank" }}
+    {{ end }}
+    {{ $s.SetInMap "params" "attr_link_target" $attr_link_target }}
+  {{ end }}
+{{ end }}
+
+{{ with .caption | default $meta.caption }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "caption"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "caption" . }}
+    {{ $s.SetInMap "image_params" "caption" . }}
+  {{ end }}
+{{ end }}
+
+{{ with $link := .link | default $meta.link }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "link"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ if hasPrefix $link "http" }}
+      {{ $external_link = true }}
+      {{ $link = relref $.ctx $link }}
+    {{ end }}
+    {{ $s.SetInMap "params" "link" $link }}
+  {{ end }}
+{{ end }}
+
+{{ with $rel := .rel | default $meta.rel | default (.ctx.Param "image.rel") }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "rel"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ if eq $external_link true }}
+      {{ $rel = $rel | default "noopener noreferrer" }}
+    {{ end }}
+    {{ $s.SetInMap "params" "rel" $rel }}
+  {{ end }}
+{{ end }}
+
+{{ with $target := .target | default $meta.target | default (.ctx.Param "image.target") }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "target"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+      {{ if eq $external_link true }}
+        {{ $target = $target | default "_blank" }}
+    {{ end }}
+    {{ $s.SetInMap "params" "target" $target }}
+  {{ end }}
+{{ end }}
+
+{{ with .figcaption_title | default .figureTitle | default $meta.figcaption_title | default $meta.figureTitle }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "figcaption_title"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "figcaption_title" . }}
+    {{ $s.SetInMap "image_params" "figcaption_title" . }}
+  {{ end }}
+{{ end }}
+
 
 {{/* inline, meta, page & site */}}
-{{ $figure_class := .figure_class | default .figureClass | default $meta.figure_class | default $meta.figureClass | default (.ctx.Param "image.figureClass") | default (.ctx.Param "image.figure_class")  }}
-{{ $figcaption_class := .figcaption_class | default .figCaptionClass | default $meta.figcaption_class | default $meta.figureCaptionClass | default (.ctx.Param "image.figCaptionClass") | default (.ctx.Param "image.figcaption_class") }}
-{{ $figcaption_title_h := .figcaption_title_h | default .figureTitleH |  default $meta.figcaption_title_h | default $meta.figureTitleH | default (.ctx.Param "image.figureTitleH") | default (.ctx.Param "image.figcaption_title_h") }}
-{{ $rel := .rel | default $meta.rel | default (.ctx.Param "image.rel") }}
-{{ $target := .target | default $meta.target | default (.ctx.Param "image.target") }}
-{{/* processed here and exported for use in image partial */}}
-{{ $class := .class | default .figureImageClass | default $meta.class | default $meta.figureImageClass | default (.ctx.Param "image.figureImageClass") | default (.ctx.Param "image.figure_image_class") }}
-
-
-{{/* SANITIZE HERE */}}
-
-
-{{/*********************************************
-  ** default open http links new window       **
-  ** use relref for internal links            **
-  **********************************************/}}
-
-{{ if hasPrefix $link "http" }}
-  {{ $target = $target | default "_blank" }}
-  {{ $rel = $rel | default "noopener noreferrer" }}
-{{ else }}
-  {{ $link = relref .ctx $link }}
+{{ with .figure_class | default .figureClass | default $meta.figure_class | default $meta.figureClass | default (.ctx.Param "image.figureClass") | default (.ctx.Param "image.figure_class") }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "figure_class"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "figure_class" . }}
+  {{ end }}
 {{ end }}
 
-{{/* merge params */}}
+{{ with .figcaption_class | default .figCaptionClass | default $meta.figcaption_class | default $meta.figureCaptionClass | default (.ctx.Param "image.figCaptionClass") | default (.ctx.Param "image.figcaption_class") }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "figcaption_class"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "figcaption_class" . }}
+  {{ end }}
+{{ end }}
 
-{{ $params = merge $params (dict
-  "attr" $attr
-  "attr_link" $attr_link
-  "caption" $caption
-  "link" $link
-  "figure_class" $figure_class
-  "figcaption_title" $figcaption_title
-  "figcaption_class" $figcaption_class
-  "figcaption_title_h" $figcaption_title_h
-  "target" $target
-  "rel" $rel
-  "class" $class
+{{ with .figcaption_title_h | default .figureTitleH |  default $meta.figcaption_title_h | default $meta.figureTitleH | default (.ctx.Param "image.figureTitleH") | default (.ctx.Param "image.figcaption_title_h") }}
+  {{ if not (eq (printf "%T" .) "int") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "figcaption_title_h"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "figcaption_title_h" . }}
+  {{ end }}
+{{ end }}
+
+{{ with .class | default .figureImageClass | default $meta.class | default $meta.figureImageClass | default (.ctx.Param "image.figureImageClass") | default (.ctx.Param "image.figure_image_class") }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "class"
+      "val" .
+      "opts" "strings"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "image_params" "class" . }}
+  {{ end }}
+{{ end }}
+
+{{ return (dict 
+  "figure" ($s.Get "params")
+  "image" ($s.Get "image_params")
   ) }}
-
-{{ return $params  }}

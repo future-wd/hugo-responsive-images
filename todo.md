@@ -1,7 +1,14 @@
 # TODO
 
+image_only needs to be changed to img_only
+configure partials for use with pass_params
+move image to picture
+move image error from get-image to image
+rename get-image to common
 scope figure sanitized params present in image as "figure_params" etc.
 fix up the rest of the params/merge sanitization
+look into adding shortcode/render hook/ or direct partial name to error messages
+- currently set up with figure image, picture image, and img
 
 allow the param of image_only: true for render hook to only generate <img> and figure: true for figure
 

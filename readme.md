@@ -590,8 +590,8 @@ See <https://gohugo.io/content-management/image-processing/#imaging-configuratio
 | Name              | Inline | Meta | Page Param | Site Param | Description | Default | Notes |
 | ------------------ | --- | --- | --- | --- | ----------- | ------- | --- |
 | link               | YES | YES | NO  | NO  | Figure image link | `null` | |
-| target             | YES | YES | YES | YES | Figure link or attrLink target | `"_blank"` for http links | |
-| rel                | YES | YES | YES | YES | Figure link or attrLink rel| `"noopender, noreferrer"` for http links | |
+| target             | YES | YES | YES | YES | Figure link target | `"_blank"` for http links | |
+| rel                | YES | YES | YES | YES | Figure link rel| `"noopender, noreferrer"` for http links | |
 | figure_class       | YES | YES | YES | YES | Figure class | `"figure"` | |
 | figure_image_class | YES | YES | YES | YES | Figure image class | `"figure-img img-fluid"` | Outside of config file, .class is used to override default. |
 | figcaption_class   | YES | YES | YES | YES | Figcaption class | `"figure-caption"` | |
@@ -599,4 +599,6 @@ See <https://gohugo.io/content-management/image-processing/#imaging-configuratio
 | figcaption_title   | YES | YES | NO  | NO  | Figcaption Title | `null` | |
 | attr               | YES | YES | NO  | NO  | Figcaption atttribute | `null` | |
 | attr_link          | YES | YES | NO  | NO  | Figcaption attribute link | `null` | |
+| attr_link_target   | YES | YES | YES | YES | attr_link target | `"_blank"` for http links | |
+| attr_link_rel      | YES | YES | YES | YES | attr_link rel| `"noopender, noreferrer"` for http links | |
 | caption            | YES | YES | NO  | NO  | Figcaption caption | `null` | |
