@@ -23,7 +23,7 @@
 {{ if not $params.common.img }}
   {{ $common := dict }}
   {{ if not .common.origin }}
-    {{ $common := dict "input" "picture" }}
+    {{ $common := dict "partial" "picture" }}
     {{- $params = merge $params (partial "hri/private/params/common.html" (merge . (dict "common" $common))) }}
   {{ else }}
     {{- $params = merge $params (partial "hri/private/params/common.html" . ) }}

@@ -1,24 +1,19 @@
 {{ $s := newScratch }}
-{{ $s.Set "params" dict }}
+{{/* merge common into figure params */}}
+{{ $s.Set "params" .common }}
 {{ $s.Set "image_params" dict }}
 
 {{ $external_link := false }}
 {{ $external_attr_link := false }}
 
 {{/* must assign .meta to $meta to prevent nil error */}}
-{{ $meta := .meta}}
+{{ $meta := .common.meta }}
+{{ $ctx := .common.ctx }}
 
 {{/* pass through params from "get-image" to partials */}}
 {{ $s.SetInMap "params" "img" .img }}
-{{ $s.SetInMap "image_params" "img" .img }}
+{{ $s.SetInMap "image_params" "common" .common }}
 
-{{ $s.SetInMap "params" "ctx" .ctx }}
-{{ $s.SetInMap "image_params" "ctx" .ctx }}
-
-{{ $s.SetInMap "params" "meta" .meta }}
-{{ $s.SetInMap "image_params" "meta" .meta }}
-
-{{ $s.SetInMap "image_params" "error_ctx" .error_ctx }}
 
  
 {{/**********************
@@ -48,13 +43,13 @@
   {{ else }}
     {{ if hasPrefix $attr_link "http" }}
       {{ $external_attr_link = true }}
-      {{ $attr_link = relref $.ctx $attr_link }}
+      {{ $attr_link = relref $ctx $attr_link }}
     {{ end }}
     {{ $s.SetInMap "params" "attr_link" $attr_link }}
   {{ end }}
 {{ end }}
 
-{{ with $attr_link_rel := .rel | default $meta.rel | default (.ctx.Param "image.rel") }}
+{{ with $attr_link_rel := .attr_link_rel | default $meta.attr_link_rel | default ($ctx.Param "image.attr_link_rel") }}
   {{ if not (eq (printf "%T" .) "string") }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "attr_link_rel"
@@ -70,7 +65,7 @@
   {{ end }}
 {{ end }}
 
-{{ with $attr_link_target := .target | default $meta.target | default (.ctx.Param "image.target") }}
+{{ with $attr_link_target := .attr_link_target | default $meta.attr_link_target | default ($ctx.Param "image.attr_link_target") }}
   {{ if not (eq (printf "%T" .) "string") }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "attr_link_target"
@@ -117,7 +112,7 @@
   {{ end }}
 {{ end }}
 
-{{ with $rel := .rel | default $meta.rel | default (.ctx.Param "image.rel") }}
+{{ with $rel := .rel | default $meta.rel | default ($ctx.Param "image.rel") }}
   {{ if not (eq (printf "%T" .) "string") }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "rel"
@@ -133,7 +128,7 @@
   {{ end }}
 {{ end }}
 
-{{ with $target := .target | default $meta.target | default (.ctx.Param "image.target") }}
+{{ with $target := .target | default $meta.target | default ($ctx.Param "image.target") }}
   {{ if not (eq (printf "%T" .) "string") }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "target"
@@ -165,7 +160,7 @@
 
 
 {{/* inline, meta, page & site */}}
-{{ with .figure_class | default .figureClass | default $meta.figure_class | default $meta.figureClass | default (.ctx.Param "image.figureClass") | default (.ctx.Param "image.figure_class") }}
+{{ with .figure_class | default .figureClass | default $meta.figure_class | default $meta.figureClass | default ($ctx.Param "image.figureClass") | default (.ctx.Param "image.figure_class") }}
   {{ if not (eq (printf "%T" .) "string") }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "figure_class"
@@ -178,7 +173,7 @@
   {{ end }}
 {{ end }}
 
-{{ with .figcaption_class | default .figCaptionClass | default $meta.figcaption_class | default $meta.figureCaptionClass | default (.ctx.Param "image.figCaptionClass") | default (.ctx.Param "image.figcaption_class") }}
+{{ with .figcaption_class | default .figCaptionClass | default $meta.figcaption_class | default $meta.figureCaptionClass | default ($ctx.Param "image.figCaptionClass") | default (.ctx.Param "image.figcaption_class") }}
   {{ if not (eq (printf "%T" .) "string") }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "figcaption_class"
@@ -191,7 +186,7 @@
   {{ end }}
 {{ end }}
 
-{{ with .figcaption_title_h | default .figureTitleH |  default $meta.figcaption_title_h | default $meta.figureTitleH | default (.ctx.Param "image.figureTitleH") | default (.ctx.Param "image.figcaption_title_h") }}
+{{ with .figcaption_title_h | default .figureTitleH |  default $meta.figcaption_title_h | default $meta.figureTitleH | default ($ctx.Param "image.figureTitleH") | default ($ctx.Param "image.figcaption_title_h") }}
   {{ if not (eq (printf "%T" .) "int") }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "figcaption_title_h"
@@ -204,7 +199,7 @@
   {{ end }}
 {{ end }}
 
-{{ with .class | default .figureImageClass | default $meta.class | default $meta.figureImageClass | default (.ctx.Param "image.figureImageClass") | default (.ctx.Param "image.figure_image_class") }}
+{{ with .class | default .figureImageClass | default $meta.class | default $meta.figureImageClass | default ($ctx.Param "image.figureImageClass") | default ($ctx.Param "image.figure_image_class") }}
   {{ if not (eq (printf "%T" .) "string") }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "class"

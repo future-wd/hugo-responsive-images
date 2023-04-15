@@ -14,7 +14,8 @@
     - .img
     - .global
     - .error_ctx
-    - .input (shortcode/render_hook/figure/picture/img)
+    - .markdown (shortcode/render_hook)
+    - .partial (figure/picture/img)
     - .img_only
 
   @access private
@@ -127,6 +128,8 @@
 {{ end }}
 
 {{/* not sanitized as comes from shortcode/render-hook/partial */}}
-{{ $s.SetInMap "params" "input" .input }}
+{{ $s.SetInMap "params" "partial" .partial }}
+{{ $s.SetInMap "params" "markdown" .markdown }}
+
 
 {{ return dict "common" $params }}
