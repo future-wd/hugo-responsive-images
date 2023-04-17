@@ -1,10 +1,13 @@
 
 {{/* need to create $variables as .variables dont work if = nill */}}
-{{ $meta := .meta }}
-{{ $ctx := .ctx }}
+
 
 {{ $s := newScratch }}
 {{ $s.Set "params" dict }}
+
+
+{{ $meta := .common.meta }}
+{{ $ctx := .common.ctx }}
 
 {{ with .placeholder | default $meta.placeholder | default ($ctx.Param "image.placeholder") }}
   {{ if not (eq (printf "%T" .) "string") }}

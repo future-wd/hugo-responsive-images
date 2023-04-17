@@ -1,34 +1,34 @@
-{{- with .picture.original.src }}
+{{- with .image.picture.original.src }}
   <img
-  {{- with $.loading_prop }}
+  {{- with $.image.loading_prop }}
     loading="{{ . }}"
   {{- end -}}
-  {{- if eq $.loading "lazysizes" }}
+  {{- if eq $.image.loading "lazysizes" }}
     data-src="{{ .RelPermalink }}"
     height="{{ .Height }}"
     width="{{ .Width }}"
-    {{- with $.picture.original.placeholder }}
+    {{- with $.image.picture.original.placeholder }}
     src="{{ . | safeURL }}"
     {{- end }}
-  {{- else if $.provider }}
+  {{- else if $.image.provider }}
     src="{{ . }}"
-    height="{{ $.img.Height }}"
-    width="{{ $.img.Width }}"
+    height="{{ $.common.img.Height }}"
+    width="{{ $.common.img.Width }}"
   {{- else }}
     src="{{ .RelPermalink }}"
     height="{{ .Height }}"
     width="{{ .Width }}"
   {{- end }}
-  {{- with $.class }}
+  {{- with $.image.class }}
     class="{{ . }}"
   {{- end -}}
-  {{- with $.sizes_prop }}
+  {{- with $.image.sizes_prop }}
     {{ . | safeHTMLAttr }}
   {{- end }}
-  {{- with $.alt }}
+  {{- with $.image.alt }}
     alt="{{ . }}"
   {{- end }}
-  {{- with $.title }}
+  {{- with $.image.title }}
     title="{{ . }}"
   {{- end }}
   />

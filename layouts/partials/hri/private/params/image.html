@@ -26,16 +26,15 @@
 
 {{/* camelCase params have been kept to avoid breaking changes, will be deprecated in future versions */}}
 
-{{ $ctx := merge . .common }}
-{{ $params := partial "hri/private/params/image-general" $ctx }}
+{{ $params := partial "hri/private/params/image-general" . }}
 
 {{ if not $params.provider }}
-  {{ $processing_params := partial "hri/private/params/image-processing" $ctx }}
+  {{ $processing_params := partial "hri/private/params/image-processing" $params }}
   {{ $params = merge $params (dict "options" $processing_params) }}
 {{ end }}
 
 
-{{ $placeholder_params := partial "hri/private/params/image-placeholder" $ctx }}
+{{ $placeholder_params := partial "hri/private/params/image-placeholder" $params }}
 {{ $params = merge $params $placeholder_params }}
 
 

@@ -16,26 +16,15 @@
 
 */ -}}
 
-
-{{- /* get common params*/ -}}
 {{ $params := . }}
-{{ if not $params.common.img }}
-  {{ $common := dict }}
-  {{ if not .common.origin }}
-    {{ $common := dict "partial" "figure" }}
-    {{- $params = merge $params (partial "hri/private/params/common.html" (merge . (dict "common" $common))) }}
-  {{ else }}
-    {{- $params = merge $params (partial "hri/private/params/common.html" . ) }}
-  {{ end }}
+
+{{ if not $params.common }}
+  {{ $common := partial "hri/private/params/common.html" (merge $params (dict "partial" "figure")) }}
+  {{ $params = merge $params (dict "common" $common) }}
 {{ end }}
 
+{{- $figure_params := partial "hri/private/params/figure" $params -}}
+{{- $params = merge $params (dict "figure" $figure_params) }}
 
-{{- /* process figure & image params */ -}}
-
-{{- $params = partial "hri/private/params/figure" $params -}}
-
-{{- partial "hri/private/print/figure-set" (dict 
-  "figure_params" $params.figure
-  "image_params" (merge . $params.image )
-  ) -}}
+{{- partial "hri/private/print/figure-set" $params -}}
   

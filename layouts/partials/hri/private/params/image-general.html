@@ -1,16 +1,11 @@
-
-
-
-
-
 {{ $s := newScratch }}
-{{/* initialize and merge in common params */}}
-{{ $s.Set "params" .common }}
+{{ $s.Set "params" dict }}
 
 {{ $params := $s.Get "params"}}
-{{ $ctx := .ctx }}
-{{ $meta := .meta }}
-{{ $page := .page }}
+{{ $ctx := .common.ctx }}
+{{ $meta := .common.meta }}
+{{ $page := .common.page }}
+{{ $error_ctx := .common.error_ctx }}
 
 
 
@@ -20,7 +15,7 @@
       "var" "suppress_width_warning"
       "val" .
       "opts" "true/false"
-      "ctx" $.error_ctx
+      "ctx" $error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "suppress_width_warning" .}}
@@ -36,7 +31,7 @@
         "var" "densities slice item"
         "val" .
         "opts" "integers in a slice"
-        "ctx" $.error_ctx
+        "ctx" $error_ctx
         ) }}
       {{ end }}
     {{ end }}
@@ -46,7 +41,7 @@
     "var" "densities"
     "val" .
     "opts" "integers in a slice"
-    "ctx" $.error_ctx
+    "ctx" $error_ctx
     ) }}
   {{ end }}
 {{ end }}
@@ -58,7 +53,7 @@
       "var" "provider"
       "val" .
       "opts" (delimit $providerOpts ", " " and ")
-      "ctx" $.error_ctx
+      "ctx" $error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "provider" . }}
@@ -78,7 +73,7 @@
       "var" "loading"
       "val" .
       "opts" (delimit $opts ", " " and ")
-      "ctx" $.error_ctx
+      "ctx" $error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "loading" . }}
@@ -96,7 +91,7 @@
       "var" "fit"
       "val" .
       "opts" (delimit $opts ", " " and ")
-      "ctx" $.error_ctx
+      "ctx" $error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "fit" . }}
@@ -109,7 +104,7 @@
       "var" "height"
       "val" .
       "opts" "an integer"
-      "ctx" $.error_ctx
+      "ctx" $error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "height" . }}
@@ -122,7 +117,7 @@
       "var" "noscript"
       "val" .
       "opts" "strings"
-      "ctx" $.error_ctx
+      "ctx" $error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "noscript" . }}
@@ -150,7 +145,7 @@
         "var" "title"
         "val" .
         "opts" "a string"
-        "ctx" $.error_ctx
+        "ctx" $error_ctx
       ) }}
     {{ else }}
       {{ $s.SetInMap "params" "title" . }}
@@ -164,7 +159,7 @@
         "var" "alt"
         "val" .
         "opts" "strings"
-        "ctx" $.error_ctx
+        "ctx" $error_ctx
       ) }}
     {{ else }}
       {{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
@@ -193,7 +188,7 @@
           "var" "formats array item"
           "val" .
           "opts" (delimit $formatOpts ", " " and ")
-          "ctx" $.error_ctx
+          "ctx" $error_ctx
         ) }}
         {{ end }}
     {{ end }}
@@ -202,7 +197,7 @@
         "var" "formats array"
         "val" .
         "opts" "array of image formats"
-        "ctx" $.error_ctx
+        "ctx" $error_ctx
       ) }}
   {{ end }}
 {{ end }}
@@ -240,7 +235,7 @@
 {{ if and $params.width $user_widths }}
   {{ partial "hri/private/utils/options-error" (dict 
     "msg" "You cannot provide both width and widths params"
-    "ctx" $.error_ctx
+    "ctx" $error_ctx
   ) }}
 {{ end }}
 
@@ -252,7 +247,7 @@
           "var" "width in widths slice"
           "val" .
           "opts" "an integer"
-          "ctx" $.error_ctx
+          "ctx" $error_ctx
         ) }}
       {{ end }}
     {{ end }}
@@ -261,7 +256,7 @@
     "var" "widths slice"
     "val" .
     "opts" "slice of integers"
-    "ctx" $.error_ctx
+    "ctx" $error_ctx
   ) }}
   {{ end }}
 {{ end }}
@@ -275,7 +270,7 @@
       "var" "min_width_difference"
       "val" .
       "opts" "an integer"
-      "ctx" $.error_ctx
+      "ctx" $error_ctx
     ) }}
   {{ else }}
     {{/* not exported just for use in this file */}}
@@ -283,7 +278,6 @@
   {{ end }}
 {{ end }}
 
-{{ warnf "img: %v" .img }}
 {{ with $user_widths }}
   {{/* produce responsive srcset
     ** produce array [{desc: "300w", width: 300},{desc: "600w", width: 600}]
@@ -291,7 +285,7 @@
   {{/* SANTIZE WIDTHS WITH UTIL */}}
   {{ $sanitized_widths := partial "img-common/private/utils/restrict-widths" (dict 
     "ctx" $ctx
-    "img" $.img
+    "img" $.common.img
     "widths" (sort . )
     "aspect_ratio" $params.aspect_ratio
     "difference" $difference
@@ -317,7 +311,7 @@
       "var" "width"
       "val" .
       "opts" "an integer"
-      "ctx" $.error_ctx
+      "ctx" $error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "width" . }}
@@ -353,7 +347,7 @@
       "var" "class"
       "val" .
       "opts" "strings"
-      "ctx" $.error_ctx
+      "ctx" $error_ctx
     ) }}
   {{ end }}
 {{ end }}
@@ -380,7 +374,7 @@
         "var" "aspect_ratio slice item"
         "val" .
         "opts" "2x integers in a slice"
-        "ctx" $.error_ctx
+        "ctx" $error_ctx
         ) }}
       {{ end }}
     {{ end }}
@@ -390,7 +384,7 @@
     "var" "aspect_ratio"
     "val" .
     "opts" "2x integers in a slice"
-    "ctx" $.error_ctx
+    "ctx" $error_ctx
     ) }}
   {{ end }}
 {{ end }}
@@ -413,7 +407,7 @@
       "var" "sizes"
       "val" .
       "opts" "strings"
-      "ctx" $.error_ctx
+      "ctx" $error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "sizes" . }}

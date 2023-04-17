@@ -6,8 +6,9 @@
   @author @sean-au
 
   @context dict 
-    .params - image/figure params
-    .render_hook_params   - shortcode specific 
+    .              - unsanitized params
+    .render_hook   - render hook specific 
+    .common        - common params
 
   @access private
 
@@ -15,12 +16,6 @@
   {{ partial "render-hook-template" . }}
 
 */ -}}
-<div class="{{ .render_hook_params.render_hook_wrapper_class }}">
-  {{ if eq .params.output "figure" }}
-    {{ partial "hri/figure" .params }}
-  {{ else if (eq .params.output "img") }}
-    {{ partial "hri/img" .params }}
-  {{ else }}
-    {{ partial "hri/picture" .params }}
-  {{ end }}
+<div class="{{ .render_hook.wrapper_class }}">
+  {{ partial (printf "hri/%v" .common.output) . }}
 </div>

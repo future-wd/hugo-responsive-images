@@ -1,0 +1,15 @@
+{{ $s := newScratch }}
+{{ $s.Set "params" dict }}
+
+{{ $meta := .common.meta }}
+{{ $page := .common.page }}
+{{ $site := .common.site }}
+
+{{ $enabled := $meta.render_hook | default $meta.renderHook | default $page.render_hook | default $page.renderHook | default $site.render_hook | default $site.renderHook  }}
+{{ $s.SetInMap "params" "enabled" $enabled }}
+
+{{ $wrapper_class := $meta.render_hook_wrapper_class | default $meta.renderHookWrapperClass | default (.Page.Param "image.renderHookWrapperClass") | default (.Page.Param "image.render_hook_wrapper_class") }}
+{{ $s.SetInMap "params" "wrapper_class" $wrapper_class }}
+
+{{ return ($s.Get "params") }}
+

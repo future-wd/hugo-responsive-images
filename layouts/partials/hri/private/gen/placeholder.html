@@ -20,23 +20,23 @@
   
 */}}
 {{ $placeholder := false}}
-{{ with .placeholder }}
+{{ with .image.placeholder }}
   {{ if eq . "lqip" }}
-    {{ $placeholder = $.placeholder_img.Resize (printf "%vx gif" (div $.placeholder_img.Width $.lqip_div_factor | int)) }}
-    {{ $placeholder = $placeholder.Filter (images.GaussianBlur $.lqip_blur_amount) }}
+    {{ $placeholder = $.image.placeholder_img.Resize (printf "%vx gif" (div $.image.placeholder_img.Width $.image.lqip_div_factor | int)) }}
+    {{ $placeholder = $placeholder.Filter (images.GaussianBlur $.image.lqip_blur_amount) }}
   {{ else }}
     {{ if eq . "dominant" }}
-      {{ $placeholder = $.placeholder_img.Resize "1x1 gif" }}
+      {{ $placeholder = $.image.placeholder_img.Resize "1x1 gif" }}
     {{ else }}
       {{ with resources.Get (printf "images/placeholder-colors/%s.gif" . ) }}
         {{ $placeholder = . }}
       {{ else }}
-        {{ $message := printf "Placeholder assets/images/placeholder-colors/%s.gif for image %s on page %s cannot be found." $.placeholderType $.img.RelPermalink $.ctx.RelPermalink }}
+        {{ $message := printf "Placeholder assets/images/placeholder-colors/%s.gif for image %s on page %s cannot be found." $.image.placeholderType $.common.img.RelPermalink $.common.ctx.RelPermalink }}
         {{ partial "img-common/private/utils/errorf" $message}}
       {{ end }}
       {{ $placeholder = $placeholder.Resize "1x1 gif" }}
     {{ end }}
-    {{ $placeholder = $placeholder.Resize (printf "%vx%v gif" ( div $.placeholder_img.Width $.gif_div_factor | int) (div $.placeholder_img.Height $.gif_div_factor | int)) }}
+    {{ $placeholder = $placeholder.Resize (printf "%vx%v gif" ( div $.image.placeholder_img.Width $.image.gif_div_factor | int) (div $.image.placeholder_img.Height $.image.gif_div_factor | int)) }}
   {{ end }}
   {{ $placeholder = printf "data:image/gif;base64,%s" ($placeholder.Content | base64Encode) -}}
 {{ end }}

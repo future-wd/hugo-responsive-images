@@ -15,6 +15,6 @@
   {{ partial "shortcode-template" . }}
 
 */ -}}
-<div class="{{ .shortcode_params.shortcode_wrapper_class }}">
-  {{ partial (printf "hri/%v" .shortcode_params.name) .params }}
+<div class="{{ .shortcode.wrapper_class }}">
+  {{ partial (printf "hri/%v" .common.shortcode) . }}
 </div>

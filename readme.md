@@ -561,7 +561,7 @@ Test site resides in /.testSite
 | sizes        | YES | YES | YES | NO  | [string] - Image sizes for responsive widths images | `"100vw"` |
 | class        | YES | YES | YES | YES | Image class | `"img-fluid"` |
 | alt          | YES | YES | NO  | NO  | Image alt text | `caption` (figure) then `Image of [title]` then generates error. |
-| output          | NO | YES | NO  | NO  | Render hook output. Default `picture` can be set to `figure` or `img` |
+| output          | NO | YES | YES  | YES  | Render hook output. Default `picture` can be set to `figure` or `img` |
 
 ## Placeholder variables
 

@@ -43,24 +43,3 @@ resources:
 <div id="js-test2-results"></div>
 </div>
 {{< /shortcode2b.inline >}}
-
-{{< shortcode3a.inline >}}
-<div class="col-md-6 render-hook-test" id="js-test3">
-  <h2>3. Basic - render hook widths too wide for image</h2>
-  <p>test3.jpg</p>
-{{< /shortcode3a.inline >}}
-![Alt Text](test3.jpg "Test Title")
-{{< shortcode3b.inline >}}
-<div id="js-test3-results"></div>
-</div>
-{{< /shortcode3b.inline >}}
-{{< renderhook4a.inline >}}
-<div class="col-md-6 render-hook-test" id="js-test1">
-  <h2>4. Basic - render_hook: false (replicated stock markdown handling of img)</h2>
-  <p>test4.jpg</p>
-{{< /renderhook4a.inline >}}
-![Alt Text](test4.jpg "Test Title")
-{{< renderhook4b.inline >}}
-<div id="js-test1-results"></div>
-</div>
-{{< /renderhook4b.inline >}}

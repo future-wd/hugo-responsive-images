@@ -1,7 +1,5 @@
 {{ $s := newScratch }}
-{{/* merge common into figure params */}}
-{{ $s.Set "params" .common }}
-{{ $s.Set "image_params" dict }}
+{{ $s.Set "params" dict }}
 
 {{ $external_link := false }}
 {{ $external_attr_link := false }}
@@ -10,12 +8,6 @@
 {{ $meta := .common.meta }}
 {{ $ctx := .common.ctx }}
 
-{{/* pass through params from "get-image" to partials */}}
-{{ $s.SetInMap "params" "img" .img }}
-{{ $s.SetInMap "image_params" "common" .common }}
-
-
- 
 {{/**********************
   ** inline & meta ***/}}
 
@@ -91,7 +83,6 @@
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "caption" . }}
-    {{ $s.SetInMap "image_params" "caption" . }}
   {{ end }}
 {{ end }}
 
@@ -154,7 +145,6 @@
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "figcaption_title" . }}
-    {{ $s.SetInMap "image_params" "figcaption_title" . }}
   {{ end }}
 {{ end }}
 
@@ -208,11 +198,8 @@
       "ctx" $.error_ctx
     ) }}
   {{ else }}
-    {{ $s.SetInMap "image_params" "class" . }}
+    {{ $s.SetInMap "params" "class" . }}
   {{ end }}
 {{ end }}
 
-{{ return (dict 
-  "figure" ($s.Get "params")
-  "image" ($s.Get "image_params")
-  ) }}
+{{ return $s.Get "params" }}
