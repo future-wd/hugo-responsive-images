@@ -2,7 +2,11 @@
 
 
 look into error handling when image cannot be found (Both global and page resource)
-
+{{ if (findRE ":" $param) }}
+  {{ $ratio := partial "hri/private/utils/string-to-array" $input }}
+  {{ $ratio = partial "hri/private/utils/string-to-int" $ratio }}
+{{ else if }}
+{{/* slice is deprecated, to be removed in v2 */}}
 
 
 
@@ -13,7 +17,6 @@ astro image processing params:
 
 test site fix js error - forEach iterating over undefined.. need to debug
 
-add remote image src
 
 change quality of lqip if fit/crop ratio reduces the width of the image. see poor examples on test site
 

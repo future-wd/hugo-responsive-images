@@ -110,11 +110,11 @@
 
 {{ if eq $params.partial "image" }}
   {{ $warn_message := printf `Image %v%v: You are using the "image" partial which has been deprecated. It will be removed in v2` $ctx.RelPermalink $.src }}
-  {{ partial "img-common/private/utils/warnf" (dict "message" $warn_message "module" $module) }}
+  {{ partial "img-common/private/utils/warnf" (dict "message" $warn_message "module" $c.module) }}
 {{ end }}
 
 {{ if $message }}
-  {{ partial "img-common/private/utils/errorf" (dict "message" $message "module" $module) }}
+  {{ partial "img-common/private/utils/errorf" (dict "message" $message "module" $c.module) }}
 {{ end }}
 
 {{ $input := "" }}

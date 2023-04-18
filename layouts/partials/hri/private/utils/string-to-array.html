@@ -1,7 +1,7 @@
 {{/*
   string-to-array.html
-  Converts comma delimited string-arrays to arrays
-  Spaces after commas will be removed
+  Converts comma and colon delimited string-arrays to arrays
+  Spaces before and after strings will be removed
 
   @author @sean-au
 
@@ -23,9 +23,16 @@
 {{ if (findRE "," $param) }}
   {{/* create array ',' delimiter for creation */}}
   {{ $param = split . "," -}}
-  {{/* remove leading spaces from each string */}}
-  {{ $param = apply $param "strings.TrimLeft" " " "." }}
+{{/* check for colon delimited array (string) */}}
+{{ else if (findRE ":" $param) }}
+  {{/* create array ':' delimiter for creation */}}
+  {{ $param = split . "," -}}
 {{ end }}
+
+{{/* remove leading spaces from each string */}}
+{{ $param = apply $param "strings.TrimLeft" " " "." }}
+{{/* remove trailing spaces from each string */}}
+{{ $param = apply $param "strings.TrimRight" " " "." }}
 
 {{ return $param }}
 
