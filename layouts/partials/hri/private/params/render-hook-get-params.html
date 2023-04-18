@@ -1,3 +1,4 @@
+{{ $c := partial "hri/private/params/constants" . }}
 {{ $s := newScratch }}
 {{ $s.Set "params" dict }}
 {{ $params := $s.Get "params" }}
@@ -11,8 +12,9 @@
 {{ $error_ctx := dict 
   "ctx" $params.ctx
   "img" $params.src
-  "element" "image"
-  "module" "Hugo Responsive Images" }}
+  "element" $c.element
+  "input" ""
+  "module" $c.module }}
 
 {{/* params needed by common */}}
 {{ $meta := dict }}

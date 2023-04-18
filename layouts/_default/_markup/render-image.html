@@ -15,11 +15,11 @@
   ![Image Alt](img_path.jpeg "Image title")
   
 */ -}}
-{{- $params := partial "hri/private/params/render-hook" . }}
-
+{{- $params := partial "hri/private/params/render-hook" . -}}
 {{- if eq $params.render_hook.enabled true -}}
   {{- partial "hri/private/print/render-hook" $params -}}
 {{- else -}}
   {{- /* default markdown behavior */ -}}
   {{- partial "hri/private/print/render-hook-default" . -}}
 {{- end -}} 
+

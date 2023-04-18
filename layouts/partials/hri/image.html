@@ -1,5 +1,1 @@
-
-
-
-{{ $common := dict "partial" "image" }}
-{{ partial "hri/picture" (merge . (dict "common" $common)) }}
+{{ partial "hri/private/image" (merge . (dict "partial" "image")) }}

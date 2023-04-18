@@ -18,7 +18,7 @@
     - .renderhook (picture/figure/img)  - set via image -> renderhook -> img/figure/(picture)?
     - .shortode (img/picture/figure/image)
     - .partial (figure/picture/img)
-    - .img_only - as img is only used as an entry point to pictur partial
+    - .processed bool (if this partial has been run)
 
   @access private
 
@@ -26,7 +26,8 @@
   {{ partial "hri/private/params/get-image" . }}
   
 */}}
-{{ $module := "Hugo Responsive Images" }}
+
+{{ $c := partial "hri/private/params/constants" . }}
 {{ $message := false }}
 {{ $s := newScratch }}
 {{ $s.Set "params" dict }}
@@ -40,14 +41,12 @@
 {{/* when .page is removed all instances of $ctx can be reverted to .ctx */}}
 {{ $ctx := dict }}
 
-
 {{ $ctx = "" }}
 {{ if .page }}
   {{ $ctx = .page }}
 {{ else if .ctx }}
   {{ $ctx = .ctx }}
-{{ end }}
-{{ if not (or $ctx .page) }}
+{{ else }}
   {{ $message = printf "ctx must be set for image %s" .src }}
 {{ end }}
 {{ $s.SetInMap "params" "ctx" $ctx}}
@@ -59,9 +58,10 @@
 {{ $s.SetInMap "params" "partial" .partial }}
 {{ $s.SetInMap "params" "render_hook" .output }}
 {{ $s.SetInMap "params" "shortcode" .shortcode }}
+{{ $s.SetInMap "params" "processed" true }}
 
 {{/* check $ctx actually pointing to a page context */}}
-{{ if not $params.markdown }}
+{{ if not (or $params.shortcode $params.render_hook) }}
   {{ if ne (printf "%T" $ctx) "*hugolib.pageState" }}
     {{ $message = printf "ctx must be set for image %s via partial" .src }}
   {{ end }}
@@ -81,7 +81,7 @@
 
 {{/* .type deprecated, keep for v1. only use $global(bool) from v2 */}}
 {{ $type := .type | default ( $ctx.Param "image.type") }}
-{{ $src := .src | default .shortcode.src }}
+{{ $src := .src }}
 {{ $prefix := substr .src 0 7 }}
 {{ if eq $prefix "assets/" }}
   {{ $src = substr .src 7 }}
@@ -117,33 +117,25 @@
   {{ partial "img-common/private/utils/errorf" (dict "message" $message "module" $module) }}
 {{ end }}
 
+{{ $input := "" }}
+{{ if $params.render_hook }}
+  {{ $input = printf "%v render-hook" $params.render_hook }}
+{{ else if $params.shortcode }}
+  {{ $input = printf "%v shortcode" $params.shortcode }}
+{{ else if $params.partial }}
+  {{ $input = printf "%v partial" $params.partial }}
+{{ end }}
 
 {{ $error_ctx := dict 
   "ctx" $ctx
   "img" $params.img
-  "element" "image"
-  "partial" $params.partial
-  "module" $params.module
-  "module" $module }}
+  "element" $c.element
+  "input" $input
+  "module" $c.module }}
 
 {{ $s.SetInMap "params" "error_ctx" $error_ctx }}
 
 
-{{ with .img_only | default $meta.img_only | default $page.img_only }}
-  {{ if ne (printf "%T" .) "bool" }}
-    {{ partial "hri/private/utils/options-error" (dict 
-      "var" "img_only"
-      "val" .
-      "opts" "true/false"
-      "ctx" $params.error_ctx
-    ) }}
-  {{ else }}
-    {{ $s.SetInMap "params" "img_only" . }}
-  {{ end }}
-{{ end }}
 
-{{ if .output }}
-{{ errorf "render hook common params %v" $params }}
-{{ end }}
 
 {{ return $params }}

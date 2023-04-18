@@ -14,7 +14,7 @@
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "suppress_width_warning"
       "val" .
-      "opts" "true/false"
+      "opts" "true or false"
       "ctx" $error_ctx
     ) }}
   {{ else }}
@@ -52,7 +52,7 @@
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "provider"
       "val" .
-      "opts" (delimit $providerOpts ", " " and ")
+      "opts" (delimit $providerOpts ", " " or ")
       "ctx" $error_ctx
     ) }}
   {{ else }}
@@ -72,7 +72,7 @@
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "loading"
       "val" .
-      "opts" (delimit $opts ", " " and ")
+      "opts" (delimit $opts ", " " or ")
       "ctx" $error_ctx
     ) }}
   {{ else }}
@@ -90,7 +90,7 @@
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "fit"
       "val" .
-      "opts" (delimit $opts ", " " and ")
+      "opts" (delimit $opts ", " " or ")
       "ctx" $error_ctx
     ) }}
   {{ else }}
@@ -116,7 +116,7 @@
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "noscript"
       "val" .
-      "opts" "strings"
+      "opts" "a string"
       "ctx" $error_ctx
     ) }}
   {{ else }}
@@ -132,45 +132,45 @@
   **************************************/}}
 
 
-  {{ $resource_title := "" }}
-  {{ if eq $params.global true }}
-    {{ if ne .img.Title (.img | string) }}
-      {{ $resource_title = .img.Title }}
-    {{ end }}
+{{ $resource_title := "" }}
+{{ if eq $params.global false }}
+  {{ if ne .common.img.Title (.common.img | string) }}
+    {{ $resource_title = .common.img.Title }}
   {{ end }}
+{{ end }}
   
-  {{ with .title | default $meta.title | default $resource_title | default .figcaption_title }}
-    {{ if ne (printf "%T" .) "string" }}
-      {{ partial "hri/private/utils/options-error" (dict 
-        "var" "title"
-        "val" .
-        "opts" "a string"
-        "ctx" $error_ctx
-      ) }}
-    {{ else }}
-      {{ $s.SetInMap "params" "title" . }}
-    {{ end }}
+{{ with .title | default $meta.title | default $resource_title | default .figcaption_title }}
+  {{ if ne (printf "%T" .) "string" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "title"
+      "val" .
+      "opts" "a string"
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "title" . }}
   {{ end }}
+{{ end }}
   
 
-  {{ with .alt | default $meta.alt }}
-    {{ if not (eq (printf "%T" .) "string") }}
-      {{ partial "hri/private/utils/options-error" (dict 
-        "var" "alt"
-        "val" .
-        "opts" "strings"
-        "ctx" $error_ctx
-      ) }}
+{{ with .alt | default $meta.alt }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "alt"
+      "val" .
+      "opts" "a string"
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
+    {{ $alt := "" }}
+    {{ if $.figure.caption }}
+      {{ $alt = $.figure.caption | markdownify | plainify }}
+    {{ else if $params.title }}
+      {{ $alt = (printf "Image of %s" $params.title) }}
     {{ else }}
-      {{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
-      {{ $alt := "" }}
-      {{ if $.caption }}
-        {{ $alt = $.caption | markdownify | plainify }}
-      {{ else if $params.title }}
-        {{ $alt = (printf "Image of %s" $params.title) }}
-      {{ else }}
-        {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $params.img.RelPermalink $ctx.RelPermalink }}
-      {{ end }}
+      {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $params.img.RelPermalink $ctx.RelPermalink }}
+    {{ end }}
     {{ $s.SetInMap "params" "alt" $alt }}
   {{ end }}
 {{ end }}
@@ -187,7 +187,7 @@
         {{ partial "hri/private/utils/options-error" (dict 
           "var" "formats array item"
           "val" .
-          "opts" (delimit $formatOpts ", " " and ")
+          "opts" (delimit $formatOpts ", " " or ")
           "ctx" $error_ctx
         ) }}
         {{ end }}
@@ -196,14 +196,14 @@
     {{ partial "hri/private/utils/options-error" (dict 
         "var" "formats array"
         "val" .
-        "opts" "array of image formats"
+        "opts" "an array of image formats"
         "ctx" $error_ctx
       ) }}
   {{ end }}
 {{ end }}
   
 {{/* if only generating img tag, only process first format */}}
-{{ if eq $params.img_only true }}
+{{ if eq .common.partial "img" }}
   {{ $single_format := index $user_formats 0 }}
   {{ $user_formats = slice $single_format }}
 {{ end }}
@@ -224,22 +224,8 @@
 
 
 
-{{ $user_widths := "" }}
-{{/* shortcode and render hook widths defaults are handled higher up */}}
-{{ if or (eq .input "render_hook") (eq .input "shortcode") }}
-  {{ $user_widths = .widths }}
-{{ else }}
-  {{ $user_widths = .widths | default $meta.widths | default ($ctx.Param "image.widths") }}
-{{ end }}
-
-{{ if and $params.width $user_widths }}
-  {{ partial "hri/private/utils/options-error" (dict 
-    "msg" "You cannot provide both width and widths params"
-    "ctx" $error_ctx
-  ) }}
-{{ end }}
-
-{{ with $user_widths }}
+{{ $user_widths := slice }}
+{{ with .render_hook.widths | default .shortcode.widths | default .widths | default $meta.widths | default ($ctx.Param "image.widths") }}
   {{ if reflect.IsSlice . }}
     {{ range . }}
       {{ if ne (printf "%T" .) "int" }}
@@ -251,17 +237,23 @@
         ) }}
       {{ end }}
     {{ end }}
+    {{ $user_widths = . }}
   {{ else }}
     {{ partial "hri/private/utils/options-error" (dict 
     "var" "widths slice"
     "val" .
-    "opts" "slice of integers"
+    "opts" "a slice of integers"
     "ctx" $error_ctx
   ) }}
   {{ end }}
 {{ end }}
 
-
+{{ if and $params.width $user_widths }}
+  {{ partial "hri/private/utils/options-error" (dict 
+    "msg" "You cannot provide both width and widths params"
+    "ctx" $error_ctx
+  ) }}
+{{ end }}
 
 {{ $difference := 0 }}
 {{ with site.Params.min_width_difference | default site.Params.minWidthDifference }}
@@ -357,13 +349,6 @@
 {{ end }}
 
 {{ $s.SetInMap "params" "class" $class }}
-
-{{/* caption sanitized at figure level - not needed outside this file */}}
-{{/* }}
-{{ $caption := "" }}
-{{ if eq $params.input "figure" }}
-  {{ $s.SetInMap "params" "caption" .caption }}
-{{ end }}  */}}
 
 {{ $user_aspect_ratio := slice }}
 {{ with .aspect_ratio | default .fill_ratio | default .fillRatio | default $meta.aspect_ratio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fill_ratio | default $page.fillRatio  }}

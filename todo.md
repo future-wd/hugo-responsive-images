@@ -1,44 +1,10 @@
 # TODO
 
-there is an error messagage in render_hook which comes before the common variables its "out of scope" can these variables be defined higher up as constants and pulled in where needed?
 
-point img and pictue to an image partial, but set partial=img and partial=picture
-then throughout the process refer to partial=img 
-this must be set even if .common already exists!
-
-update shortcode-get-params error messages, after error message re write
-sanitize shortcode params
-move shortcode widths to general params to simplify param workflow.
-configure partials for use with common
-move image error from get-image to image
-
-scope figure sanitized params present in image as "figure_params" etc.
-fix up the rest of the params/merge sanitization
-look into adding shortcode/render hook/ or direct partial name to error messages
-- currently set up with figure image, picture image, and img
+look into error handling when image cannot be found (Both global and page resource)
 
 
 
-
-{{/*  to be added below, conditional on .common.shortcode 
-    will possibly need to be modified
-
-    {{ $widths_site := default $site.shortcodeWidths | default $site.shortcode_widths | default $site.widths }}
-{{ $withs_page  := $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
-{{ $widths_meta := $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths | default $withs_page  }}
-{{ $widths := .widths | default $widths_meta }}    /*}}
-
-
-## render hook widths
-dependant on .common.render_hook
-
-{{ $widths_site := $site.renderHookWidths | default $site.render_hook_widths | default $site.shortcodeWidths | default $site.shortcode_widths  | default $site.widths }}
-{{ $widths_page  := $page.render_hook_widths | default $page.renderHookWidths | default $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
-{{ $widths_meta := $meta.render_hook_widths | default $meta.renderHookWidths | default $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths | default $widths_page}}
-{{ $widths := $widths_meta }}
-
-
-allow the param of image_only: true for render hook to only generate <img> and figure: true for figure
 
 astro image processing params:
 - aspect_ratio: string ratio for image resize string "16:9", int also e.g. 1.32

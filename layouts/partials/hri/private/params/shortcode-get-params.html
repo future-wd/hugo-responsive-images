@@ -6,7 +6,7 @@
 
   @author @sean-au
 
-  @context . Context from image/figure shortcode
+  @context . Context from shortcode
 
   @returns map of params
 
@@ -16,10 +16,10 @@
   {{ partial "shortcode-params" . }}
 
 */}}
-
+{{ $c := partial "hri/private/params/constants" . }}
 {{ $s := newScratch }}
-{{ $s.SetInMap "params" "shortcode" .Name }}
-{{ $s.SetInMap "params" "ctx" .Page }}
+{{ $message := "" }}
+
 
 
 {{/****************************************
@@ -32,7 +32,7 @@
   {{ $s.Set "params" $params }}
   {{/* check for src if not throw error */}}
   {{ if not (.Get "src") }}
-    {{ errorf "The %q shortcode on page %s requires the 'src' named parameter. See %s" .Name .Page .Position }}
+    {{ $message = printf "The %q shortcode on page %s requires the 'src' named parameter. See %s" .Name .Page.RelPermalink .Position }}
   {{ end }}
 
 {{ else }}
@@ -50,8 +50,16 @@
   {{ end -}}
 
   {{ if ge (len .Params) 2 }}
-    {{ errorf "If using positional parameters, only 1 parameter can be provided (src)" }}
+    {{ $message = printf "The %q shortcode on page %s can only contain 1 parameter (src) if using positional parameters. See %s" .Name .Page.RelPermalink .Position }}
   {{ end }}
 {{ end }}
+
+{{ $s.SetInMap "params" "shortcode" .Name }}
+{{ $s.SetInMap "params" "ctx" .Page }}
+
+{{ if $message }}
+  {{ partial "img-common/private/utils/errorf" (dict "message" $message "module" $c.module) }}
+{{ end }}
+
 
 {{ return $s.Get "params" }}

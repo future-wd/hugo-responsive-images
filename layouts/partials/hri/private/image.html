@@ -1,0 +1,48 @@
+
+
+{{- /*
+  image.html
+  Takes inputs and page context.
+  - Passes inputs to params partial for processing
+  - Then passes params to generate-widths for image generation
+  - Then passes params to picture-tag to generate HTML
+
+  @author @sean-au
+
+  @context . Context (dict) from a page template, figure/image partial, or render hook partial.
+           .partial with string of partial name is added
+
+  @access public
+
+  @example - Go Template
+
+*/ -}}
+{{- /* get common params */ -}}
+{{ $params := . }}
+{{ if not $params.common.processed }}
+  {{- $common := partial "hri/private/params/common.html" $params -}}
+  {{- $params = merge $params (dict "common" $common) -}}
+{{ else }}
+  {{ $params = merge $params (dict "common" (dict "partial" .partial )) }}
+{{ end }}
+
+{{- /* santize inputs, process params */ -}}
+{{- /* only selected params are passed throgh */ -}}
+{{- $image_params := partial "hri/private/params/image.html" $params }}
+{{- $params = merge $params (dict "image" $image_params) }}
+
+{{- /* generate image widths*/ -}}
+{{- $picture := partial "hri/private/gen/widths" $params -}}
+{{- $params = merge $params (dict "image" (dict "picture" $picture)) }}
+
+{{- /* only pass processed params */ -}}
+{{ $params = (dict "common" $params.common "figure" $params.figure "image" $params.image "render_hook" $params.render_hook "shortcode" $params.shortcode) }}
+
+{{- /* generate picture or img tag */ -}}
+{{- if eq $params.common.partial "img" -}}
+  {{- partial "hri/private/print/image-set" $params -}}
+{{- else -}}
+  {{- partial "hri/private/print/picture-set" $params -}}
+{{- end -}}
+
+

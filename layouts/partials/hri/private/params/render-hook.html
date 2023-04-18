@@ -18,13 +18,10 @@
 
 {{ $params := partial "hri/private/params/render-hook-get-params" . }}
 
-{{- /* sanitize common params /* -}}
-{{- $common := partial "hri/private/params/common" $params }}
-{{- $params = merge $params (dict "common" $common) -}}
+{{ $common := partial "hri/private/params/common" $params }}
+{{ $params = merge $params (dict "common" $common) }}
 
-
-{{- /* render hook params */ -}}
-{{- $render_hook_params := partial "hri/private/params/render-hook-general.html" $params }}
-{{- $params = merge $params (dict "render_hook" $render_hook_params) -}}
+{{ $render_hook_params := partial "hri/private/params/render-hook-general.html" $params }}
+{{ $params = merge $params (dict "render_hook" $render_hook_params) -}}
 
 {{ return $params }}
