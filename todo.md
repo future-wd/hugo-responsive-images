@@ -2,18 +2,8 @@
 
 
 look into error handling when image cannot be found (Both global and page resource)
-{{ if (findRE ":" $param) }}
-  {{ $ratio := partial "hri/private/utils/string-to-array" $input }}
-  {{ $ratio = partial "hri/private/utils/string-to-int" $ratio }}
-{{ else if }}
-{{/* slice is deprecated, to be removed in v2 */}}
 
 
-
-astro image processing params:
-- aspect_ratio: string ratio for image resize string "16:9", int also e.g. 1.32
-- use regex to check for 0-9*:0-9*
-- deprecate slice
 
 test site fix js error - forEach iterating over undefined.. need to debug
 

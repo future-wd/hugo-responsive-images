@@ -222,7 +222,44 @@
 {{ $formats = $formats | uniq }}
 {{ $s.SetInMap "params" "formats" $formats }}
 
+{{ $user_aspect_ratio := slice }}
+{{ with .aspect_ratio | default .fill_ratio | default .fillRatio | default $meta.aspect_ratio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fill_ratio | default $page.fillRatio  }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
+        {{ partial "hri/private/utils/options-error" (dict 
+        "var" "aspect_ratio slice item"
+        "val" .
+        "opts" "2x integers in a slice"
+        "ctx" $error_ctx
+        ) }}
+      {{ end }}
+    {{ end }}
+    {{ $user_aspect_ratio = . }}
+  {{ else if (findRE `^\d{1,4}:\d{1,4}$` .) }}
+    {{ $ratio := partial "hri/private/utils/string-to-array" . }}
+    {{ $ratio = partial "hri/private/utils/string-to-int" $ratio }}
+    {{ $user_aspect_ratio = $ratio }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+    "var" "aspect_ratio"
+    "val" .
+    "opts" "string in the format 0000:0000 (1-4 digits either side)"
+    "ctx" $error_ctx
+    ) }}
+  {{ end }}
+{{ end }}
 
+{{ with $user_aspect_ratio }}
+  {{ if and $params.height $params.width }}
+    {{/* even though width and height have been provided, we need a ratio for densities */}}
+    {{ $s.SetInMap "params" "aspect_ratio" (div ( $params.height | float) ($params.width | float)) }}
+  {{ else }}
+    {{/* height to width ratio of .aspect_ratio */}}
+    {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
+    {{ $s.SetInMap "params" "aspect_ratio" (div (index . 1 | float) (index . 0 | float)) }}
+  {{ end }}
+{{ end }}
 
 {{ $user_widths := slice }}
 {{ with .render_hook.widths | default .shortcode.widths | default .widths | default $meta.widths | default ($ctx.Param "image.widths") }}
@@ -350,40 +387,6 @@
 
 {{ $s.SetInMap "params" "class" $class }}
 
-{{ $user_aspect_ratio := slice }}
-{{ with .aspect_ratio | default .fill_ratio | default .fillRatio | default $meta.aspect_ratio | default $meta.fill_ratio | default $meta.fillRatio | default $page.fill_ratio | default $page.fill_ratio | default $page.fillRatio  }}
-  {{ if reflect.IsSlice . }}
-    {{ range . }}
-      {{ if ne (printf "%T" .) "int" }}
-        {{ partial "hri/private/utils/options-error" (dict 
-        "var" "aspect_ratio slice item"
-        "val" .
-        "opts" "2x integers in a slice"
-        "ctx" $error_ctx
-        ) }}
-      {{ end }}
-    {{ end }}
-    {{ $user_aspect_ratio = . }}
-  {{ else }}
-    {{ partial "hri/private/utils/options-error" (dict 
-    "var" "aspect_ratio"
-    "val" .
-    "opts" "2x integers in a slice"
-    "ctx" $error_ctx
-    ) }}
-  {{ end }}
-{{ end }}
-
-{{ with $user_aspect_ratio }}
-  {{ if and $params.height $params.width }}
-    {{/* even though width and height have been provided, we need a ratio for densities */}}
-    {{ $s.SetInMap "params" "aspect_ratio" (div ( $params.height | float) ($params.width | float)) }}
-  {{ else }}
-    {{/* height to width ratio of .aspect_ratio */}}
-    {{/* numbers must be converted to float before division or they may create an answer of 0 */}}
-    {{ $s.SetInMap "params" "aspect_ratio" (div (index . 1 | float) (index . 0 | float)) }}
-  {{ end }}
-{{ end }}
 
 
 {{ with .sizes | default $meta.sizes | default $page.sizes }}

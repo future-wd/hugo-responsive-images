@@ -37,7 +37,7 @@ resources:
   <h2>2. Basic - shortcode</h2>
   <p>test2.jpg</p>
 {{< /shortcode2a.inline >}}
-{{< picture src=test2.jpg alt="Alt text" title="Title text"  >}}
+{{< picture src=test2.jpg alt="Alt text" title="Title text" aspect_ratio=1:1 >}}
 {{< shortcode2b.inline >}}
 <div id="js-test2-results"></div>
 </div>
@@ -46,16 +46,16 @@ resources:
 
 
 
-{{< shortcode3a.inline >}}
+{{< render3a.inline >}}
 <div class="col-md-6 render-hook-test" id="js-test3">
   <h2>3. Basic - render hook widths too wide for image</h2>
   <p>test3.jpg</p>
-{{< /shortcode3a.inline >}}
+{{< /render3a.inline >}}
 ![Alt Text](test3.jpg "Test Title")
-{{< shortcode3b.inline >}}
+{{< render3b.inline >}}
 <div id="js-test3-results"></div>
 </div>
-{{< /shortcode3b.inline >}}
+{{< /render3b.inline >}}
 
 {{< renderhook4a.inline >}}
 <div class="col-md-6 render-hook-test" id="js-test1">

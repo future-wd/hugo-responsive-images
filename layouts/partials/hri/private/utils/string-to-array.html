@@ -13,20 +13,25 @@
 
   @example - Go Template
   {{ partial "hri/private/utils/string-to-array" "1,2,3" }}
-  {{ partial "hri/private/utils/string-to-array" "1, 2, 3" }}
+  {{ partial "hri/private/utils/string-to-array" "1 , 2 , 3" }}
+  {{ partial "hri/private/utils/string-to-array" "1234:1" }}
   
 */}}
 
-{{ $param := . }}
-
+{{ $param := "" }}
 {{/* check for comma delimited array (string) */}}
-{{ if (findRE "," $param) }}
+{{ $comma_delim := split . ","}}
+{{ if gt (len $comma_delim) 1  }}
   {{/* create array ',' delimiter for creation */}}
-  {{ $param = split . "," -}}
+  {{ $param = $comma_delim -}}
 {{/* check for colon delimited array (string) */}}
-{{ else if (findRE ":" $param) }}
-  {{/* create array ':' delimiter for creation */}}
-  {{ $param = split . "," -}}
+{{ else }}
+  {{ if (findRE `^\d{1,4}:\d{1,4}` .) }}
+    {{/* create array ':' delimiter for creation */}}
+    {{ $param = split . ":" -}}
+  {{ else }}
+    {{ errorf "Hugo Responsive Images: Internal error string-to-array not passed comma or colon delimited string"}}
+  {{ end }}
 {{ end }}
 
 {{/* remove leading spaces from each string */}}
