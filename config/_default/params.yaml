@@ -23,6 +23,7 @@ image:
   type: page # or global
   min_width_difference: 40
   noscript: false
+  output: picture #render-hook output
 
 
 

@@ -12,23 +12,24 @@ testImages:
     alt: Test Image Alt
     title: Test Image Title
     loading: lazysizes
-  # tests:
-  #   img:
-  #     dataSizes: 'auto'
-  #     alt: 'Test Image Alt'
-  #     title: 'Test Image Title'
-  #     dataSizes: 'auto'
-  #     class: ['img-fluid', 'lazyloaded', lazyautosizes]
-  #   source: 
-  #     types: ['webp', 'jpeg']
-  #     dataWidths: ['600w', '900w', '1300w']
-# - id: js-test2
-#   title: 2. Formats
-#   subtitle: original (jpeg), png, webp
-#   params:
-#     src: test2.jpg
-#     alt: Formats
-#     formats: [original, png, webp]
+  tests:
+    img:
+      dataSizes: 'auto'
+      alt: 'Test Image Alt'
+      title: 'Test Image Title'
+      dataSizes: 'auto'
+      class: ['img-fluid', 'lazyloaded', lazyautosizes]
+    source: 
+      types: ['webp', 'jpeg']
+      dataWidths: ['600w', '900w', '1300w']
+- id: js-test2
+  title: 2. Img
+  subtitle: uses img partial
+  partial: img
+  params:
+    src: assets/images/test2.jpg
+    alt: Alt
+    
 #   tests: 
 #     source:
 #       types: ['webp', 'png', 'jpeg'] 
@@ -187,4 +188,4 @@ testImages:
 #     alt: Test Image Alt
 #     title: Test Image Title
 #     placeholder: dominant
---- 
+---

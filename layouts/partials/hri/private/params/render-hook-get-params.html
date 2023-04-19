@@ -1,0 +1,39 @@
+{{ $c := partial "hri/private/params/constants" . }}
+{{ $s := newScratch }}
+{{ $s.Set "params" dict }}
+{{ $params := $s.Get "params" }}
+
+{{/* basic built in params */}}
+{{ $s.SetInMap "params" "src" .Destination }}
+{{ $s.SetInMap "params" "ctx" .Page }}
+{{ $s.SetInMap "params" "alt" .PlainText }}
+{{ $s.SetInMap "params" "title" .Title }}
+
+{{ $error_ctx := dict 
+  "ctx" $params.ctx
+  "img" $params.src
+  "element" $c.element
+  "input" ""
+  "module" $c.module }}
+
+{{/* params needed by common */}}
+{{ $meta := dict }}
+{{ with .Page.Resources.GetMatch .Destination }}
+  {{ $meta = .Params.image }}
+{{ end }}
+
+{{ with $meta.output | default (.Page.Param "image.output") }}
+  {{ $opts := slice "img" "picture" "figure" }}
+  {{ if not (in $opts .) }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "output"
+      "val" .
+      "opts" (delimit $opts ", ")
+      "ctx" $error_ctx
+      ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "output" . }}
+  {{ end }}
+{{ end }}
+
+{{ return $s.Get "params"}}

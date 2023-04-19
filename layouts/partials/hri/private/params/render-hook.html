@@ -16,36 +16,12 @@
 
 */}}
 
-{{/* extract image meta data for param below */}}
-{{ $meta := false }}
-{{ with .Page.Resources.GetMatch .Destination }}
-  {{ $meta = .Params.image }}
-{{ end }}
-{{ $page := .Page.Params.image }}
-{{ $site := site.Params.image }}
+{{ $params := partial "hri/private/params/render-hook-get-params" . }}
 
-{{ $render_hook := $meta.render_hook | default $meta.renderHook | default $page.render_hook | default $page.renderHook | default $site.renderHook | default $site.render_hook  }}
-{{ $render_hook_wrapper_class := $meta.render_hook_wrapper_class | default $meta.renderHookWrapperClass | default (.Page.Param "image.renderHookWrapperClass") | default (.Page.Param "image.render_hook_wrapper_class") }}
+{{ $common := partial "hri/private/params/common" $params }}
+{{ $params = merge $params (dict "common" $common) }}
 
-{{ $render_hook_params := dict 
-  "render_hook_wrapper_class" $render_hook_wrapper_class
-  "render_hook" $render_hook }}
+{{ $render_hook_params := partial "hri/private/params/render-hook-general.html" $params }}
+{{ $params = merge $params (dict "render_hook" $render_hook_params) -}}
 
-{{ $widths_site := $site.renderHookWidths | default $site.render_hook_widths | default $site.shortcodeWidths | default $site.shortcode_widths  | default $site.widths }}
-{{ $widths_page  := $page.render_hook_widths | default $page.renderHookWidths | default $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
-{{ $widths_meta := $meta.render_hook_widths | default $meta.renderHookWidths | default $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths | default $widths_page}}
-{{ $widths := $widths_meta }}
-{{ $output := $meta.output }}
-
-{{ $params := dict 
-  "ctx" .Page 
-  "src" .Destination 
-  "alt" .PlainText 
-  "title" .Title
-  "input" "render_hook"
-  "widths" $widths
-  "output" $output }}
-
-{{ return dict 
-  "params" $params
-  "render_hook_params" $render_hook_params }}
+{{ return $params }}

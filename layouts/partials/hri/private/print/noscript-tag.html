@@ -1,17 +1,17 @@
-{{ if and .noscript (eq .loading "lazysizes") }}
-{{- with .picture.original.src }}
+{{ if and .image.noscript (eq .image.loading "lazysizes") }}
+{{- with .image.picture.original.src }}
 <noscript>
   <img 
   src="{{ .RelPermalink }}"
   height="{{ .Height }}"
   width="{{ .Width }}" 
-  {{- with $.class }}
+  {{- with $.image.class }}
     class="{{ . }} noscript"
   {{- end -}}
-  {{- with $.alt }}
+  {{- with $.image.alt }}
     alt="{{ . }}"
   {{- end }}
-  {{- with $.title }}
+  {{- with $.image.title }}
     title="{{ . }}"
   {{- end }} >
 </noscript>

@@ -16,7 +16,7 @@
 */}}
 
 {{ $params := false }}
-{{ if .params.provider }}
+{{ if .image.provider }}
   {{ $params = partial "hri/private/gen/external-widths" . }}
 {{ else }}
   {{ $params = partial "hri/private/gen/local-widths" . }}

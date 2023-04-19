@@ -40,7 +40,7 @@ testImages:
 - id: js-test3
   # title: 3. Width and densities
   title: 3
-  subtitle: widths 400, densities 1,2,3
+  subtitle: widths 400, densities 1,2,3. aspect_ratio 1.222
   params:
     src: test3.jpg
     alt: Width, densities
@@ -139,7 +139,7 @@ testImages:
     alt: Test Image Alt
     title: Test Image Title
     widths: [200, 400, 900]
-    aspect_ratio: [3,4]
+    aspect_ratio: "3:4"
     anchor: TopLeft
   tests:
     source: 
@@ -152,20 +152,20 @@ testImages:
     alt: Test Image Alt
     title: Test Image Title
     widths: [900, 1200, 2000]
-    aspect_ratio: [3,4]
+    aspect_ratio: "1:1"
     fit: contain
   tests:
     source: 
       dataWidths: ['900w', '1200w', '1920w']
 - id: js-test12
-  title: 11. aspect ratio, fit=fill
+  title: 12. aspect ratio, fit=fill
   subtitle: Width 900, 1200, 2000 down to 1920
   params:
     src: test11.jpg
     alt: Test Image Alt
     title: Test Image Title
     widths: [900, 1200, 2000]
-    aspect_ratio: [3,4]
+    aspect_ratio: 1:1
     fit: fill
   tests:
     source: 

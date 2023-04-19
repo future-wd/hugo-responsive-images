@@ -1,0 +1,141 @@
+{{/*
+  get-image.html
+  Takes inputs and page context.
+  - converts image path into image resource
+
+  @author @sean-au
+
+  @context . Context from image partial
+
+  @return "common"
+    - .ctx 
+    - .page (params)
+    - .meta (params)
+    - .site (params)
+    - .img (resource)
+    - .global (bool)
+    - .error_ctx
+    - .renderhook (picture/figure/img)  - set via image -> renderhook -> img/figure/(picture)?
+    - .shortode (img/picture/figure/image)
+    - .partial (figure/picture/img)
+    - .processed bool (if this partial has been run)
+
+  @access private
+
+  @example - Go Template
+  {{ partial "hri/private/params/get-image" . }}
+  
+*/}}
+
+{{ $c := partial "hri/private/params/constants" . }}
+{{ $message := false }}
+{{ $s := newScratch }}
+{{ $s.Set "params" dict }}
+
+{{ $params := $s.Get "params"}}
+{{ $ctx := $params.ctx }}
+{{ $meta := $params.meta }}
+{{ $page := $params.page }}
+
+{{/* .page deprecated, to be removed */}}
+{{/* when .page is removed all instances of $ctx can be reverted to .ctx */}}
+{{ $ctx := dict }}
+
+{{ $ctx = "" }}
+{{ if .page }}
+  {{ $ctx = .page }}
+{{ else if .ctx }}
+  {{ $ctx = .ctx }}
+{{ else }}
+  {{ $message = printf "ctx must be set for image %s" .src }}
+{{ end }}
+{{ $s.SetInMap "params" "ctx" $ctx}}
+
+{{ $s.SetInMap "params" "page" $ctx.Params.image }}
+{{ $s.SetInMap "params" "site" site.Params.image }}
+
+{{/* not sanitized as comes from shortcode/render-hook/partial */}}
+{{ $s.SetInMap "params" "partial" .partial }}
+{{ $s.SetInMap "params" "render_hook" .output }}
+{{ $s.SetInMap "params" "shortcode" .shortcode }}
+{{ $s.SetInMap "params" "processed" true }}
+
+{{/* check $ctx actually pointing to a page context */}}
+{{ if not (or $params.shortcode $params.render_hook) }}
+  {{ if ne (printf "%T" $ctx) "*hugolib.pageState" }}
+    {{ $message = printf "ctx must be set for image %s via partial" .src }}
+  {{ end }}
+{{/* the following errors are code errors, not user errors as CTX is automatic */}}
+{{ else if (eq $params.markdown "shortcode") }}
+  {{ if ne (printf "%T" $ctx) "*hugolib.pageForShortcode" }}
+    {{ $message = printf "Shortcode ctx error for image %s" .src }}
+  {{ end }}
+{{ else if (eq $params.markdown "render_hook") }}
+  {{ if ne (printf "%T" $ctx) "*hugolib.pageForRenderHooks" }}
+    {{ $message = printf "Render hook ctx error for image %s" .src }}
+  {{ end }}
+{{ end }}
+
+
+
+
+{{/* .type deprecated, keep for v1. only use $global(bool) from v2 */}}
+{{ $type := .type | default ( $ctx.Param "image.type") }}
+{{ $src := .src }}
+{{ $prefix := substr .src 0 7 }}
+{{ if eq $prefix "assets/" }}
+  {{ $src = substr .src 7 }}
+  {{ $type = "global" }}
+{{ end }}
+{{ if eq $type "global" }}
+  {{ with resources.Get $src }}
+    {{ $s.SetInMap "params" "img" . }}
+    {{ $s.SetInMap "params" "global" "true" }}
+  {{ else }}
+    {{ $message = printf "Global resource image /assets/%s not found" $src}}
+  {{ end }}
+{{ else }}
+  {{/* page resource */}}
+  {{ with $ctx.Resources.GetMatch (print .src) }}
+    {{ with .Params.image }}
+      {{ $s.SetInMap "params" "meta" . }}
+    {{ end }}
+    {{ $s.SetInMap "params" "img" . }}
+  {{ else }}
+    {{ $message = printf "Page resource image %s%s not found"  $ctx.RelPermalink $.src }}
+  {{ end }}
+{{ end }}
+
+
+
+{{ if eq $params.partial "image" }}
+  {{ $warn_message := printf `Image %v%v: You are using the "image" partial which has been deprecated. It will be removed in v2` $ctx.RelPermalink $.src }}
+  {{ partial "img-common/private/utils/warnf" (dict "message" $warn_message "module" $c.module) }}
+{{ end }}
+
+{{ if $message }}
+  {{ partial "img-common/private/utils/errorf" (dict "message" $message "module" $c.module) }}
+{{ end }}
+
+{{ $input := "" }}
+{{ if $params.render_hook }}
+  {{ $input = printf "%v render-hook" $params.render_hook }}
+{{ else if $params.shortcode }}
+  {{ $input = printf "%v shortcode" $params.shortcode }}
+{{ else if $params.partial }}
+  {{ $input = printf "%v partial" $params.partial }}
+{{ end }}
+
+{{ $error_ctx := dict 
+  "ctx" $ctx
+  "img" $params.img
+  "element" $c.element
+  "input" $input
+  "module" $c.module }}
+
+{{ $s.SetInMap "params" "error_ctx" $error_ctx }}
+
+
+
+
+{{ return $params }}

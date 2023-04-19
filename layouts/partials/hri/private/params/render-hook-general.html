@@ -1,0 +1,64 @@
+{{ $s := newScratch }}
+{{ $s.Set "params" dict }}
+
+{{ $meta := .common.meta }}
+{{ $page := .common.page }}
+{{ $site := site.Params.image }}
+{{ $error_ctx := .common.error_ctx }}
+
+
+
+{{ with $meta.render_hook | default $meta.renderHook | default $page.render_hook | default $page.renderHook | default $site.render_hook | default $site.renderHook }}
+  {{ if ne (printf "%T" .) "bool" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "render_hook"
+      "val" .
+      "opts" "true/false"
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "enabled" . }}
+  {{ end }}
+{{ end }}
+
+{{ with $meta.render_hook_wrapper_class | default $meta.renderHookWrapperClass | default $page.render_hook_wrapper_class | default $page.renderHookWrapperClass | default $site.render_hook_wrapper_class | default $site.renderHookWrapperClass }}
+  {{ if ne (printf "%T" .) "string" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "render_hook"
+      "val" .
+      "opts" "a string"
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "wrapper_class" . }}
+  {{ end }}
+{{ end }}
+
+{{ $widths_site := $site.renderHookWidths | default $site.render_hook_widths | default $site.shortcodeWidths | default $site.shortcode_widths  | default $site.widths }}
+{{ $widths_page  := $page.render_hook_widths | default $page.renderHookWidths | default $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
+
+{{ with $meta.render_hook_widths | default $meta.renderHookWidths | default $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths | default $widths_page }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
+        {{ partial "hri/private/utils/options-error" (dict 
+          "var" "width in widths slice"
+          "val" .
+          "opts" "an integer"
+          "ctx" $error_ctx
+        ) }}
+      {{ end }}
+    {{ end }}
+    {{ $s.SetInMap "params" "widths" . }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+    "var" "widths slice"
+    "val" .
+    "opts" "a slice of integers"
+    "ctx" $error_ctx
+  ) }}
+  {{ end }}
+{{ end }}
+
+{{ return ($s.Get "params") }}
+

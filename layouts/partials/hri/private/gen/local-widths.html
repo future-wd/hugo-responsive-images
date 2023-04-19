@@ -21,9 +21,9 @@
   *************************************/}}
 {{ $picture := dict }}
 
-{{ range $index, $format:= .formats }}
+{{ range $index, $format:= .image.formats }}
   {{/* add format to options array (for format transformation) if not original */}}
-  {{ $options := $.options }}
+  {{ $options := $.image.options }}
   {{ if ne $format "original" }}
     {{ $options = merge $options (dict "format" $format) }}
   {{ end }}
@@ -33,12 +33,12 @@
   {{ $srcset := slice }}
   {{ $src := false }}
   {{ $placeholder := false }}
-  {{ range $index, $width := $.widths }}
+  {{ range $index, $width := $.image.widths }}
     {{ $img_resized := partial "img-common/private/utils/image-resize" (dict 
-      "img" $.img
+      "img" $.common.img
       "width" $width.width
-      "aspect_ratio" $.aspect_ratio
-      "fit" $.fit
+      "aspect_ratio" $.image.aspect_ratio
+      "fit" $.image.fit
       "options" $options) }}
     {{/* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */}}
     {{ $srcset = $srcset | append (printf "%s %s" $img_resized.RelPermalink $width.desc) }}
@@ -47,16 +47,16 @@
       {{ if eq $index 0}}
         {{/* smallest image width for placeholder generation */}}
         {{ $placeholder_params := merge $ (dict "placeholder_img" $img_resized) }}
-        {{ if eq $.loading "lazysizes" }}
+        {{ if eq $.image.loading "lazysizes" }}
           {{ $placeholder = partial "hri/private/gen/placeholder" $placeholder_params }}
         {{ end }}
       {{ end }}
       {{/* add smallest image to src for screen density srcset */}}
-      {{ if $.width }}
+      {{ if $.image.width }}
         {{ if eq $index 0}}
           {{ $src = $img_resized }}
         {{ end }}
-      {{ else if eq (len $.widths) (add $index 1) }}
+      {{ else if eq (len $.image.widths) (add $index 1) }}
         {{/* else largest width (last iteration), add image to src variable for use as fallback */}}
         {{ $src = $img_resized }}
       {{ end }}
@@ -70,4 +70,4 @@
 
 {{/* merge and return params */}}
 
-{{ return (merge . (dict "picture" $picture)) }}
+{{ return $picture }}

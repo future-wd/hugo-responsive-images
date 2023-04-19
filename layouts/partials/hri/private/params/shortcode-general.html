@@ -1,0 +1,70 @@
+{{/*
+  shortcode params
+  generates params from shortcode input.
+  some strings (comma separated arrays) are converted to arrays of integers
+  standard params are passed through
+
+  @author @sean-au
+
+  @context . Context from image/figure shortcode
+
+  @returns map of params
+
+  @access private
+
+  @example - Go Template
+  {{ partial "shortcode-params" . }}
+
+*/}}
+
+{{ $page := .common.page }}
+{{ $meta := .common.meta }}
+{{ $site := site.Params.image }}
+{{ $error_ctx := .common.error_ctx }}
+
+{{ $s := newScratch }}
+{{ $s.Set "params" dict }}
+
+{{ with .shortcode_wrapper_class | default .shortcodeWrapperClass | default $meta.shortcode_wrapper_class | default $meta.shortcodeWrapperClass | default ($page.Param "image.shortcodeWrapperClass") | default ($page.Param "image.shortcode_wrapper_class") }}
+  {{ if ne (printf "%T" .) "int" }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "shortcode_wrapper_class"
+      "val" .
+      "opts" "an integer"
+      "ctx" $error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "wrapper_class" . }}
+  {{ end }}
+{{ end }}
+
+
+{{ $widths_site := default $site.shortcodeWidths | default $site.shortcode_widths | default $site.widths }}
+{{ $withs_page  := $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
+{{ $widths_meta := $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths | default $withs_page  }}
+
+
+{{ with .widths | default $widths_meta  }}
+  {{ if reflect.IsSlice . }}
+    {{ range . }}
+      {{ if ne (printf "%T" .) "int" }}
+        {{ partial "hri/private/utils/options-error" (dict 
+          "var" "width in widths slice"
+          "val" .
+          "opts" "an integer"
+          "ctx" $error_ctx
+        ) }}
+      {{ end }}
+    {{ end }}
+    {{ $s.SetInMap "params" "widths" . }}
+  {{ else }}
+    {{ partial "hri/private/utils/options-error" (dict 
+    "var" "widths slice"
+    "val" .
+    "opts" "a slice of integers"
+    "ctx" $error_ctx
+  ) }}
+  {{ end }}
+{{ end }}
+
+{{ return $s.Get "params" }}

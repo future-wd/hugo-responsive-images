@@ -14,6 +14,7 @@
       .img - image page resource object
       .element - element name e.g bg-image/image (required)
       .module - module name (required)
+      .input - description e.g. picture shortcode
 
   @access private
 
@@ -41,7 +42,7 @@
     {{ $message = printf "Config item \"%s\" for %s %s on page %s has not been provided." .var .ctx.element .ctx.img.RelPermalink .ctx.ctx.RelPermalink }}
   {{ end }}
 {{ else }}
-  {{ $message = printf "Invalid config \"%s\" value of \"%v\" for %s %s on page %s. Must be %s."  .var .val .ctx.element .ctx.img.RelPermalink .ctx.ctx.RelPermalink .opts }}
+  {{ $message = printf "Invalid config \"%s\" value of \"%v\" for %s %s %s on page %s. Must be %s."  .var .val .ctx.input .ctx.element .ctx.img.RelPermalink .ctx.ctx.RelPermalink .opts }}
 {{ end }}
 
 

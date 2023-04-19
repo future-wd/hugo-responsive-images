@@ -1,4 +1,6 @@
+
+
 {{- /* call 3 partials for each part of figure */ -}}
-{{- partial "hri/private/print/figure-top" .figure_params }}
-{{- partial "hri/image" .image_params -}}
-{{- partial "hri/private/print/figure-bottom" .figure_params }}
+{{- partial "hri/private/print/figure-top" .figure }}
+{{-  partial "hri/picture" . -}}
+{{- partial "hri/private/print/figure-bottom" .figure }}

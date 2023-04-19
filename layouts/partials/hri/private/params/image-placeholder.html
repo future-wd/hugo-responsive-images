@@ -1,0 +1,64 @@
+
+{{/* need to create $variables as .variables dont work if = nill */}}
+
+
+{{ $s := newScratch }}
+{{ $s.Set "params" dict }}
+
+
+{{ $meta := .common.meta }}
+{{ $ctx := .common.ctx }}
+
+{{ with .placeholder | default $meta.placeholder | default ($ctx.Param "image.placeholder") }}
+  {{ if not (eq (printf "%T" .) "string") }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "placeholder"
+      "val" .
+      "opts" "lqip, dominant or a color which matches a gif file"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "placeholder" . }}
+  {{ end }}
+{{ end }}
+
+{{ with  .lqip_blur_amount | default .lqipBlurAmount | default $meta.lqip_blur_amount | default $meta.lqipBlurAmount | default ($ctx.Param "image.lqipBlurAmount") | default ($ctx.Param "image.lqip_blur_amount") }}
+  {{ if not (or (eq (printf "%T" .) "int") (eq (printf "%T" .) "float") ) }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "lqip_blur_amount"
+      "val" .
+      "opts" "an integer or float blur amount"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "lqip_blur_amount" . }}
+  {{ end }}
+{{ end }}
+
+{{ with .gif_div_factor | default .gifDivFactor | default $meta.gif_div_factor | default $meta.gifDivFactor | default ($ctx.Param "image.gifDivFactor") | default ($ctx.Param "image.gif_div_factor") }}
+  {{ if not (or (eq (printf "%T" .) "int") (eq (printf "%T" .) "float") ) }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "gif_div_factor"
+      "val" .
+      "opts" "an integer or float division factor"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "gif_div_factor" . }}
+  {{ end }}
+{{ end }}
+
+{{ with .lqip_div_factor | default .lqipDivFactor | default $meta.lqip_div_factor | default $meta.lqipDivFactor | default ($ctx.Param "image.lqip_div_factor") | default ($ctx.Param "image.lqip_div_factor") }}
+  {{ if not (or (eq (printf "%T" .) "int") (eq (printf "%T" .) "float") ) }}
+    {{ partial "hri/private/utils/options-error" (dict 
+      "var" "gif_div_factor"
+      "val" .
+      "opts" "an integer or float division factor"
+      "ctx" $.error_ctx
+    ) }}
+  {{ else }}
+    {{ $s.SetInMap "params" "lqip_div_factor" . }}
+  {{ end }}
+{{ end }}
+
+{{ return $s.Get "params" }}

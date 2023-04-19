@@ -5,15 +5,15 @@ image:
   densities: [1,2] # densities which are output when an image width is specified
   formats: [original, webp] # set output formats. options are `original`, `bmp`, `gif`, `jpeg`, `jpg`, `png`, `tif`, `tiff`, and `webp`.
   class: img-fluid # default image class if no class is specified
-  figureClass: figure # default figure class
-  figcaptionClass: figure-caption # default figcaption class
-  figureImageClass: "figure-img img-fluid" # default figure image class
-  figureTitleH: 4 # heading level for figure title
+  figure_class: figure # default figure class
+  figcaption_class: figure-caption # default figcaption class
+  figure_image_class: "figure-img img-fluid" # default figure image class
+  figure_title_h: 4 # heading level for figure title
   # deprecated lazysizes: true # enable integration of the lazysizes js library (`loading: lazysizes` needed for )
   loading: lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js to handle image loading. Defaults to lazy. If you use default (`lazy`) or `lazysizes`, you will need to set above the fold images to `auto`. 
-  renderHook: true # set to false to disable included markdown image render hook
-  renderHookWrapperClass: img-wrapper
-  shortcodeWrapperClass: img-wrapper
+  render_hook: true # set to false to disable included markdown image render hook
+  render_hook_wrapper_class: img-wrapper
+  shortcode_wrapper_class: img-wrapper
   placeholder: lqip # /dominant/file_name 
   noscript: true
   suppress_width_warning: false

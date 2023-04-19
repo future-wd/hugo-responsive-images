@@ -110,7 +110,7 @@ hugo mod get
 {{ partial "picture"  (dict
   "ctx" .
   "src" "image.jpg"
-  "aspect_ratio" (slice 4 3)
+  "aspect_ratio" "4:3"
   "alt" "Test image"
   ) }}
 ```
@@ -131,7 +131,7 @@ If you are generating a fixed with image, you can alternatively specify the aspe
 ### Shortcode - Cropping an image to an aspect ratio, custom respnsive widths
 
 ```html
-{{< picture src=image.jpg aspect_ratio=4,3  widths=400,900 alt="Test Image" >}}
+{{< picture src=image.jpg aspect_ratio=4:3  widths=400,900 alt="Test Image" >}}
 ```
 
 > The page context is already provided by the shortcode
@@ -237,7 +237,7 @@ resources:
 
 ### Aspect ratio resizing
 
-To alter the aspect ratio of the image set `aspect_ratio` with a slice e.g. (slice 16 9) or [16,9] (yaml).
+To alter the aspect ratio of the image set `aspect_ratio` with a colon delimited aspect ratio e.g. 16:9.
 
 The `fit` option allows you to set the kind of resize (uses CSS rules)
 
@@ -550,7 +550,7 @@ Test site resides in /.testSite
 | src          | YES | NO  | NO  | NO  | Provide resource path | `undefined` |
 | type         | YES | YES | YES | YES | page/global - Type of image resource | `page` |
 | title        | YES | YES | NO  | NO  | Image title | `figcaption_title` |
-| aspect_ratio | YES | YES | YES | NO  | Aspect ratio for image | `null` |
+| aspect_ratio | YES | YES | YES | NO  | Aspect ratio for image e.g. 16:9 | `null` |
 | fit          | YES | YES | YES | NO  | Fit type for aspect_ratio (`cover`, `contain`, `fill`) | `cover` |
 | widths       | YES | YES | YES | YES | Widths for responsive width image generation | [600, 900, 1300] |
 | width        | YES | YES | YES | NO  | Set widths for fixed with image. Disables widths | 'null' |
@@ -561,7 +561,7 @@ Test site resides in /.testSite
 | sizes        | YES | YES | YES | NO  | [string] - Image sizes for responsive widths images | `"100vw"` |
 | class        | YES | YES | YES | YES | Image class | `"img-fluid"` |
 | alt          | YES | YES | NO  | NO  | Image alt text | `caption` (figure) then `Image of [title]` then generates error. |
-| output          | NO | YES | NO  | NO  | Render hook output. Default `picture` can be set to `figure` or `img` |
+| output          | NO | YES | YES  | YES  | Render hook output. Default `picture` can be set to `figure` or `img` |
 
 ## Placeholder variables
 
@@ -590,8 +590,8 @@ See <https://gohugo.io/content-management/image-processing/#imaging-configuratio
 | Name              | Inline | Meta | Page Param | Site Param | Description | Default | Notes |
 | ------------------ | --- | --- | --- | --- | ----------- | ------- | --- |
 | link               | YES | YES | NO  | NO  | Figure image link | `null` | |
-| target             | YES | YES | YES | YES | Figure link or attrLink target | `"_blank"` for http links | |
-| rel                | YES | YES | YES | YES | Figure link or attrLink rel| `"noopender, noreferrer"` for http links | |
+| target             | YES | YES | YES | YES | Figure link target | `"_blank"` for http links | |
+| rel                | YES | YES | YES | YES | Figure link rel| `"noopender, noreferrer"` for http links | |
 | figure_class       | YES | YES | YES | YES | Figure class | `"figure"` | |
 | figure_image_class | YES | YES | YES | YES | Figure image class | `"figure-img img-fluid"` | Outside of config file, .class is used to override default. |
 | figcaption_class   | YES | YES | YES | YES | Figcaption class | `"figure-caption"` | |
@@ -599,4 +599,6 @@ See <https://gohugo.io/content-management/image-processing/#imaging-configuratio
 | figcaption_title   | YES | YES | NO  | NO  | Figcaption Title | `null` | |
 | attr               | YES | YES | NO  | NO  | Figcaption atttribute | `null` | |
 | attr_link          | YES | YES | NO  | NO  | Figcaption attribute link | `null` | |
+| attr_link_target   | YES | YES | YES | YES | attr_link target | `"_blank"` for http links | |
+| attr_link_rel      | YES | YES | YES | YES | attr_link rel| `"noopender, noreferrer"` for http links | |
 | caption            | YES | YES | NO  | NO  | Figcaption caption | `null` | |

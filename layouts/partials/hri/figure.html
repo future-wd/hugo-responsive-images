@@ -15,19 +15,18 @@
   {{ partial "figure" (dict "src" "image.jpg" "alt" "alt text") }}
 
 */ -}}
-{{- /* use .page or .ctx as ctx */ -}}
-{{- $ctx := .ctx -}}
-{{- if .page -}}
-  {{- $ctx = .page -}}
-{{- end -}}
-{{- /* process figure params */ -}}
-{{- $figure_params := partial "hri/private/params/figure" (merge . (dict "ctx" $ctx)) -}}
-{{/* merge select figure params into image params */}}
-{{- $image_params := merge . (dict 
-      "input" "figure"
-      "caption" $figure_params.caption
-      "figcaption_title" $figure_params.figcaption_title
-      "class" $figure_params.class ) -}}
-{{- partial "hri/private/print/figure-set" (dict 
-  "figure_params" $figure_params 
-  "image_params" $image_params ) -}}
+
+{{ $params := . }}
+
+{{ if not $params.common.processed }}
+  {{ $common := partial "hri/private/params/common.html" (merge $params (dict "partial" "figure")) }}
+  {{ $params = merge $params (dict "common" $common) }}
+{{ else }}
+  {{ merge $params (dict "common" (dict "partial" "figure" )) }}
+{{ end }}
+
+{{- $figure_params := partial "hri/private/params/figure" $params -}}
+{{- $params = merge $params (dict "figure" $figure_params) }}
+
+{{- partial "hri/private/print/figure-set" $params -}}
+  

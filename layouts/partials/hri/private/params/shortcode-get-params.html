@@ -1,0 +1,65 @@
+{{/*
+  shortcode params
+  generates params from shortcode input.
+  some strings (comma separated arrays) are converted to arrays of integers
+  standard params are passed through
+
+  @author @sean-au
+
+  @context . Context from shortcode
+
+  @returns map of params
+
+  @access private
+
+  @example - Go Template
+  {{ partial "shortcode-params" . }}
+
+*/}}
+{{ $c := partial "hri/private/params/constants" . }}
+{{ $s := newScratch }}
+{{ $message := "" }}
+
+
+
+{{/****************************************
+  ** check for named params in shortcode **
+  *****************************************/}}
+{{ if .IsNamedParams }}
+
+  {{/* santize params (convert string-arrays and string-integers) */}}
+  {{ $params := partial "hri/private/utils/process-shortcode-params" .Params }}
+  {{ $s.Set "params" $params }}
+  {{/* check for src if not throw error */}}
+  {{ if not (.Get "src") }}
+    {{ $message = printf "The %q shortcode on page %s requires the 'src' named parameter. See %s" .Name .Page.RelPermalink .Position }}
+  {{ end }}
+
+{{ else }}
+  {{/**************************************************************
+    ** single positional parameter                               **
+    ** this will generate an error as no alt has been provided,  **
+    ** but the error can be suppressed if required               **
+    ** alt may have been provided in page resource meta data     **
+    ***************************************************************/}}
+  {{/* if only 1 un named param in shortcode */}}
+  
+  {{ with (.Get 0) }}
+  {{ $params := (dict "src" .) }}
+  {{ $s.Set "params" $params }}
+  {{ end -}}
+
+  {{ if ge (len .Params) 2 }}
+    {{ $message = printf "The %q shortcode on page %s can only contain 1 parameter (src) if using positional parameters. See %s" .Name .Page.RelPermalink .Position }}
+  {{ end }}
+{{ end }}
+
+{{ $s.SetInMap "params" "shortcode" .Name }}
+{{ $s.SetInMap "params" "ctx" .Page }}
+
+{{ if $message }}
+  {{ partial "img-common/private/utils/errorf" (dict "message" $message "module" $c.module) }}
+{{ end }}
+
+
+{{ return $s.Get "params" }}
