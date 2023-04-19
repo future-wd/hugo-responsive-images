@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.19](/github.com/future-wd/hugo-responsive-image/compare/v1.2.18...v1.2.19) (2023-04-19)
+
+
+### Bug Fixes
+
+* remove debug message ([8cea067](/github.com/future-wd/hugo-responsive-image/commit/8cea0671ea27a59023d612e2282c63a06ec65081))
+
 ### [1.2.18](/github.com/future-wd/hugo-responsive-image/compare/v1.2.17...v1.2.18) (2023-04-14)
 
 
