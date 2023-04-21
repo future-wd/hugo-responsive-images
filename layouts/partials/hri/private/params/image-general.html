@@ -173,8 +173,8 @@
   {{ else }}
     {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $params.img.RelPermalink $ctx.RelPermalink }}
   {{ end }}
-  {{ $s.SetInMap "params" "alt" $alt }}
 {{ end }}
+{{ $s.SetInMap "params" "alt" $alt }}
 
 
 
