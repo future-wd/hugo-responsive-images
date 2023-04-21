@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](/github.com/future-wd/hugo-responsive-image/compare/v1.2.19...v1.3.0) (2023-04-21)
+
+
+### Features
+
+* debug display ([eed9b2b](/github.com/future-wd/hugo-responsive-image/commit/eed9b2bc9553e108c6f2a931bf187d3848d0fedb))
+
+
+### Bug Fixes
+
+* fixed alt not passing through ([9ecba6d](/github.com/future-wd/hugo-responsive-image/commit/9ecba6de6f6a903b0f9c5b2aeda0cfc14cf9728a))
+
 ### [1.2.19](/github.com/future-wd/hugo-responsive-image/compare/v1.2.18...v1.2.19) (2023-04-19)
 
 
