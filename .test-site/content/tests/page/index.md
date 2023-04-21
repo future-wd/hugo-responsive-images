@@ -40,7 +40,7 @@ testImages:
 - id: js-test3
   # title: 3. Width and densities
   title: 3
-  subtitle: widths 400, densities 1,2,3. aspect_ratio 1.222
+  subtitle: widths 400, densities 1,2,3. 
   params:
     src: test3.jpg
     alt: Width, densities

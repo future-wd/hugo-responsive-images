@@ -139,6 +139,8 @@ If you are generating a fixed with image, you can alternatively specify the aspe
 > Double quotes (" ") don't have to be used for the property values if there are no spaces.
 >
 > Comma seperated values are converted into arrays, numbers are converted into integers.
+>
+> aspect_ratio is defined with the format `aspect_ratio=16:9`
 
 ### Shortcode - Single positional parameter
 
@@ -302,7 +304,6 @@ params:
     gif_div_amount: 10 # single color gif placeholder is 10x smaller than smallest image in srcset
     # provider: netlify # currently only supports netlify image processing.
     suppress_width_warning: false # turn of warning that image cannot be resized to the widths specified
-    type: page # or global # useful for setting all images on a page to global resources, or set default
 ```
 
 All of image parameter configuration items can also be configured on a per page basis by adding the config to the page's front matter.
