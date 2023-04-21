@@ -18,4 +18,4 @@ image:
   noscript: true
   suppress_width_warning: false
   # provider: netlify
-  debug: true
+  # debug: true

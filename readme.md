@@ -297,6 +297,7 @@ params:
     loading: lazy # or auto/lazysizes # lazy/auto are for stock browser behavior, lazysizes will use lazysizes.js
     render_hook: false # set to false to disable included markdown image render hook
                       # override by setting imageRenderHook: true/false in front matter
+    output: partial # img, figure # partial called by render-hook
     # placeholder: lqip # or dominant/file_name  (see colours set up in assets/images/placeholder-colors) use filename without .gif
     lqip_blur_amount: 5 # apply gaussian blur amount of 5 to lqip
                       # may need to be increased at a page level for larger images
