@@ -16,15 +16,13 @@
 
 */ -}}
 
-{{ $params := . }}
-
-{{ if not $params.common.processed }}
-  {{ $common := partial "hri/private/params/common.html" (merge $params (dict "partial" "figure")) }}
-  {{ $params = merge $params (dict "common" $common) }}
-{{ else }}
-  {{ merge $params (dict "common" (dict "partial" "figure" )) }}
-{{ end }}
-
+{{- $params := . -}}
+{{- if not $params.common.processed -}}
+  {{- $common := partial "hri/private/params/common.html" (merge $params (dict "partial" "figure")) -}}
+  {{- $params = merge $params (dict "common" $common) -}}
+{{- else -}}
+  {{- $params = merge $params (dict "common" (dict "partial" "figure" )) -}}
+{{- end -}}
 {{- $figure_params := partial "hri/private/params/figure" $params -}}
 {{- $params = merge $params (dict "figure" $figure_params) }}
 

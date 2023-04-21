@@ -1,5 +1,7 @@
 # TODO
 
+render hook get params - error ctx uses "src" update error print to match this.
+
 
 look into error handling when image cannot be found (Both global and page resource)
 

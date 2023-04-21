@@ -14,8 +14,9 @@ image:
   render_hook: true # set to false to disable included markdown image render hook
   render_hook_wrapper_class: img-wrapper
   shortcode_wrapper_class: img-wrapper
+  # output: figure
   placeholder: lqip # /dominant/file_name 
   noscript: true
-  suppress_width_warning: false
+  suppress_width_warning: true
   # provider: netlify
-  # debug: true
+  debug: false

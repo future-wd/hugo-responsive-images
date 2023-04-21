@@ -73,17 +73,22 @@
   {{ end }}
 {{ end }}
 
-{{ with .caption | default $meta.caption }}
-  {{ if not (eq (printf "%T" .) "string") }}
+{{ $caption := .caption | default $meta.caption}}
+{{ if $caption  }}
+  {{ if not (eq (printf "%T" $caption ) "string") }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "caption"
-      "val" .
+      "val" $caption
       "opts" "strings"
       "ctx" $.error_ctx
     ) }}
   {{ else }}
-    {{ $s.SetInMap "params" "caption" . }}
+    {{ $s.SetInMap "params" "caption" $caption }}
   {{ end }}
+{{ else if .title }}
+  
+  {{ $s.SetInMap "params" "caption" .title }}
+  {{ warnf "title in figure is %v caption is %v" .title ($s.Get "params").caption }}
 {{ end }}
 
 {{ with $link := .link | default $meta.link }}
