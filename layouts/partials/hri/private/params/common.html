@@ -11,7 +11,6 @@
     - .ctx 
     - .page (params)
     - .meta (params)
-    - .site (params)
     - .img (resource)
     - .global (bool)
     - .error_ctx
@@ -52,7 +51,6 @@
 {{ $s.SetInMap "params" "ctx" $ctx}}
 
 {{ $s.SetInMap "params" "page" $ctx.Params.image }}
-{{ $s.SetInMap "params" "site" site.Params.image }}
 
 {{/* not sanitized as comes from shortcode/render-hook/partial */}}
 {{ $s.SetInMap "params" "partial" .partial }}

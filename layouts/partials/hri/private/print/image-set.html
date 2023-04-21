@@ -1,2 +1,5 @@
 {{- partial "hri/private/print/image-tag" . -}}
 {{- partial "hri/private/print/noscript-tag" . -}}
+{{- if site.Params.image.debug -}}
+  {{- partial "hri/private/debug/debug-print" . -}}
+{{- end -}}

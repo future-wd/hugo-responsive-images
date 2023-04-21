@@ -152,7 +152,7 @@
   {{ end }}
 {{ end }}
   
-
+{{ $alt := "" }}
 {{ with .alt | default $meta.alt }}
   {{ if not (eq (printf "%T" .) "string") }}
     {{ partial "hri/private/utils/options-error" (dict 
@@ -162,17 +162,18 @@
       "ctx" $error_ctx
     ) }}
   {{ else }}
-    {{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
-    {{ $alt := "" }}
-    {{ if $.figure.caption }}
-      {{ $alt = $.figure.caption | markdownify | plainify }}
-    {{ else if $params.title }}
-      {{ $alt = (printf "Image of %s" $params.title) }}
-    {{ else }}
-      {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $params.img.RelPermalink $ctx.RelPermalink }}
-    {{ end }}
-    {{ $s.SetInMap "params" "alt" $alt }}
+    {{ $alt = . }}
   {{ end }}
+{{ else }}
+  {{/* alt defaults to caption.  defaults to "image of [title]" If not caption or alt set, error. can be supporessed e.g. netlify use case */}}
+  {{ if $.figure.caption }}
+    {{ $alt = $.figure.caption | markdownify | plainify }}
+  {{ else if $params.title }}
+    {{ $alt = (printf "Image of %s" $params.title) }}
+  {{ else }}
+    {{ erroridf "alt-error" "Alt text has not been provided for image %s on page %s. Set alt, title or caption (for figure)." $params.img.RelPermalink $ctx.RelPermalink }}
+  {{ end }}
+  {{ $s.SetInMap "params" "alt" $alt }}
 {{ end }}
 
 

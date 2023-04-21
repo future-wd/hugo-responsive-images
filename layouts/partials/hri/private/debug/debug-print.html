@@ -1,0 +1,19 @@
+<table>
+  <thead>
+    <tr>
+      <th>
+
+      </th>
+    </tr>
+  </thead>
+</table>
+
+{{ range $k, $e := . }}
+  <h3>{{ $k }}</h3>
+  <p>
+  {{ range $k, $e := . }}
+    <strong>{{ $k }}:</strong> {{ $e }}<br>
+  {{ end }}
+  </p>
+{{ end }}
+

@@ -30,3 +30,6 @@
 {{- partial "hri/private/print/image-tag" . -}}
 </picture>
 {{- partial "hri/private/print/noscript-tag" . -}}
+{{- if site.Params.image.debug -}}
+  {{- partial "hri/private/debug/debug-print" . -}}
+{{- end -}}
