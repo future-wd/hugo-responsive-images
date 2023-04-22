@@ -86,9 +86,7 @@
     {{ $s.SetInMap "params" "caption" $caption }}
   {{ end }}
 {{ else if .title }}
-  
   {{ $s.SetInMap "params" "caption" .title }}
-  {{ warnf "title in figure is %v caption is %v" .title ($s.Get "params").caption }}
 {{ end }}
 
 {{ with $link := .link | default $meta.link }}
