@@ -54,9 +54,16 @@
   {{ end }}
 {{ end }}
 
-{{ $s.SetInMap "params" "shortcode" .Name }}
+{{/* set params common to named or positional params */}}
+
+{{ if not (index ($s.Get "params") "shortcode") }}
+  {{ $s.SetInMap "params" "shortcode" .Name }}
+{{ end }}
+
 {{ $s.SetInMap "params" "ctx" .Page }}
 
+
+{{/* throw error if $message has been set */}}
 {{ if $message }}
   {{ partial "img-common/private/utils/errorf" (dict "message" $message "module" $c.module) }}
 {{ end }}
