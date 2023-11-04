@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](/github.com/future-wd/hugo-responsive-image/compare/v1.3.3...v1.4.0) (2023-11-04)
+
+
+### Features
+
+* added custom shortcode feature and param ([d3e5d5f](/github.com/future-wd/hugo-responsive-image/commit/d3e5d5f03ff3b70f8700345b185cb437e9ef5253))
+
+
+### Bug Fixes
+
+* added custom shortcode test ([36df554](/github.com/future-wd/hugo-responsive-image/commit/36df5546bb4e9add7b1a2df7fae22f1511f8fbbe))
+* depreated image partials and shortcodes ([50cc205](/github.com/future-wd/hugo-responsive-image/commit/50cc2057e609a64f755516243fb977910bc9f579))
+
 ### [1.3.3](/github.com/future-wd/hugo-responsive-image/compare/v1.3.2...v1.3.3) (2023-07-07)
 
 ### [1.3.2](/github.com/future-wd/hugo-responsive-image/compare/v1.3.1...v1.3.2) (2023-04-22)
