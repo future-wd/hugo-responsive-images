@@ -37,6 +37,16 @@ testImages:
   tests: 
     source:
       types: ['webp', 'png', 'jpeg'] 
+- id: js-test2a
+  title: 2a. Formats - one format only, other than original
+  subtitle: webp and png (different to original format)
+  params:
+    src: test2.jpg
+    alt: Formats
+    formats: [webp, png]
+  tests: 
+    source:
+      types: ['original', 'webp'] 
 - id: js-test3
   # title: 3. Width and densities
   title: 3

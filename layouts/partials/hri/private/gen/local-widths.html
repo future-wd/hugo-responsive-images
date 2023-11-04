@@ -43,7 +43,7 @@
     {{/* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */}}
     {{ $srcset = $srcset | append (printf "%s %s" $img_resized.RelPermalink $width.desc) }}
     {{/* if .width and 1x density (First iteration), add image to src variable for use as fallback */}}
-    {{ if eq $format "original" }}
+    {{ if eq $format $.image.fallback }}
       {{ if eq $index 0}}
         {{/* smallest image width for placeholder generation */}}
         {{ $placeholder_params := merge $ (dict "placeholder_img" $img_resized) }}

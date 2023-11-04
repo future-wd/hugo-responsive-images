@@ -1,4 +1,6 @@
-{{- with .image.picture.original.src }}
+{{- /* pick out the image format which matches the fallback param */ -}}
+{{- with index .image.picture .image.fallback }}
+  {{- with .src }}
   <img
   {{- with $.image.loading_prop }}
     loading="{{ . }}"
@@ -32,5 +34,6 @@
     title="{{ . }}"
   {{- end }}
   />
+  {{ end  -}}
 {{ end  -}}
 

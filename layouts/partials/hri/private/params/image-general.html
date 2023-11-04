@@ -201,6 +201,14 @@
         "ctx" $error_ctx
       ) }}
   {{ end }}
+  {{ if and (eq (len $user_formats) 1) (eq (index $user_formats 0) "webp")}}
+    {{ partial "hri/private/utils/options-error" (dict 
+    "var" "formats array"
+    "val" .
+    "opts" "more formats than just 'webp' for browser compadibility"
+    "ctx" $error_ctx
+    ) }}
+  {{ end }}
 {{ end }}
   
 {{/* if only generating img tag, only process first format */}}
@@ -208,19 +216,51 @@
   {{ $single_format := index $user_formats 0 }}
   {{ $user_formats = slice $single_format }}
 {{ end }}
+{{/* todo: add warning message that image formats other than first will be ignored */}}
   
 {{/* if a format is the same as the image media type, change the format to original, remove duplicates */}}
 {{ $formats := slice }}
+
+{{ $webp_original := false }}
 {{ $imgType := $params.img.MediaType.SubType }}
 {{ range $user_formats }}
   {{ if eq . $imgType }}
-    {{ $formats = $formats | append "original" }}
+    {{/* only set "original" if its not webp */}}
+    {{ if not (eq . "webp") }}
+      {{ $formats = $formats | append "original" }}
+    {{ else }}
+      {{/* flag that the original is webp, and generate a fallback format for the img tag */}}
+      {{/* $webp_original = true */}}
+    {{ end }}
   {{ else }}
     {{ $formats = $formats | append . }}
   {{ end }}
 {{ end }}
+
 {{/* remove duplicates */}}
 {{ $formats = $formats | uniq }}
+
+{{/* add fallback image type (for img tag) if original has not been set (its not possible to only specify webp based on prior sanitization)
+   * 1. check for webp in formats list and remove
+   * 2. use left most format for fallback 
+  */}}
+
+
+{{ if eq false (in $formats "original") }}
+  {{ $fallback_opts := slice }}
+  {{/* 1. remove webp from list is present */}}
+  {{ range $formats }}
+    {{ if ne . "webp"}}
+      {{ $fallback_opts = $fallback_opts | append . }}
+    {{ end }}
+  {{ end }}
+  {{/* 2. set left most value as img fallback image format */}}
+  {{ $s.SetInMap "params" "fallback" (index $fallback_opts 0) }}
+{{ else }}
+  {{ $s.SetInMap "params" "fallback" "original" }}
+{{ end }}
+
+
 {{ $s.SetInMap "params" "formats" $formats }}
 
 {{ $user_aspect_ratio := slice }}
