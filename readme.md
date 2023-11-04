@@ -557,7 +557,7 @@ Test site resides in /.testSite
 | widths       | YES | YES | YES | YES | Widths for responsive width image generation | [600, 900, 1300] |
 | width        | YES | YES | YES | NO  | Set widths for fixed with image. Disables widths | 'null' |
 | densities    | YES | YES | YES | YES | Densities for fixed with image generation | [1,2] |
-| formats      | YES | YES | YES | YES | Image formats to generate. One must be original. In order of browser support. | ["original", "webp" ] |
+| formats      | YES | YES | YES | YES | Image formats to generate. Cannot set to just "webp". In order of browser support. | ["original", "webp" ] |
 | provider     | YES | YES | YES | YES | External image processing provider. Only netlify supported for now | `null`|
 | loading      | YES | YES | YES | YES | auto/lazy/lazysizes - Type of image loading | `"auto"` |
 | sizes        | YES | YES | YES | NO  | [string] - Image sizes for responsive widths images | `"100vw"` |
