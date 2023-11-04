@@ -604,3 +604,13 @@ See <https://gohugo.io/content-management/image-processing/#imaging-configuratio
 | attr_link_target   | YES | YES | YES | YES | attr_link target | `"_blank"` for http links | |
 | attr_link_rel      | YES | YES | YES | YES | attr_link rel| `"noopender, noreferrer"` for http links | |
 | caption            | YES | YES | NO  | NO  | Figcaption caption | `null` | |
+
+## Advanced Usage
+
+### Creating custom shortcodes
+
+Copy and paste the code from any shortcodes in this module, into a shortcode in your project. You must add a `shortcode` named parameter to your shortcode, and define which built in shortcode you wish to use e.g. (your custom shortcode is called `custom-img` and its being pointed to the built in `img` shortcode)
+
+```
+{{< custom-img src=test6.jpg shortcode=img >}}
+```
