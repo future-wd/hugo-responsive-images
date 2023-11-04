@@ -58,7 +58,7 @@ resources:
 {{< /render3b.inline >}}
 
 {{< renderhook4a.inline >}}
-<div class="col-md-6 render-hook-test" id="js-test1">
+<div class="col-md-6 render-hook-test" id="js-test4">
   <h2>4. Basic - render_hook: false (replicated stock markdown handling of img)</h2>
   <p>test4.jpg</p>
 {{< /renderhook4a.inline >}}
@@ -69,12 +69,24 @@ resources:
 {{< /renderhook4b.inline >}}
 
 {{< shortcode5a.inline >}}
-<div class="col-md-6 render-hook-test" id="js-test1">
+<div class="col-md-6 render-hook-test" id="js-test5">
   <h2>5. Shortcode img & positional parameters</h2>
   <p>test5.jpg</p>
 {{< /shortcode5a.inline >}}
-{{< img test2.jpg >}}
+{{< img test5.jpg >}}
 {{< shortcode5b.inline >}}
 <div id="js-test5-results"></div>
 </div>
 {{< /shortcode5b.inline >}}
+
+
+{{< shortcode6a.inline >}}
+<div class="col-md-6 render-hook-test" id="js-test6">
+  <h2>6. Custom shortcode "custom-img"</h2>
+  <p>test5.jpg</p>
+{{< /shortcode6a.inline >}}
+{{< custom-img src=test6.jpg shortcode=img >}}
+{{< shortcode6b.inline >}}
+<div id="js-test6-results"></div>
+</div>
+{{< /shortcode6b.inline >}}
