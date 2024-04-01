@@ -181,7 +181,7 @@ And all the options...
 
 ## Usage as a markdown render hook
 
-By default a markdown render hook template has been included. To turn it on set the config params.image.renderHook: true. It has been disabled by default as it may break existing functionality.
+By default a markdown render hook template has been included. To turn it on set the config params.image.render_hook: true. It has been disabled by default as it may break existing functionality.
 
 The render hook will only render page resource images - the image path will be relative to the page's markdown file.
 
