@@ -353,7 +353,7 @@ The following options can be configured at a partial/shortcode & page/site confi
 
 See above for explanations
 
-image and figure (with partial example)
+### image and figure (with partial example)
 
 ```go
 {{ partial "image" (dict 
@@ -365,7 +365,7 @@ image and figure (with partial example)
 ) }}
 ```
 
-figure only
+### figure only
 
 ```go
 "target" "_blank"
@@ -376,7 +376,7 @@ figure only
 "figcaption_title_h" 4
 ```
 
-placeholder options
+### placeholder options
 
 ```go
 "placeholder" "lqip" # set to lqip, dominant, [file_name] or false
@@ -385,7 +385,7 @@ placeholder options
 "gif_div_factor" 10 # dominant/gif file is resized to this division factor (of smallest image in srcset)
 ```
 
-hugo image processing options
+### hugo image processing options
 
 its recommended to use [hugos native image config](https://gohugo.io/content-management/image-processing/#imaging-configuration) unless you want to only set for this module.
 
