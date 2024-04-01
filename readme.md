@@ -236,7 +236,7 @@ resources:
     caption: Figure caption text
     figcaption_title: Caption title
 ---
-
+```
 ### Aspect ratio resizing
 
 To alter the aspect ratio of the image set `aspect_ratio` with a colon delimited aspect ratio e.g. 16:9.
