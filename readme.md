@@ -209,9 +209,10 @@ resources:
 - src: img1.jpg
   title: Optionally Set title here
   params:
-    alt: Optionally set alt here
-    width: 300
-    class: custom-class # etc
+    image:
+      alt: Optionally set alt here
+      width: 300
+      class: custom-class # etc
 ---
 ```
 
