@@ -1,27 +1,39 @@
-lockfileVersion: 5.4
+lockfileVersion: '9.0'
 
-specifiers:
-  bootstrap: ^5.2.3
-  lazysizes: ^5.3.2
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
-dependencies:
-  bootstrap: 5.2.3_@popperjs+core@2.11.6
-  lazysizes: 5.3.2
+importers:
+
+  .:
+    dependencies:
+      bootstrap:
+        specifier: ^5.2.3
+        version: 5.3.3(@popperjs/core@2.11.8)
+      lazysizes:
+        specifier: ^5.3.2
+        version: 5.3.2
 
 packages:
 
-  /@popperjs/core/2.11.6:
-    resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
-    dev: false
+  '@popperjs/core@2.11.8':
+    resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
 
-  /bootstrap/5.2.3_@popperjs+core@2.11.6:
-    resolution: {integrity: sha512-cEKPM+fwb3cT8NzQZYEu4HilJ3anCrWqh3CHAok1p9jXqMPsPTBhU25fBckEJHJ/p+tTxTFTsFQGM+gaHpi3QQ==}
+  bootstrap@5.3.3:
+    resolution: {integrity: sha512-8HLCdWgyoMguSO9o+aH+iuZ+aht+mzW0u3HIMzVu7Srrpv7EBBxTnrFlSCskwdY1+EOFQSm7uMJhNQHkdPcmjg==}
     peerDependencies:
-      '@popperjs/core': ^2.11.6
-    dependencies:
-      '@popperjs/core': 2.11.6
-    dev: false
+      '@popperjs/core': ^2.11.8
 
-  /lazysizes/5.3.2:
+  lazysizes@5.3.2:
     resolution: {integrity: sha512-22UzWP+Vedi/sMeOr8O7FWimRVtiNJV2HCa+V8+peZOw6QbswN9k58VUhd7i6iK5bw5QkYrF01LJbeJe0PV8jg==}
-    dev: false
+
+snapshots:
+
+  '@popperjs/core@2.11.8': {}
+
+  bootstrap@5.3.3(@popperjs/core@2.11.8):
+    dependencies:
+      '@popperjs/core': 2.11.8
+
+  lazysizes@5.3.2: {}

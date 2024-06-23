@@ -92,13 +92,23 @@
   {{ else }}
     {{ $message = printf "Global resource image /assets/%s not found" $src}}
   {{ end }}
+
+
 {{ else }}
   {{/* page resource */}}
   {{ with $ctx.Resources.GetMatch (print .src) }}
     {{ with .Params.image }}
       {{ $s.SetInMap "params" "meta" . }}
     {{ end }}
-    {{ $s.SetInMap "params" "img" . }}
+
+    {{ if eq (printf "%T" $src) "*resources.resourceAdapter" }}
+      {{/* array of page resources using .Resources.Get or resources.Get /*}}
+      {{ $type = "resources.resourceAdapter" }}
+      {{/* to do add 
+        {{ range $image := where (.ctx.Resources.Match $match) "ResourceType" "image" }}  */}}
+    {{ end }}
+      {{ $s.SetInMap "params" "img" . }}
+    
   {{ else }}
     {{ $message = printf "Page resource image %s%s not found"  $ctx.RelPermalink $.src }}
   {{ end }}
