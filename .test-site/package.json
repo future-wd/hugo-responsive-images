@@ -5,9 +5,6 @@
   "scripts": {
     "dev": "hugo server --gc --disableFastRender ",
     "build": "hugo -v --gc --minify --cleanDestinationDir",
-    "renderToDisk": "hugo server --gc --disableFastRender --renderToDisk --cleanDestinationDir ",
-    "renderToDisk:production": "npm run renderToDisk -- --minify --environment production",
-    "npm-check": "npx npm-check -u"
   },
   "author": "Sean Emerson",
   "license": "ISC",

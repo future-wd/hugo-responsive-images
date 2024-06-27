@@ -7,7 +7,6 @@
     "release": "standard-version",
     "release:dry-run": "standard-version --dry-run",
     "git:push": "git push --follow-tags origin master",
-    "update": "npx npm-check --update"
   },
   "repository": {
     "type": "git",
