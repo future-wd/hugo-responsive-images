@@ -121,6 +121,27 @@ testImages:
       class: [figure]
     figcaption:
       class: [figure-caption]
+- id: js-test7a
+  title: 7a. figure external link
+  subtitle: 
+  partial: figure
+  params:
+    src: test7.jpg
+    alt: figure
+    figcaption_title: Figure Title
+    figcaption_title_h: 3
+    caption: Figure Caption, including comma
+    attr: Attribution Text
+    attr_link: http://www.author.com
+    link: http://www.google.com
+  tests:
+    img:
+      dataSizes: auto
+      class: ['figure-img', 'img-fluid', 'lazyloaded']
+    figure:
+      class: [figure]
+    figcaption:
+      class: [figure-caption]
 - id: js-test8
   title: 8. Image metadata
   subtitle: title and alt set in markup metadata
