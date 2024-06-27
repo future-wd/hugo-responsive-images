@@ -33,10 +33,6 @@
       "ctx" $.error_ctx
     ) }}
   {{ else }}
-    {{ if hasPrefix $attr_link "http" }}
-      {{ $external_attr_link = true }}
-      {{ $attr_link = relref $ctx $attr_link }}
-    {{ end }}
     {{ $s.SetInMap "params" "attr_link" $attr_link }}
   {{ end }}
 {{ end }}
@@ -98,10 +94,6 @@
       "ctx" $.error_ctx
     ) }}
   {{ else }}
-    {{ if hasPrefix $link "http" }}
-      {{ $external_link = true }}
-      {{ $link = relref $.ctx $link }}
-    {{ end }}
     {{ $s.SetInMap "params" "link" $link }}
   {{ end }}
 {{ end }}
