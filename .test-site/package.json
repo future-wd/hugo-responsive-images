@@ -4,7 +4,7 @@
   "description": "Basic Bootstrap Template - No Bloat!",
   "scripts": {
     "dev": "hugo server --gc --disableFastRender ",
-    "build": "hugo -v --gc --minify --cleanDestinationDir",
+    "build": "hugo -v --gc --minify --cleanDestinationDir"
   },
   "author": "Sean Emerson",
   "license": "ISC",
