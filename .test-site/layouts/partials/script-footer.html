@@ -1,4 +1,4 @@
-{{ partial "esbuild-template" (dict "src" "js/test.js" "page" . )  }}
+
 {{ partialCached "esbuild" (dict "src" "js/vendor.js") . }}
 
 {{ if eq .Type "tests" }}

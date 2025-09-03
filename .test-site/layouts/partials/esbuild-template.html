@@ -1,5 +1,0 @@
-
-{{ $js := resources.Get .src }}
-  {{ $js = $js | resources.ExecuteAsTemplate .src .page }}
-{{ $js = $js | js.Build (dict "sourceMap" "inline") | fingerprint  }}
-<script src="{{ $js.RelPermalink }}"></script>

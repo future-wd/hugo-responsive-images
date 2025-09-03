@@ -90,3 +90,14 @@ resources:
 <div id="js-test6-results"></div>
 </div>
 {{< /shortcode6b.inline >}}
+
+{{< shortcode7a.inline >}}
+<div class="col-md-6 render-hook-test" id="js-test5">
+  <h2>7. Shortcode img & named parameters (set width)</h2>
+  <p>test5.jpg</p>
+{{< /shortcode7a.inline >}}
+{{< img src=test5.jpg width=200 >}}
+{{< shortcode7b.inline >}}
+<div id="js-test5-results"></div>
+</div>
+{{< /shortcode7b.inline >}}
