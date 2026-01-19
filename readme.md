@@ -42,7 +42,7 @@ hugo mod get
 
 - The latest GoLang (minimum 1.16). See <https://golang.org/dl/>.
 - The lates git for downloading the module. See <https://git-scm.com/downloads/>.
-- Install the latest hugo (at least 0.101.0)
+- Install the latest hugo (at least 0.146.0)
 - You hugo project must be initialized for hugo modules e.g. `hugo mod init github.com/username/project` in the root of your project.
 - Update your modules with `hugo mod get -u`
 
