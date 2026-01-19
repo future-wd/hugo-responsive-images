@@ -29,7 +29,7 @@ Then add this module to your projects configuration
 # config.yaml
 module:
   imports:
-  - path: github.com/future-wd/hugo-responsive-images
+  - path: github.com/future-wd/hugo-responsive-images/v2
 ```
 
 Then you need to install the module with 
