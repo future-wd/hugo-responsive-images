@@ -26,7 +26,7 @@
 {{ with .densities | default $meta.densities | default ($ctx.Param "image.densities") }}
   {{ if reflect.IsSlice . }}
     {{ range . }}
-      {{ if ne (printf "%T" .) "int" }}
+      {{ if not (in (slice "int" "int64" "uint64") (printf "%T" .)) }}
         {{ partial "hri/private/utils/options-error" (dict 
         "var" "densities slice item"
         "val" .
@@ -306,7 +306,7 @@
 {{ with .render_hook.widths | default .shortcode.widths | default .widths | default $meta.widths | default ($ctx.Param "image.widths") }}
   {{ if reflect.IsSlice . }}
     {{ range . }}
-      {{ if and (ne (printf "%T" .) "int") (ne (printf "%T" .) "int64") }}
+      {{ if not (in (slice "int" "int64" "uint64") (printf "%T" .)) }}
         {{ partial "hri/private/utils/options-error" (dict 
           "var" "width in widths slice"
           "val" .

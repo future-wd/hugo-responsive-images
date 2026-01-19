@@ -172,7 +172,7 @@
 {{ end }}
 
 {{ with .figcaption_title_h | default .figureTitleH |  default $meta.figcaption_title_h | default $meta.figureTitleH | default ($ctx.Param "image.figureTitleH") | default ($ctx.Param "image.figcaption_title_h") }}
-  {{ if not (eq (printf "%T" .) "int") }}
+  {{ if not (in (slice "int" "int64" "uint64") (printf "%T" .)) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "figcaption_title_h"
       "val" .

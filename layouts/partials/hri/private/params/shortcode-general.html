@@ -47,7 +47,7 @@
 {{ with .widths | default $widths_meta  }}
   {{ if reflect.IsSlice . }}
     {{ range . }}
-      {{ if ne (printf "%T" .) "int" }}
+      {{ if not (in (slice "int" "int64" "uint64") (printf "%T" .)) }}
         {{ partial "hri/private/utils/options-error" (dict 
           "var" "width in widths slice"
           "val" .
