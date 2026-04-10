@@ -24,7 +24,7 @@
 {{ with $meta.render_hook_wrapper_class | default $meta.renderHookWrapperClass | default $page.render_hook_wrapper_class | default $page.renderHookWrapperClass | default $site.render_hook_wrapper_class | default $site.renderHookWrapperClass }}
   {{ if ne (printf "%T" .) "string" }}
     {{ partial "hri/private/utils/options-error" (dict 
-      "var" "render_hook"
+      "var" "render_hook_wrapper_class"
       "val" .
       "opts" "a string"
       "ctx" $error_ctx

@@ -25,12 +25,12 @@
 {{ $s := newScratch }}
 {{ $s.Set "params" dict }}
 
-{{ with .shortcode_wrapper_class | default .shortcodeWrapperClass | default $meta.shortcode_wrapper_class | default $meta.shortcodeWrapperClass | default ($page.Param "image.shortcodeWrapperClass") | default ($page.Param "image.shortcode_wrapper_class") }}
-  {{ if ne (printf "%T" .) "int" }}
+{{ with .shortcode_wrapper_class | default .shortcodeWrapperClass | default $meta.shortcode_wrapper_class | default $meta.shortcodeWrapperClass | default ($page.shortcodeWrapperClass) | default ($page.shortcode_wrapper_class | default $site.shortcode_wrapper_class | default $site.shortcodeWrapperClass) }}
+  {{ if ne (printf "%T" .) "string" }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "shortcode_wrapper_class"
       "val" .
-      "opts" "an integer"
+      "opts" "a string"
       "ctx" $error_ctx
     ) }}
   {{ else }}
@@ -40,8 +40,8 @@
 
 
 {{ $widths_site := default $site.shortcodeWidths | default $site.shortcode_widths | default $site.widths }}
-{{ $withs_page  := $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
-{{ $widths_meta := $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths | default $withs_page  }}
+{{ $widths_page := $page.shortcode_widths | default $page.shortcodeWidths | default $page.widths | default $widths_site }}
+{{ $widths_meta := $meta.shortcode_widths | default $meta.shortcodeWidths | default $meta.widths | default $widths_page }}
 
 
 {{ with .widths | default $widths_meta  }}
@@ -67,4 +67,4 @@
   {{ end }}
 {{ end }}
 
-{{ return $s.Get "params" }}
+{{ return ($s.Get "params") }}
