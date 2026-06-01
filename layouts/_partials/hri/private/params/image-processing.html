@@ -34,7 +34,7 @@
 {{ $ctx := .common.ctx }}
 
 {{ with .quality | default $meta.quality | default ($ctx.Param "image.quality") }}
-  {{ if not (and (eq (printf "%T" .) "int") (and (ge . 1) (le . 100))) }}
+  {{ if not (and (in (slice "int" "int64") (printf "%T" .)) (and (ge . 1) (le . 100))) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "quality"
       "val" .
@@ -47,7 +47,7 @@
 {{ end }}
 
 {{ with .rotate | default $meta.rotate | default ($ctx.Param "image.rotate") }}
-  {{ if not (and (eq (printf "%T" .) "int") (and (ge . 1) (le . 360))) }}
+  {{ if not (and (in (slice "int" "int64") (printf "%T" .)) (and (ge . 1) (le . 360))) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "rotate"
       "val" .
