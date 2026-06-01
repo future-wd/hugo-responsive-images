@@ -15,7 +15,7 @@
       "var" "placeholder"
       "val" .
       "opts" "lqip, dominant or a color which matches a gif file"
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "placeholder" . }}
@@ -28,7 +28,7 @@
       "var" "lqip_blur_amount"
       "val" .
       "opts" "an integer or float blur amount"
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "lqip_blur_amount" . }}
@@ -41,7 +41,7 @@
       "var" "gif_div_factor"
       "val" .
       "opts" "an integer or float division factor"
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "gif_div_factor" . }}
@@ -54,7 +54,7 @@
       "var" "gif_div_factor"
       "val" .
       "opts" "an integer or float division factor"
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "lqip_div_factor" . }}
