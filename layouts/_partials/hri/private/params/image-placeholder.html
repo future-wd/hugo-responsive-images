@@ -23,7 +23,7 @@
 {{ end }}
 
 {{ with  .lqip_blur_amount | default .lqipBlurAmount | default $meta.lqip_blur_amount | default $meta.lqipBlurAmount | default ($ctx.Param "image.lqipBlurAmount") | default ($ctx.Param "image.lqip_blur_amount") }}
-  {{ if not (or (eq (printf "%T" .) "int") (eq (printf "%T" .) "float") ) }}
+  {{ if not (or (in (slice "int" "int64") (printf "%T" .)) (eq (printf "%T" .) "float64")) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "lqip_blur_amount"
       "val" .
@@ -36,7 +36,7 @@
 {{ end }}
 
 {{ with .gif_div_factor | default .gifDivFactor | default $meta.gif_div_factor | default $meta.gifDivFactor | default ($ctx.Param "image.gifDivFactor") | default ($ctx.Param "image.gif_div_factor") }}
-  {{ if not (or (eq (printf "%T" .) "int") (eq (printf "%T" .) "float") ) }}
+  {{ if not (or (in (slice "int" "int64") (printf "%T" .)) (eq (printf "%T" .) "float64")) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "gif_div_factor"
       "val" .
@@ -49,7 +49,7 @@
 {{ end }}
 
 {{ with .lqip_div_factor | default .lqipDivFactor | default $meta.lqip_div_factor | default $meta.lqipDivFactor | default ($ctx.Param "image.lqip_div_factor") | default ($ctx.Param "image.lqipDivFactor") }}
-  {{ if not (or (eq (printf "%T" .) "int") (eq (printf "%T" .) "float") ) }}
+  {{ if not (or (in (slice "int" "int64") (printf "%T" .)) (eq (printf "%T" .) "float64")) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "gif_div_factor"
       "val" .
