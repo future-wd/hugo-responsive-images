@@ -56,11 +56,11 @@
       {{/* resulting fillHeight must be converted to integer for use with image resize */}}
       {{ $fillHeight := mul $width.width . | int }}
       {{/* resize image */}}
-      {{ $imgResized = printf "%s?nfresize=smartcrop?w=%dh=%d" $.common.img.RelPermalink $width.width $fillHeight }}
+      {{ $imgResized = printf "%s?nfresize=smartcrop&w=%d&h=%d" $.common.img.RelPermalink $width.width $fillHeight }}
     {{ else }}
       {{/* do standard image resize */}}
       {{/* create resize path */}}
-      {{ $imgResized = printf "%s?nfresize=fit?w=%d" $.common.img.RelPermalink $width.width }}
+      {{ $imgResized = printf "%s?nfresize=fit&w=%d" $.common.img.RelPermalink $width.width }}
     {{ end }}
     {{/* add image to srcset array with format "/path/image.jpg 100w" or "/path/image.jpg 1x"  */}}
     {{ $srcset = $srcset | append (printf "%s %s" $imgResized $width.desc) }}
@@ -71,7 +71,7 @@
       {{ end }}
     {{ else }}
       {{/* else largest width (last iteration), add image to src variable for use as fallback */}}
-      {{ if eq (len $.widths) (add $index 1) }}
+      {{ if eq (len $.image.widths) (add $index 1) }}
         {{ $src = $imgResized }}
       {{ end }}
     {{ end }}

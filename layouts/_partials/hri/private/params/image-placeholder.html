@@ -48,7 +48,7 @@
   {{ end }}
 {{ end }}
 
-{{ with .lqip_div_factor | default .lqipDivFactor | default $meta.lqip_div_factor | default $meta.lqipDivFactor | default ($ctx.Param "image.lqip_div_factor") | default ($ctx.Param "image.lqip_div_factor") }}
+{{ with .lqip_div_factor | default .lqipDivFactor | default $meta.lqip_div_factor | default $meta.lqipDivFactor | default ($ctx.Param "image.lqip_div_factor") | default ($ctx.Param "image.lqipDivFactor") }}
   {{ if not (or (eq (printf "%T" .) "int") (eq (printf "%T" .) "float") ) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "gif_div_factor"
