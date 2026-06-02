@@ -29,12 +29,12 @@
 {{ $params := partial "hri/private/params/image-general" . }}
 
 {{ if not $params.provider }}
-  {{ $processing_params := partial "hri/private/params/image-processing" $params }}
+  {{ $processing_params := partial "hri/private/params/image-processing" . }}
   {{ $params = merge $params (dict "options" $processing_params) }}
 {{ end }}
 
 
-{{ $placeholder_params := partial "hri/private/params/image-placeholder" $params }}
+{{ $placeholder_params := partial "hri/private/params/image-placeholder" . }}
 {{ $params = merge $params $placeholder_params }}
 
 

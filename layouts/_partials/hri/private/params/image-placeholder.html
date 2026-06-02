@@ -15,7 +15,7 @@
       "var" "placeholder"
       "val" .
       "opts" "lqip, dominant or a color which matches a gif file"
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "placeholder" . }}
@@ -23,12 +23,12 @@
 {{ end }}
 
 {{ with  .lqip_blur_amount | default .lqipBlurAmount | default $meta.lqip_blur_amount | default $meta.lqipBlurAmount | default ($ctx.Param "image.lqipBlurAmount") | default ($ctx.Param "image.lqip_blur_amount") }}
-  {{ if not (or (eq (printf "%T" .) "int") (eq (printf "%T" .) "float") ) }}
+  {{ if not (in (slice "int" "int8" "int16" "int32" "int64" "uint" "uint8" "uint16" "uint32" "uint64" "float32" "float64") (printf "%T" .)) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "lqip_blur_amount"
       "val" .
       "opts" "an integer or float blur amount"
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "lqip_blur_amount" . }}
@@ -36,25 +36,25 @@
 {{ end }}
 
 {{ with .gif_div_factor | default .gifDivFactor | default $meta.gif_div_factor | default $meta.gifDivFactor | default ($ctx.Param "image.gifDivFactor") | default ($ctx.Param "image.gif_div_factor") }}
-  {{ if not (or (eq (printf "%T" .) "int") (eq (printf "%T" .) "float") ) }}
+  {{ if not (in (slice "int" "int8" "int16" "int32" "int64" "uint" "uint8" "uint16" "uint32" "uint64" "float32" "float64") (printf "%T" .)) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "gif_div_factor"
       "val" .
       "opts" "an integer or float division factor"
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "gif_div_factor" . }}
   {{ end }}
 {{ end }}
 
-{{ with .lqip_div_factor | default .lqipDivFactor | default $meta.lqip_div_factor | default $meta.lqipDivFactor | default ($ctx.Param "image.lqip_div_factor") | default ($ctx.Param "image.lqip_div_factor") }}
-  {{ if not (or (eq (printf "%T" .) "int") (eq (printf "%T" .) "float") ) }}
+{{ with .lqip_div_factor | default .lqipDivFactor | default $meta.lqip_div_factor | default $meta.lqipDivFactor | default ($ctx.Param "image.lqip_div_factor") | default ($ctx.Param "image.lqipDivFactor") }}
+  {{ if not (in (slice "int" "int8" "int16" "int32" "int64" "uint" "uint8" "uint16" "uint32" "uint64" "float32" "float64") (printf "%T" .)) }}
     {{ partial "hri/private/utils/options-error" (dict 
       "var" "gif_div_factor"
       "val" .
       "opts" "an integer or float division factor"
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "lqip_div_factor" . }}

@@ -34,28 +34,30 @@
 {{ $ctx := .common.ctx }}
 
 {{ with .quality | default $meta.quality | default ($ctx.Param "image.quality") }}
-  {{ if not (and (eq (printf "%T" .) "int") (and (ge . 1) (le . 100))) }}
-    {{ partial "hri/private/utils/options-error" (dict 
+  {{ $q := int . }}
+  {{ if not (and (ge $q 1) (le $q 100)) }}
+    {{ partial "hri/private/utils/options-error" (dict
       "var" "quality"
       "val" .
       "opts" "integers between 1-100 inclusive"
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
-    {{ $s.SetInMap "params" "quality" (printf "q%v" . )}}
+    {{ $s.SetInMap "params" "quality" (printf "q%v" $q) }}
   {{ end }}
 {{ end }}
 
 {{ with .rotate | default $meta.rotate | default ($ctx.Param "image.rotate") }}
-  {{ if not (and (eq (printf "%T" .) "int") (and (ge . 1) (le . 360))) }}
-    {{ partial "hri/private/utils/options-error" (dict 
+  {{ $r := int . }}
+  {{ if not (and (ge $r 1) (le $r 360)) }}
+    {{ partial "hri/private/utils/options-error" (dict
       "var" "rotate"
       "val" .
       "opts" "integers between 1-360 inclusive"
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
-    {{ $s.SetInMap "params" "rotate" (printf "r%v" . ) }}
+    {{ $s.SetInMap "params" "rotate" (printf "r%v" $r) }}
   {{ end }}
 {{ end }}
 
@@ -67,7 +69,7 @@
       "var" "resample_filter"
       "val" .
       "opts" (delimit $filter_opts ", ")
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "resample_filter" . }}
@@ -81,7 +83,7 @@
       "var" "hint"
       "val" .
       "opts" (delimit $hint_opts ", ")
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "hint" . }}
@@ -95,7 +97,7 @@
       "var" "anchor"
       "val" .
       "opts" (delimit $anchor_opts ", ")
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "anchor" . }}
@@ -109,7 +111,7 @@
       "var" "background_color"
       "val" .
       "opts" "3 or 6 digit hex color code"
-      "ctx" $.error_ctx
+      "ctx" $.common.error_ctx
     ) }}
   {{ else }}
     {{ $s.SetInMap "params" "background_color" . }}

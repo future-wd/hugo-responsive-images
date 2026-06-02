@@ -25,6 +25,9 @@
   {{- else }}
     type="{{ printf "image/%s" .format }}"
   {{- end }}
+  {{- with $.image.sizes_prop }}
+    {{ . | safeHTMLAttr }}
+  {{- end }}
   />
 {{- end }}
 {{- partial "hri/private/print/image-tag" . -}}
