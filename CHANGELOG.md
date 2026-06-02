@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.6](/github.com/future-wd/hugo-responsive-image/compare/v1.4.5...v1.4.6) (2026-06-02)
+
 ### [1.4.5](/github.com/future-wd/hugo-responsive-image/compare/v1.4.4...v1.4.5) (2026-04-10)
 
 ### [1.4.4](/github.com/future-wd/hugo-responsive-image/compare/v1.4.3...v1.4.4) (2026-01-19)
